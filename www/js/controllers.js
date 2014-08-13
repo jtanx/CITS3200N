@@ -12,4 +12,9 @@ angular.module('starter.controllers', [])
 })
 
 .controller('AccountCtrl', function($scope) {
+})
+
+.controller('SurveyCtrl', function($scope, SurveyOne) {
+  $scope.surveyOne = SurveyOne.all();
+
 });

@@ -8,10 +8,10 @@ angular.module('starter.services', [])
 
   // Some fake testing data
   var friends = [
-    { id: 0, name: 'Scruff McGruff' },
-    { id: 1, name: 'G.I. Joe' },
-    { id: 2, name: 'Miss Frizzle' },
-    { id: 3, name: 'Ash Ketchum' }
+    { id: 0, name: 'Scruff McGruff', ph: '0412345678' },
+    { id: 1, name: 'G.I. Joe', ph: '0818288880' },
+    { id: 2, name: 'Miss Frizzle', ph: '0322134414' },
+    { id: 3, name: 'Ash Ketchum', ph: '0414554332' }
   ];
 
   return {
@@ -23,4 +23,22 @@ angular.module('starter.services', [])
       return friends[friendId];
     }
   }
+})
+
+.factory('SurveyOne', function() {
+    var surveyItems = [
+        { id: 0, checked: false, text: "Item 1"},
+        { id: 1, checked: false, text: "Item 2"},
+        { id: 2, checked: true, text: "Item 3"},
+        { id: 3, checked: false, text: "Item 4"}
+    ];
+    
+    return {
+      all: function() {
+        return surveyItems;
+      },
+      get: function(itemId) {
+        return surveyItems[itemId];
+      }
+    };
 });
