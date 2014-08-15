@@ -27,10 +27,10 @@ angular.module('starter.services', [])
 
 .factory('SurveyOne', function() {
     var surveyItems = [
-        { id: 0, checked: false, text: "Item 1"},
-        { id: 1, checked: false, text: "Item 2"},
-        { id: 2, checked: true, text: "Item 3"},
-        { id: 3, checked: false, text: "Item 4"}
+        { id: 0, value: 0, text: "Item 1"},
+        { id: 1, value: 0, text: "Item 2"},
+        { id: 2, value: 0, text: "Item 3"},
+        { id: 3, value: 0, text: "Item 4"}
     ];
     
     return {
