@@ -19,7 +19,7 @@
       
       <div class="card" ng-repeat="question in surveyOne">
         <div class="item item-divider">
-        {{question.id+q}}. {{question.text}}
+        {{question.id+1}}. {{question.text}}
         </div>
         <div class="item item-text-wrap range">
           <input type="range" name="survey-question-{{question.id}}" max="4" ng-model="question.value" style="height:60px;">
