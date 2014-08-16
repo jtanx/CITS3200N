@@ -4,15 +4,6 @@
     </button>
   </ion-nav-buttons>
     
-<ion-header-bar align-title="left" class="bar-positive">
-  <div class="buttons">
-    <button class="button" ng-click="doSomething()">Left Button</button>
-  </div>
-  <h1 class="title">Title!</h1>
-  <div class="buttons">
-    <button class="button">Right Button</button>
-  </div>
-</ion-header-bar>
   <ion-content class="padding">
     <div class="card">
       <div class="item item-icon-left item-text-wrap">
@@ -25,63 +16,15 @@
       <!--
       <ion-checkbox ng-repeat="item in surveyOne" ng-model="item.checked" ng-checked="item.checked">{{item.text}}</ion-checkbox>
       -->
-      <div class="card">
-        <div class="item item-divider">
-        1. Miserable
-        </div>
-        <div class="item item-text-wrap range">
-          <input type="range" name="item1" max="4" value="5">
-        </div>
-        <div class="item item-divider">
-        Extremely
-        </div>
-      </div>
       
-      <div class="card">
+      <div class="card" ng-repeat="question in surveyOne">
         <div class="item item-divider">
-        2. Unhappy
+        {{question.id+q}}. {{question.text}}
         </div>
         <div class="item item-text-wrap range">
-          <input type="range" name="item1" max="4" value="3">
+          <input type="range" name="survey-question-{{question.id}}" max="4" ng-model="question.value" style="height:60px;">
         </div>
-        <div class="item item-divider">
-        Quite a bit
-        </div>
-      </div>
-      
-      <div class="card">
-        <div class="item item-divider">
-        3. Bitter
-        </div>
-        <div class="item item-text-wrap range">
-          <input type="range" name="item1" max="4" value="1">
-        </div>
-        <div class="item item-divider">
-        A little
-        </div>
-      </div>
-      
-      <div class="card">
-        <div class="item item-divider">
-        4. Downhearted
-        </div>
-        <div class="item item-text-wrap range">
-          <input type="range" name="item1" max="4" value="2">
-        </div>
-        <div class="item item-divider">
-        Moderately
-        </div>
-      </div>
-      
-      <div class="card">
-        <div class="item item-divider">
-        5. Depressed
-        </div>
-        <div class="item item-text-wrap range">
-          <input type="range" name="item1" max="4" value="0">
-        </div>
-        <div class="item item-divider">
-        Not at all
+        <div class="item item-divider" ng-bind="descriptors[question.value]">
         </div>
       </div>
       <button class="button button-block button-positive">
