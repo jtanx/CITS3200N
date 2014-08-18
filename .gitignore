@@ -1,0 +1,11 @@
+Thumbs.db
+*.bbl
+*.aux
+*.synctex.gz
+*.synctex.gz(busy)
+*.log
+*.bcf
+*.blg
+*.out
+cits3200n-rad.pdf
+source-serif-pro-otf-1.014.zip
