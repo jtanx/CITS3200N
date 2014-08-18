@@ -1,5 +1,58 @@
 <ion-view title="Dashboard">
   <ion-content class="padding">
-    
+    <h5 class="title">
+    In the past 24 hours, how often have you felt...
+    </h5>
+    <div class="list card">
+      <div class="item item-divider">
+        1. Miserable
+      </div>
+      <label class="item item-radio">
+        <input type="radio" name="group">
+        <div class="item-content">
+          Not at all
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+      </label>
+      <label class="item item-radio">
+        <input type="radio" name="group">
+        <div class="item-content">
+          A little
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+      </label>
+      <label class="item item-radio">
+        <input type="radio" name="group">
+        <div class="item-content">
+          Moderately
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+      </label>
+      <label class="item item-radio">
+        <input type="radio" name="group">
+        <div class="item-content">
+          Quite a lot
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+      </label>
+      <label class="item item-radio">
+        <input type="radio" name="group">
+        <div class="item-content">
+          Extremely
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+      </label>
+    </div>
   </ion-content>
+  <ion-footer-bar class="bar-assertive">
+  <div class="buttons">
+    <button class="button"><i class="button-icon ion-arrow-left-a"></i></button>
+  </div>
+  <h1 class="title">
+  1/22
+  </h1>
+  <div class="buttons" ng-click="doSomething()">
+    <button class="button"><i class="button-icon ion-arrow-right-a"></i></button>
+  </div>  
+  </ion-footer-bar>
 </ion-view>
