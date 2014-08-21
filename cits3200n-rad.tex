@@ -5,8 +5,8 @@
 \usepackage{import}
 
 %Font stuff
-%\usepackage{fontspec}
-%\setmainfont[Ligatures={TeX}]{Source Serif Pro}
+\usepackage{fontspec}
+\setmainfont[Ligatures={TeX}]{Source Serif Pro}
 
 %Harvard referencing
 \usepackage[authoryear]{natbib}
@@ -22,6 +22,12 @@
 \titlespacing\subsection{0pt}{4pt}{2pt}
 \titlespacing\subsubsection{0pt}{2pt}{2pt}
 \parskip 8.2pt 
+
+%Whole paragraph indent
+\usepackage{changepage}
+
+%List spacing
+%\usepackage{enumitem}
 
 %Headers
 \usepackage{fancyhdr}
@@ -81,7 +87,7 @@ August 2014
 Version & Author & Date & Description \\
 \hline
 0.1 & Stuart Paton & 13 August 2014 & Initial version \\
-0.2 &  & b & c \\
+0.2 &  & 22 August 2014 & Deliverable A \\
 \hline
 \end{tabularx}
 \end{table}
@@ -92,13 +98,14 @@ This document addresses the requirements of the iPhone/iPad Training, Nutrition 
 \subsection*{Target Audience}
 Client, Developers
 
-\subsection*{Client signoff}
-I, Grant Landers have reviewed and approve of the Requirements Analysis Document, where the information outlined is accurate and suited to my needs. \\[2em]
+\subsection*{Client sign-off}
+I, Grant Landers have reviewed and approve of the Requirements Analysis Document, where the information outlined is accurate and suited to my needs.  \\[2em]
 \noindent \begin{tabular}{ll}
 \makebox[6cm]{\hrulefill} & \makebox[6cm]{\hrulefill} \\
 Signature & Date
-
 \end{tabular}
+
+If there are any outstanding issues, or if you would like to make changes, additions or deletions to this document, please annotate these as necessary.
 
 
 \subsection*{CITS3200 Group N Members}
@@ -109,10 +116,10 @@ Signature & Date
 	Name & Student Number & Role \\
 	\hline
 	Stuart Paton & 20148763  & Group manager\\
-	Hillary Loh & 20517519 & Role\\
-	Kian Aik (Johnathan) Lim & 20687818 & Role \\
-	Joel Frewin & 21306458 & Role\\
-	Jeremy Tan & 20933708 & Role\\
+	Hillary Loh & 20517519 & Developer\\
+	Kian Aik (Johnathan) Lim & 20687818 & Developer \\
+	Joel Frewin & 21306458 & Developer\\
+	Jeremy Tan & 20933708 & Developer\\
 \end{tabular}
 \end{table}
 
@@ -157,14 +164,18 @@ Client meetings will be scheduled on an as-needed basis with the client.
 %-------------------------------------------------------------------------------
 
 \section{General Goals}
-\textcolor{red}{Placeholder text}
+The goal is to develop a mobile application that makes it easier to collect data from users, for the purpose of fitness and training studies at UWA.
+
+The system is designed to streamline data entry from the client, such that the collected data is as up to date and accurate as possible. It should reduce the manual transfer of data as much as possible, both to minimise transcription errors and to increase data processing efficiency. 
 
 \section{Current System}
-\textcolor{red}{Placeholder text}
+The current system involves filling out paper forms, which have to be printed and gathered. This is a significant time investment and often includes half-remembered data. 
+
+Those forms are then manually copied to an Excel spreadsheet, where various statistical analyses are performed. This manual process leads to a slow turnaround from when the data is recorded to when it is analysed.
 
 \section{Proposed System}
 \subsection{Overview}
-\textcolor{red}{Placeholder text}
+A mobile application (app) will replace the paper forms, encouraging users to enter data sooner rather than later. The second component is a server backend, which the application will connect to remotely; most likely over the internet. Its function is to manage the users of the application, as well as to retrieve and store the data from users. The third component is an administrative interface to manage the system.
 
 \subsection{Functional Requirements}
 \textcolor{red}{Placeholder text}
@@ -177,19 +188,35 @@ Client meetings will be scheduled on an as-needed basis with the client.
 \textcolor{red}{Placeholder text}
 
 \subsubsection{Documentation}
-\textcolor{red}{Placeholder text}
+Documentation for the mobile application, server and administrative interface will be needed. This should include information for both how to use it (manuals) and how to maintain it (i.e. source code comments, routine maintenance procedures)
+.
+The manuals should be written to target:
+\begin{itemize}
+	\item Mobile application: General user (non-technical)
+	\item Administrative interface: Supervisor/Manager (non-technical)
+	\item Server: Systems administrator (technical)
+\end{itemize}
 
 \subsubsection{Hardware Considerations}
-\textcolor{red}{Placeholder text}
+The app resides on a smartphone, which typically has constrained processing power and storage versus a typical workstation computer. This input is minimal and will mostly be sent straight to the server for long term storage, meaning that very little storage capability is required of the smartphone. 
+
+The server will require a more traditional computer that has internet access. With relatively low usage, it is expected that storage and computing requirements will be minimal.
+
+With the administrative interface being web based, all that is required is the use of a modern web browser. Much like the app, the administrative interface will interact with the server and will not be responsible for a large storage of data.
 
 \subsubsection{Performance Characteristics}
-\textcolor{red}{Placeholder text}
+This project is not expected to be computing or storage intensive. The largest bottleneck in the system will exist in the data interaction with the server. The speed at which data is sent to the server depends upon available internet bandwidth at the time of delivery. Reducing the size of the data to be sent may help if bandwidth is limited. 
+
+Data will not be able to be sent to the server when there is no internet connectivity. Under this circumstance the data will be stored temporarily on the app until it can be sent. The lack of internet connectivity will lead to a longer response time.
+
 
 \subsubsection{Error Handling and Extreme Conditions}
-\textcolor{red}{Placeholder text}
+Input will be tightly controlled on the client end, ensuring that all data is valid and compatible with the server. Checking data before sending it is safer, simpler, and saves data.
+
+The server should have a strictly defined interface, such that it rejects anything that does not conform to what it should receive. It is unlikely that the server will be overloaded with input requests. However, in this circumstance the server should reject requests and send subsequent error messages to the user.
 
 \subsubsection{System Interfacing}
-\textcolor{red}{Placeholder text}
+No input is coming from systems outside the proposed system. However, the system should allow for data export in a format (i.e. CSV) that is compatible with currently used software (Microsoft Excel).
 
 \subsubsection{Quality Issues}
 \textcolor{red}{Placeholder text}
@@ -207,11 +234,21 @@ Client meetings will be scheduled on an as-needed basis with the client.
 \textcolor{red}{Placeholder text}
 
 \subsection{Constraints}
-\textcolor{red}{Placeholder text}
+The app is to be built using the Ionic framework, which uses HTML5, CSS and JavaScript. Development can occur on any operating system that can run Ionic (Windows, OS X and Linux). Final deployment for iOS must occur on a computer running OS X, and a developer license will be needed to publish the application to the Application Store.
+
+The server will host an SQL database, while the administrative interface will be web based. With no present system in place, there is little constraint over what technologies may be used.
 
 \subsection{System Model}
 \subsubsection{Scenarios}
-\textcolor{red}{Placeholder text}
+\textbf{Scenario 1}\\[0pt]
+A user completes a sixty minute training session in which they ran 10km. The user would then record this information on the app by first selecting the “training” form from the app’s home screen, and then entering the training details. They would first specify what type of training was done; in this case they would select “running”, then they would then proceed to enter quantitative details of their exercise. In this case, they would enter the duration as sixty minutes, distance as 10km, and perceived intensity (out of five) as three. Once they have completed the form, they would submit it, and it would be transmitted into the client’s database when the user is connected to internet. The app returns to the home screen.
+
+\textbf{Scenario 2}\\[0pt]
+A user goes to sleep at 10pm, and wakes up at 6:30am. They record this information by selecting the “sleep” form from the app’s home screen and then entering their sleep duration as 8.5 hours. They would then submit the form by clicking “submit” and the information would be transmitted to the client’s database when the user is connected to internet. The app then returns to the home screen.
+
+\textbf{Scenario 3}\\[0pt]
+A user wants to view their training history for the last month. They would select the “statistics” tab from the home screen, and then the “training” option. The user would then be able to view computed statistics about their training durations, distances and intensities.
+
 
 \subsubsection{Use Case Models}
 TBA (Deliverable B)
@@ -223,8 +260,33 @@ TBA (Deliverable B)
 TBA (Deliverable B)
 
 \subsubsection{User Interface --- Navigational Paths and Screen Mock-ups}
-TBA (Deliverable B)
+\begin{figure}[H]
+	\centering
+	
+	\begin{tabular}{cc}
+		\includegraphics[width=0.35\textwidth]{figures/mockup-a.png} A &
+		\includegraphics[width=0.35\textwidth]{figures/mockup-b.png} B
+	\end{tabular}
+	
+	\includegraphics[width=0.3\textwidth]{figures/mockup-c.png} C
+	\caption{Mock-ups of the app}
+	\label{fig:mockups}
+\end{figure}
 
+\section{Glossary}
+\begin{itemize}
+	\item \textbf{Android} --- A mobile operating system developed by Google. Used on most non-Apple branded phones and tablets.
+	\item \textbf{app} --- `Mobile application'; software than runs on a smart phone.
+	\item \textbf{CSS} --- Cascading Style Sheets -- A language used to format how a document appears; typically used with HTML.
+	\item \textbf{CSV} --- Comma Separated Values -- A common and simple format to export data to; rows are entered one per line, and columns are separated by a delimiter (i.e. a comma).
+	\item \textbf{HTML} --- HyperText Markup Language -- A markup language used to create web pages.
+	\item \textbf{Ionic} --- A framework to design cross-platform mobile applications using HTML, CSS and JavaScript.
+	\item \textbf{iOS} --- A mobile operating system developed by Apple. Used on all Apple mobile products (iPhone/iPad)
+	\item \textbf{JavaScript} --- A scripting language often used to control web pages, making them interactive.
+	\item \textbf{MTDS}
+	\item \textbf{SQL} --- Structured Query Language -- A programming language used in the control of a relational database management system.
+	\item \textbf{UWA} --- The University of Western Australia.
+\end{itemize}
 
 %Referencing
 % Commented out - no referencing so far
