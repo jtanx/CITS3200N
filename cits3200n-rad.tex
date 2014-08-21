@@ -185,7 +185,13 @@ A mobile application (app) will replace the paper forms, encouraging users to en
 
 \subsection{Nonfunctional Requirements}
 \subsubsection{User Interface and Human Factors}
-\textcolor{red}{Placeholder text}
+The mobile application and administrative interface should be intuitive; more so for the former. They should not be overly complex, and should not require expert knowledge to be used. 
+
+The mobile application will have a touch-screen as the primary input/output interface. Since it will be used by a significant number of people, little to no training should be required to use it. 
+
+The administrative interface should only be used by a manager of the application (i.e. the client). Some training will be needed to use it, but it should remain easy to use. It should protect against making drastic changes, such as accidental deletion of the entire database.
+
+Maintenance of the server should only be handled by someone that has expert knowledge about the system.
 
 \subsubsection{Documentation}
 Documentation for the mobile application, server and administrative interface will be needed. This should include information for both how to use it (manuals) and how to maintain it (i.e. source code comments, routine maintenance procedures)
@@ -219,19 +225,30 @@ The server should have a strictly defined interface, such that it rejects anythi
 No input is coming from systems outside the proposed system. However, the system should allow for data export in a format (i.e. CSV) that is compatible with currently used software (Microsoft Excel).
 
 \subsubsection{Quality Issues}
-\textcolor{red}{Placeholder text}
+The main component of failure is the server, or access to the server. Downtime and system faults should be a rare occurrence. The system is not particularly time critical, and loss of server access should not impede the ability for users to continue using the app. While unlikely, acceptable downtime per 24 hour period may be up to 12 hours. After a system failure, the system should be restarted within a day.
+
+Portability is maintained by writing standards compliant code and using highly maintained, cross-platform compatible software. 
 
 \subsubsection{System Modifications}
-\textcolor{red}{Placeholder text}
+The current infrastructure is insufficient for the client’s needs, and must be built up from scratch. It is being converted from paper records, though not retroactively.
+
+In the future, the supervisor may want to add more survey types or display more statistics.
+The initial interface should be relatively simple. Future modifications are expected to the app; possibly to its design and also the content served. Supporting modifications to the server and administrative interface may also be expected.
 
 \subsubsection{Physical Environment}
-\textcolor{red}{Placeholder text}
+Smartphones may be used in a wide range of environments and locations, but this is unlikely a concern for the functioning of this app. Given the use of a touch interface, it would be worth having large interface elements that are easy to activate. 
+
+It is not expected that the server or administrative interface will be operated under unusual environmental conditions.
 
 \subsubsection{Security Issues}
-\textcolor{red}{Placeholder text}
+The data should be secured against trivial attack. The data is not really of any value to anyone outside the people studying the subject. The user's side should be secured as much as the user's phone is. The supervisor's side should be as secure as the client's computer. The database itself should be relatively secure, and only accessible by developers and the software interfaced to it.
 
 \subsubsection{Resource Issues}
-\textcolor{red}{Placeholder text}
+The data should be backed up once a day in an automated process.
+If the system requires restarting, it should retrieve the backup.
+If the system requires a scheduled restart, it should back up its data before shutting down.
+
+System installation and maintenance of the server should be conducted by a technician or someone skilled in these processes.
 
 \subsection{Constraints}
 The app is to be built using the Ionic framework, which uses HTML5, CSS and JavaScript. Development can occur on any operating system that can run Ionic (Windows, OS X and Linux). Final deployment for iOS must occur on a computer running OS X, and a developer license will be needed to publish the application to the Application Store.
