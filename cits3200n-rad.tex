@@ -89,6 +89,7 @@ Version & Author & Date & Description \\
 \hline
 0.1 & Stuart Paton & 13 August 2014 & Initial version \\
 0.2 &  & 22 August 2014 & Deliverable A \\
+0.3 & & 5 September 2014 & Deliverable B \\
 \hline
 \end{tabularx}
 \end{table}
@@ -100,7 +101,7 @@ This document addresses the requirements of the iPhone/iPad Training, Nutrition 
 Client, Developers
 
 \subsection*{Client sign-off}
-I, Grant Landers have reviewed and approve of the Requirements Analysis Document, where the information outlined is accurate and suited to my needs.  \\[2em]
+I, Grant Landers have reviewed and approve of the Requirements Analysis Document, where the information outlined is accurate and suited to my needs. I accept this document as the basis for undertaking this project.  \\[2em]
 \noindent \begin{tabular}{ll}
 \makebox[6cm]{\hrulefill} & \makebox[6cm]{\hrulefill} \\
 Signature & Date
@@ -140,8 +141,12 @@ Date & Time & Description \\
 04/08/2014 & 12PM--1PM & Group Meeting \\
 05/08/2014 & 12PM--1PM & Group Meeting and subsequent Client Meeting \\
 11/08/2014 & 12:30PM--1PM & Group Meeting \\
-18/08/2014 & 3PM--4:30PM & Group Meeting
-
+18/08/2014 & 3PM--4:30PM & Group Meeting \\
+25/08/2014 & 3PM--4PM & Group Meeting \\
+26/08/2014 & 11AM-12PM & Group Meeting \\
+26/08/2014 & 1PM--1:30PM & Client Meeting \\
+02/09/2014 & 11AM--12PM & Group Meeting \\
+02/09/2014 & 1PM--?? & Client Meeting
 \end{tabularx}
 \end{table}
 
@@ -330,7 +335,23 @@ A user wants to view their training history for the last month. They would selec
 TBA (Deliverable B)
 
 \subsubsection{Object Models}
-TBA (Deliverable B)
+The database must allow for user management, storage of surveys (MTDS/Sleep/Training volume) and their responses, as well as storage of diary entries. For ease of access, an additional table storing aggregated statistics based on the survey responses is also kept.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/object-models/db-schema.pdf}
+	\caption{The proposed database table layout}
+\end{figure}
+
+The mobile application uses an MVC framework. What follows is a list of views and the required functions from the controllers (in UML) in the app.
+
+\begin{figure}[H]
+	\centering
+	\begin{tabular}{ccc}
+	\includegraphics[width=0.25\textwidth]{figures/object-models/AppDiary.pdf} A & \includegraphics[width=0.25\textwidth]{figures/object-models/AppGoals.pdf} B & \includegraphics[width=0.25\textwidth]{figures/object-models/AppSchedule.pdf} C \\
+	\includegraphics[width=0.25\textwidth]{figures/object-models/AppStats.pdf} D & \includegraphics[width=0.25\textwidth]{figures/object-models/AppSurvey.pdf} E
+	\end{tabular}
+\end{figure}
 
 \subsubsection{Dynamic Models}
 TBA (Deliverable B)
@@ -360,7 +381,9 @@ TBA (Deliverable B)
 	\item \textbf{iOS} --- A mobile operating system developed by Apple. Used on all Apple mobile products (iPhone/iPad)
 	\item \textbf{JavaScript} --- A scripting language often used to control web pages, making them interactive.
 	\item \textbf{MTDS}
+	\item \textbf{MVC} --- Model-View-Controller. A framework that presents a `view' of a `model' to the user. The user interacts with the `view', which is made interactive/controlled by the `controller', which then updates the `model'.
 	\item \textbf{SQL} --- Structured Query Language -- A programming language used in the control of a relational database management system.
+	\item \textbf{UML} --- Unified Modeling Language -- A general-purpose method of visualising the design of a system.
 	\item \textbf{UWA} --- The University of Western Australia.
 \end{itemize}
 
