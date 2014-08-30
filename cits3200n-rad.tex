@@ -188,30 +188,28 @@ A mobile application (app) will replace the paper forms, encouraging users to en
     \hline
     1     &       & Questionnaire features &       &        \\
     \hline
-    1.1   & 1     & Ability to enter details about a training session (training volume and RPE) &       & 15 \\
-    1.2   & 1     & Digitised form to complete the MTDS survey &       & 15 \\
+    1.1   & 1     & Ability to enter details about a training session (training volume and RPE) &  12     & 15 \\
+    1.2   & 1     & Digitised form to complete the MTDS survey &     12  & 15 \\
     \hline
     2     &       & User interface (app) &       &        \\
     \hline
-    2.1   & 1     & User data can be submitted to a central server if internet is present &       & 20 \\
-    2.2   & 2     & Users can access computed statistics, e.g. weekly and annual training volume &       & 10 \\
-    2.3   & 2     & Users can see how they should be performing compared to how they are currently performing &       & 5 \\
-    2.4   & 3     & Use of the application is restricted to registered users &       & 10 \\
-    2.5   & 4     & Users receive notifications from the application to complete scheduled surveys &       & 5 \\
-    2.6   & 4     & In addition to running on iPhone/iPad (iOS), can run on Android &       & 2 \\
+    2.1   & 1     & User data can be submitted to a central server if internet is present &   12    & 20 \\
+    2.2   & 2     & Users can access computed statistics, e.g. weekly and annual training volume &   8    & 10 \\
+    2.3   & 2     & Users can see how they should be performing compared to how they are currently performing &   3    & 5 \\
+    2.4   & 3     & Use of the application is restricted to registered users &    8   & 10 \\
     \hline
     3     &       & Backend features &       &        \\
     \hline
-    3.1   & 2     & Administrator receives notification when a user completes a survey &       & 10 \\
-    3.2   & 3     & The data is transmitted from the user to the server in a secure fashion (i.e. SSL/https) &       & 10 \\
-    3.3   & 3     & An easy method for the administrator to initiate a back-up of all data on the server &       & 5 \\
+    3.1   & 2     & Administrator receives notification when a user completes a survey &   2    & 10 \\
+    3.2   & 3     & The data is transmitted from the user to the server in a secure fashion (i.e. SSL/https) &    5   & 10 \\
+    3.3   & 3     & An easy method for the administrator to initiate a back-up of all data on the server &    5   & 5 \\
     \hline
     4     &       & Administrative interface &       &       \\
     \hline
-    4.1   & 2     & All data can be exported to required formats (e.g. Excel/CSV) &       & 5 \\
-    4.2   & 2     & Data will be evaluated further directly by the interface (e.g. graph plotting, statistics)  &       & 15 \\
-    4.3   & 3     & Ability to add/remove users &       & 15 \\
-    4.4   & 4     & Data for a specific person can be exported/viewed &       & 5 \\
+    4.1   & 2     & All data can be exported to required formats (e.g. Excel/CSV) &    12   & 5 \\
+    4.2   & 2     & Data will be evaluated further directly by the interface (e.g. graph plotting, statistics)  &   5    & 15 \\
+    4.3   & 3     & Ability to add/remove users &   8    & 15 \\
+    4.4   & 4     & Data for a specific person can be exported/viewed &   8    & 5 \\
     \hline
     \end{tabularx}%
   \label{tab:functional-requirements}%
@@ -225,24 +223,19 @@ A mobile application (app) will replace the paper forms, encouraging users to en
     \hline
     Ranking & Feature & Estimated value ratio \\
     \hline
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
-          &       &  \\
+       1 & 4.1   &   2.4   \\
+       2 & 4.4   &   1.6   \\
+       3 & 3.3   &   1.0   \\
+       4 & 1.1   &   0.8    \\
+       5 & 1.2  &    0.8   \\
+       6 & 2.2  &    0.8   \\
+       7 & 2.4   &   0.4    \\
+       8 & 2.1   &   0.6     \\
+       9 & 2.3  &    0.6   \\
+       10 & 4.3   &   0.53     \\
+       11 & 3.2   &   0.5     \\
+       12 & 4.2   &   0.33     \\
+       13 & 3.1   &   0.2    \\
     \hline
     \end{tabular}%
   \label{tab:value-estimate-ratio}%
@@ -327,7 +320,7 @@ The server will host an SQL database, while the administrative interface will be
 A user completes a sixty minute training session in which they ran 10km. The user would then record this information on the app by first selecting the “training” form from the app’s home screen, and then entering the training details. They would first specify what type of training was done; in this case they would select “running”, then they would then proceed to enter quantitative details of their exercise. In this case, they would enter the duration as sixty minutes, distance as 10km, and perceived intensity (out of five) as three. Once they have completed the form, they would submit it, and it would be transmitted into the client’s database when the user is connected to internet. The app returns to the home screen.
 
 \textbf{Scenario 2}\\[0pt]
-A user goes to sleep at 10pm, and wakes up at 6:30am. They record this information by selecting the “sleep” form from the app’s home screen and then entering their sleep duration as 8.5 hours. They would then submit the form by clicking “submit” and the information would be transmitted to the client’s database when the user is connected to internet. The app then returns to the home screen.
+A user goes to sleep at 10pm, and wakes up at 6:30am. They record this information by selecting the “sleep” form from the app’s home screen, entering their sleep/wake times, and their sleep quality (1--5 scale).  They would then submit the form by clicking “submit” and the information would be transmitted to the client’s database when the user is connected to internet. The app then returns to the home screen.
 
 \textbf{Scenario 3}\\[0pt]
 A user wants to view their training history for the last month. They would select the “statistics” tab from the home screen, and then the “training” option. The user would then be able to view computed statistics about their training durations, distances and intensities.
@@ -347,11 +340,11 @@ TBA (Deliverable B)
 	\centering
 	
 	\begin{tabular}{cc}
-		\includegraphics[width=0.35\textwidth]{figures/mockup-a.png} A &
-		\includegraphics[width=0.35\textwidth]{figures/mockup-b.png} B
+		\includegraphics[width=0.35\textwidth]{figures/mockups/mockup-a.png} A &
+		\includegraphics[width=0.35\textwidth]{figures/mockups/mockup-b.png} B
 	\end{tabular}
 	
-	\includegraphics[width=0.3\textwidth]{figures/mockup-c.png} C
+	\includegraphics[width=0.3\textwidth]{figures/mockups/mockup-c.png} C
 	\caption{Mock-ups of the app}
 	\label{fig:mockups}
 \end{figure}
