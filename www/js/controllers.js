@@ -1,9 +1,9 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope) {
+.controller('goalsCtrl', function($scope) {
 })
 
-.controller('FriendsCtrl', function($scope, Friends) {
+.controller('scheduleCtrl', function($scope, Friends) {
   $scope.friends = Friends.all();
 })
 
@@ -11,10 +11,13 @@ angular.module('starter.controllers', [])
   $scope.friend = Friends.get($stateParams.friendId);
 })
 
-.controller('AccountCtrl', function($scope) {
+.controller('statsCtrl', function($scope) {
 })
 
-.controller('SurveyCtrl', function($scope, MTDSSurvey) {
+.controller('diaryCtrl', function($scope) {
+})
+
+.controller('mentaltestCtrl', function($scope, MTDSSurvey) {
   $scope.surveyOne = MTDSSurvey.newSurvey();
   $scope.descriptors = ["Not at all", "A little", "Moderately", 
                         "Quite a bit", "Extremely"];
