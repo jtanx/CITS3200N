@@ -508,6 +508,8 @@ TBA (Deliverable B)
   \label{tab:dd:QuestionResponse}%
 \end{table}%
 
+Note that the \texttt{User} table is only given as an example of what is required from it. Most frameworks already provide an implementation for users (and the associated table). 
+
 \paragraph{Class diagrams}
 The database must allow for user management, storage of surveys (MTDS/Sleep/Training volume) and their responses, as well as storage of diary entries. For ease of access, an additional table storing aggregated statistics based on the survey responses is also kept.
 
@@ -525,10 +527,15 @@ The mobile application uses an MVC framework. What follows is a list of views an
 	\includegraphics[width=0.25\textwidth]{figures/object-models/AppDiary.pdf} A & \includegraphics[width=0.25\textwidth]{figures/object-models/AppGoals.pdf} B & \includegraphics[width=0.25\textwidth]{figures/object-models/AppSchedule.pdf} C \\
 	\includegraphics[width=0.25\textwidth]{figures/object-models/AppStats.pdf} D & \includegraphics[width=0.25\textwidth]{figures/object-models/AppSurvey.pdf} E
 	\end{tabular}
+	\caption{A set of views required by the app}
 \end{figure}
 
 \subsubsection{Dynamic Models}
-TBA (Deliverable B)
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/sequence-diagrams/AppSurveySeq.pdf}
+	\caption{A sequence diagram of a user filling in a survey with the app}
+\end{figure}
 
 \subsubsection{User Interface --- Navigational Paths and Screen Mock-ups}
 \begin{figure}[H]
