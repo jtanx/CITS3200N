@@ -531,12 +531,39 @@ The mobile application uses an MVC framework. What follows is a list of views an
 	\caption{A set of views required by the app}
 \end{figure}
 
+\newpage
 \subsubsection{Dynamic Models}
+The following models provide examples of the sequence of steps behind a user interacting with the app, under various scenarios.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/sequence-diagrams/AppDiarySeq.pdf}
+	\caption{A sequence diagram of a user viewing the diary and one entry, before filling in a new entry and submitting it to the server.}
+\end{figure}
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\textwidth]{figures/sequence-diagrams/AppSurveySeq.pdf}
-	\caption{A sequence diagram of a user filling in a survey with the app}
+	\caption{A sequence diagram of a user completing a new sleep quality survey and submitting it to the server.}
 \end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.66\textwidth]{figures/sequence-diagrams/AppScheduleSeq.pdf}
+	\caption{A sequence diagram of interaction with the timetable. In this example, the user views this week's overview, then views the details for one entry (cycling on Tuesday). After viewing the entry, the user alters the distance that he/she plans to cycle. The user then removes another entry (running on Wednesday).}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/sequence-diagrams/AppStatsSeq.pdf}
+	\caption{A sequence diagram of a user viewing recent stats and stats for a particular time frame.}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/sequence-diagrams/AppGoalsSeq.pdf}
+	\caption{A sequence diagram of a user viewing their training goals.}
+\end{figure}
+
 
 \subsubsection{User Interface --- Navigational Paths and Screen Mock-ups}
 \begin{figure}[H]
