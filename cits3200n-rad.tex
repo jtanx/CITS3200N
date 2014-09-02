@@ -151,12 +151,12 @@ Date & Time & Description \\
 25/08/2014 & 3PM--4PM & Group Meeting \\
 26/08/2014 & 11AM-12PM & Group Meeting \\
 26/08/2014 & 1PM--1:30PM & Client Meeting \\
-02/09/2014 & 11AM--12PM & Group Meeting \\
-02/09/2014 & 1PM--?? & Client Meeting
+02/09/2014 & 11AM--12:40PM & Group Meeting \\
+02/09/2014 & 1PM--1:20 & Client Meeting
 \end{tabularx}
 \end{table}
 
-Weekly group meetings are to be held every Monday from the August 4 2014 until October 27 2014. 
+Weekly group meetings are to be held every Tuesday from the August 4 2014 until October 27 2014. 
 
 Client meetings will be scheduled on an as-needed basis with the client.
 
@@ -356,7 +356,7 @@ A user wants to view their training history for the last month. They would selec
 \hline
 \textbf{Name} & Logon \\
 \textbf{Goal} & User is required to logon the system to access any functionality \\
-\textbf{Flow of Events} & \begin{tabular}[c]{@{}l@{}}1. After the app is launched, user will land on a splash screen for login.\\ 2. With successful authentication user will be brought to the app interface.\end{tabular} \\
+\textbf{Flow of Events} & \begin{tabular}[c]{@{}p{10.5cm}@{}}1. After the app is launched, user will land on a splash screen for login.\\ 2. With successful authentication user will be brought to the app interface.\end{tabular} \\
 \textbf{Special Requirements} & nil \\
 \textbf{Pre-conditions} & Application is launched. \\
 \textbf{Post-conditions} & The application functionality will be unlocked.
@@ -376,12 +376,12 @@ A user wants to view their training history for the last month. They would selec
 \end{table}
 
 \begin{table}[H]
-\begin{tabularx}{\textwidth}{l|l}
+\begin{tabularx}{\textwidth}{l|X}
 & \textbf{Descriptions} \\
 \hline
-\textbf{Name} & Set goal \\
+\textbf{Name} & Add goal \\
 \textbf{Goal} & User will be able to set a goal \\
-\textbf{Flow of Events} & \begin{tabular}[c]{@{}l@{}}1. Click on ``+" to add goal\\ 2. Brought to the add goal screen\\ 3. Fill in detail and submit\\ 4. Goal added\end{tabular} \\
+\textbf{Flow of Events} & \begin{tabular}[c]{@{}p{10.5cm}@{}}1. Click on ``+" to add goal\\ 2. Brought to the add goal screen\\ 3. Fill in detail and submit\\ 4. Goal added\end{tabular} \\
 \textbf{Special Requirements} & nil \\
 \textbf{Pre-conditions} & Application is launched. User is in Goal tab and has pressed ``+". \\
 \textbf{Post-conditions} & New goal added to the App
@@ -389,15 +389,80 @@ A user wants to view their training history for the last month. They would selec
 \end{table}
 
 \begin{table}[H]
-\begin{tabularx}{\textwidth}{l|l}
+\begin{tabularx}{\textwidth}{l|X}
 & \textbf{Descriptions} \\
 \hline
 \textbf{Name} & Meal and sleep diary \\
 \textbf{Goal} & User will be able to record meals and sleep details \\
-\textbf{Flow of Events} & \begin{tabular}[c]{@{}l@{}}1. Click on ``+" to on every specific tab\\ 2. Brought to the add screen\\ 3. Fill in detail and submit\\ 4. Meal/Sleep details updated\end{tabular} \\
+\textbf{Flow of Events} & \begin{tabular}[c]{@{}p{10.5cm}@{}}1. Click on ``+" to on every specific tab\\ 2. Brought to the add screen\\ 3. Fill in detail and submit\\ 4. Meal/Sleep details updated\end{tabular} \\
 \textbf{Special Requirements} & nil \\
 \textbf{Pre-conditions} & Application is launched. And user is in Diary tab and pressed "+". \\
 \textbf{Post-conditions} & Meal/Sleep updated to the App
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{l|X}
+& \textbf{Descriptions} \\
+\hline
+\textbf{Name} & MTDS Survey \\
+\textbf{Goal} & User will be able to finish the MTDS Survey. \\
+\textbf{Flow of Events} & \begin{tabular}[c]{@{}p{10.5cm}@{}}1. Click on ``Mental Test" tab.\\ 2. Brought to the survey screen.\\ 3. Fill in detail and submit.\\ 4. App will generate a summary for user review.\\ 5. After submission the details will be uploaded to the database.\end{tabular} \\
+\textbf{Special Requirements} & Today's survey has not been completed yet. \\
+\textbf{Pre-conditions} & Application is launched. User is in ``"Mental Test" tab. \\
+\textbf{Post-conditions} & Finished survey will be uploaded to the database.
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{l|X}
+& \textbf{Descriptions} \\
+\hline
+\textbf{Name} & Exercise \\
+\textbf{Goal} & User will be able to edit the Exercise details. \\
+\textbf{Flow of Events} & \begin{tabular}[c]{@{}p{10.5cm}@{}}1. Click on ``Exercise" tab.\\ 2. Brought to the exercise screen.\\ 3. Fill in details and submit by clicking ``+" on the specific date.\\ 5. After submission the details will be updated.\end{tabular} \\
+\textbf{Special Requirements} & User has not filled in the maximum number of exercises allowed (per day). \\
+\textbf{Pre-conditions} & Application is launched. \\
+\textbf{Post-conditions} & Finished exercise details will be updated in the app.
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{l|X}
+& \textbf{Descriptions} \\
+\hline
+\textbf{Name} & Review Statistics \\
+\textbf{Goal} & User will be review statistics against the pre-set goals. \\
+\textbf{Flow of Events} & \begin{tabular}[c]{@{}p{10.5cm}@{}}1. Click on ``Stats" tab.\\ 2. Brought to the stats screen.\\ 3. User will be able to flip through stats and graph of their exercise level.\end{tabular} \\
+\textbf{Special Requirements} & A goal to compare against (optional). \\
+\textbf{Pre-conditions} & Application is launched. \\
+\textbf{Post-conditions} & nil
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{l|X}
+& \textbf{Descriptions} \\
+\hline
+\textbf{Name} & Add/Remove User \\
+\textbf{Goal} & Administrator will have the ability to remove or add users. \\
+\textbf{Flow of Events} & \begin{tabular}[c]{@{}p{10.5cm}@{}}1. Administrator will have a list of users to review\\ 2. He/she will be able to add and remove users from the database.\end{tabular} \\
+\textbf{Special Requirements} & nil \\
+\textbf{Pre-conditions} & A working database. \\
+\textbf{Post-conditions} & User will be added or removed.
+\end{tabularx}
+\end{table}
+
+ \begin{table}[H]
+\begin{tabularx}{\textwidth}{l|X}
+& \textbf{Descriptions} \\
+\hline
+\textbf{Name} & Access Specific Data, Export Data \\
+\textbf{Goal} & Administrator will be able to export data into a readable format, either for a specific user or the whole cohort. \\
+\textbf{Flow of Events} & \begin{tabular}[c]{@{}p{10.5cm}@{}}1. Administrator will have a list of users to review\\ 2. He/she will be able to export the data by specific user or the whole cohort.\end{tabular} \\
+\textbf{Special Requirements} & nil \\
+\textbf{Pre-conditions} & A working database. \\
+\textbf{Post-conditions} & Data will be export in to readable form (E.g. Excel/CSV).
 \end{tabularx}
 \end{table}
 
@@ -664,7 +729,7 @@ Mockups A and B shows the design of the schedule feature and entry of a new item
 	\item \textbf{Ionic} --- A framework to design cross-platform mobile applications using HTML, CSS and JavaScript.
 	\item \textbf{iOS} --- A mobile operating system developed by Apple. Used on all Apple mobile products (iPhone/iPad)
 	\item \textbf{JavaScript} --- A scripting language often used to control web pages, making them interactive.
-	\item \textbf{MTDS}
+	\item \textbf{MTDS} --- Multi--component Training Distress Scale
 	\item \textbf{MVC} --- Model-View-Controller. A framework that presents a `view' of a `model' to the user. The user interacts with the `view', which is made interactive/controlled by the `controller', which then updates the `model'.
 	\item \textbf{SQL} --- Structured Query Language -- A programming language used in the control of a relational database management system.
 	\item \textbf{UML} --- Unified Modeling Language -- A general-purpose method of visualising the design of a system.

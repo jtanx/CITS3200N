@@ -41,7 +41,7 @@
      showgrid="false"
      inkscape:zoom="1.2183174"
      inkscape:cx="358.06739"
-     inkscape:cy="275.9598"
+     inkscape:cy="423.08032"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -1163,12 +1163,11 @@ Meal Diary</text>
      stroke-width="1"
      id="ellipse262" />
   <text
-     font-family="Lucida Grande"
      font-size="13"
-     x="492"
-     y="106"
-     id="text264">
-Sleep Hour</text>
+     x="490"
+     y="108"
+     id="text264"
+     style="font-size:13px;font-family:Lucida Grande">Sleep Details</text>
   <line
      fill="#000000"
      stroke="#000000"
@@ -1338,12 +1337,11 @@ Sleep Hour</text>
      stroke-width="1"
      id="ellipse302" />
   <text
-     font-family="Lucida Grande"
      font-size="13"
      x="500"
      y="50"
-     id="text304">
-Set Goal</text>
+     id="text304"
+     style="font-size:13px;font-family:Lucida Grande">Add Goal</text>
   <line
      fill="#000000"
      stroke="#000000"
