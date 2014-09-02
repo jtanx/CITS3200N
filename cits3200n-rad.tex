@@ -339,9 +339,67 @@ A user wants to view their training history for the last month. They would selec
 
 \subsubsection{Use Case Models}
 \paragraph{Actors}
-TBA (Deliverable B)
+\begin{itemize}
+	\item User
+	\item Administrator
+\end{itemize}
 \paragraph{Use Cases}
-TBA (Deliverable B)
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/object-models/use-case.pdf}
+	\caption{A use case model of the mobile application}
+\end{figure}
+
+ \begin{table}[H]
+\begin{tabularx}{\textwidth}{l|X}
+& \textbf{Descriptions} \\
+\hline
+\textbf{Name} & Logon \\
+\textbf{Goal} & User is required to logon the system to access any functionality \\
+\textbf{Flow of Events} & \begin{tabular}[c]{@{}l@{}}1. After the app is launched, user will land on a splash screen for login.\\ 2. With successful authentication user will be brought to the app interface.\end{tabular} \\
+\textbf{Special Requirements} & nil \\
+\textbf{Pre-conditions} & Application is launched. \\
+\textbf{Post-conditions} & The application functionality will be unlocked.
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{l|X}
+& \textbf{Descriptions} \\ \hline
+\textbf{Name} & Goal Tracking \\ 
+\textbf{Goal} & User will be able to review/edit goal set previously \\ 
+\textbf{Flow of Events} & 1. Click on specific goal to review existing goal \\ 
+\textbf{Special Requirements} & nil \\ 
+\textbf{Pre-conditions} & Application is launch. And user is in Goal tab. \\ 
+\textbf{Post-conditions} & User able to add goal. \\ 
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{l|l}
+& \textbf{Descriptions} \\
+\hline
+\textbf{Name} & Set goal \\
+\textbf{Goal} & User will be able to set a goal \\
+\textbf{Flow of Events} & \begin{tabular}[c]{@{}l@{}}1. Click on ``+" to add goal\\ 2. Brought to the add goal screen\\ 3. Fill in detail and submit\\ 4. Goal added\end{tabular} \\
+\textbf{Special Requirements} & nil \\
+\textbf{Pre-conditions} & Application is launched. User is in Goal tab and has pressed ``+". \\
+\textbf{Post-conditions} & New goal added to the App
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{l|l}
+& \textbf{Descriptions} \\
+\hline
+\textbf{Name} & Meal and sleep diary \\
+\textbf{Goal} & User will be able to record meals and sleep details \\
+\textbf{Flow of Events} & \begin{tabular}[c]{@{}l@{}}1. Click on ``+" to on every specific tab\\ 2. Brought to the add screen\\ 3. Fill in detail and submit\\ 4. Meal/Sleep details updated\end{tabular} \\
+\textbf{Special Requirements} & nil \\
+\textbf{Pre-conditions} & Application is launched. And user is in Diary tab and pressed "+". \\
+\textbf{Post-conditions} & Meal/Sleep updated to the App
+\end{tabularx}
+\end{table}
 
 \subsubsection{Object Models}
 \paragraph{Data dictionary}
@@ -570,15 +628,32 @@ The following models provide examples of the sequence of steps behind a user int
 	\centering
 	
 	\begin{tabular}{cc}
-		\includegraphics[width=0.35\textwidth]{figures/mockups/mockup-a.png} A &
-		\includegraphics[width=0.35\textwidth]{figures/mockups/mockup-b.png} B
+		\includegraphics[width=0.36\textwidth]{figures/mockups/schedule-1.png} A &
+		\includegraphics[width=0.36\textwidth]{figures/mockups/schedule-2.png} B \\
+		\includegraphics[width=0.36\textwidth]{figures/mockups/mtds-1.png} C &
+		\includegraphics[width=0.36\textwidth]{figures/mockups/mtds-2.png} D 
 	\end{tabular}
-	
-	\includegraphics[width=0.3\textwidth]{figures/mockups/mockup-c.png} C
 	\caption{Mock-ups of the app}
 	\label{fig:mockups}
 \end{figure}
 
+\begin{figure}[H]
+	\centering
+	
+	\begin{tabular}{cc}
+		\includegraphics[width=0.38\textwidth]{figures/mockups/diary-1.png} E &
+		\includegraphics[width=0.38\textwidth]{figures/mockups/diary-2.png} F \\
+		\includegraphics[width=0.38\textwidth]{figures/mockups/diary-3.png} G &
+		\includegraphics[width=0.38\textwidth]{figures/mockups/goal-1.png} H
+	\end{tabular}
+
+	\caption{Mock-ups of the app (continued)}
+	\label{fig:mockups-2}
+\end{figure}
+
+Mockups A and B shows the design of the schedule feature and entry of a new item. Mockups C and D provide a sample design for filling out the MTDS survey. The diary feature is shown in Mockups E-G, with filling out the sleep survey in mockup F. The goal feature is shown in Mockup H.
+
+\pagebreak
 \section{Glossary}
 \begin{itemize}
 	\item \textbf{Android} --- A mobile operating system developed by Google. Used on most non-Apple branded phones and tablets.
