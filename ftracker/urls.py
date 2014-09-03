@@ -3,6 +3,7 @@ from rest_framework import routers, serializers, viewsets
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from django.contrib.auth.models import User
 from django.contrib import admin
+from api.views import *
 admin.autodiscover()
 
 # Serializers define the API representation.
@@ -20,6 +21,8 @@ class UserViewSet(viewsets.ModelViewSet):
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
+router.register(r'diary', DiaryViewSet)
+router.register(r'dtype', DiaryTypeViewSet)
 
 urlpatterns = patterns('',
     # Examples:

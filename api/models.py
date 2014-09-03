@@ -11,7 +11,7 @@ class DiaryType(models.Model):
 class Diary(models.Model):
     user = models.ForeignKey(User)
     dtype = models.ForeignKey(DiaryType)
-    timestamp = models.DateField()
+    timestamp = models.DateTimeField()
     entry = models.CharField(max_length=255)
 
     def __unicode__(self):
@@ -47,7 +47,7 @@ class SurveyQuestion(models.Model):
 class SurveyResponse(models.Model):
     survey = models.ForeignKey(Survey)
     creator = models.ForeignKey(User)
-    timestamp = models.DateField()
+    timestamp = models.DateTimeField()
 
     def __unicode__(self):
         return 'Response by %s to %s (%s)' % (self.creator, self.survey, \

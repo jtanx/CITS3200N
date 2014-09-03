@@ -1,0 +1,80 @@
+[
+{
+    "pk": 1, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "admin", 
+        "first_name": "", 
+        "last_name": "", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_staff": true, 
+        "last_login": "2014-09-03T12:46:05.063Z", 
+        "groups": [], 
+        "user_permissions": [], 
+        "password": "pbkdf2_sha256$12000$NoIV7DPEoFg1$mMBGArwJhtr10PiPa8BGsC0FoUYQWbe+hkAJKCVtYXo=", 
+        "email": "admin@noreply.no", 
+        "date_joined": "2014-09-02T01:01:43.723Z"
+    }
+},
+{
+    "pk": 2, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "test", 
+        "first_name": "", 
+        "last_name": "", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_staff": false, 
+        "last_login": "2014-09-03T12:47:53.639Z", 
+        "groups": [], 
+        "user_permissions": [], 
+        "password": "pbkdf2_sha256$12000$0tz6WGHVZ71V$o76YhvBHx7yvPKXBoIm3HfBZ//mFycvoAC/97/rPsno=", 
+        "email": "test@test.com", 
+        "date_joined": "2014-09-03T12:14:17.148Z"
+    }
+},
+{
+    "pk": 1, 
+    "model": "api.diarytype", 
+    "fields": {
+        "name": "Breakfast", 
+        "description": "What did you have for breakfast?"
+    }
+},
+{
+    "pk": 2, 
+    "model": "api.diarytype", 
+    "fields": {
+        "name": "Lunch", 
+        "description": "What did you have for lunch?"
+    }
+},
+{
+    "pk": 3, 
+    "model": "api.diarytype", 
+    "fields": {
+        "name": "Dinner", 
+        "description": "What did you have for dinner?"
+    }
+},
+{
+    "pk": 4, 
+    "model": "api.diarytype", 
+    "fields": {
+        "name": "Midnight snack", 
+        "description": "What were you snacking on?"
+    }
+},
+{
+    "pk": 1, 
+    "model": "api.diary", 
+    "fields": {
+        "dtype": 1, 
+        "entry": "jajaja", 
+        "user": 2, 
+        "timestamp": "2014-03-04"
+    }
+}
+]
