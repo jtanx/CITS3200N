@@ -18,6 +18,14 @@ class IsRecent(permissions.BasePermission):
                 return delta.days < 7
         return True
 
+# ViewSets define the view behavior.
+class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,IsAdminUser)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+
 class DiaryTypeViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
     query_set = DiaryType.objects.all()
