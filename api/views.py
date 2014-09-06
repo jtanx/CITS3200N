@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from django.contrib.auth.models import User
 from api.models import *
@@ -25,13 +25,11 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-
 class DiaryTypeViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
     query_set = DiaryType.objects.all()
     serializer_class = DiaryTypeSerializer
     model = DiaryType
-
 
 class DiaryViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, IsRecent)
@@ -41,4 +39,10 @@ class DiaryViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Diary.objects.filter(user=self.request.user)
 
+
+class SurveyViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = SurveySerializer
+    model = Survey
+    query_set = Survey.objects.all()
 

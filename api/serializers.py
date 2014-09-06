@@ -32,3 +32,8 @@ class DiarySerializer(serializers.ModelSerializer):
         instance.created = attrs['created']
         instance.submitted = attrs['submitted']
         return instance
+
+class SurveySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Survey
+        #fields = ('name', 'description')
