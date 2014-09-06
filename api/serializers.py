@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, permissions
 from api.models import *
 
 class DiaryTypeSerializer(serializers.ModelSerializer):
@@ -8,16 +8,20 @@ class DiaryTypeSerializer(serializers.ModelSerializer):
 class DiarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Diary
-	fields = ('timestamp', 'entry', 'dtype')
+	fields = ('id', 'created', 'submitted', 'entry', 'dtype')
+	read_only_fields = ('id',)
+	
 	
     def restore_object(self, attrs, instance=None):
         if instance is None:
             request = self.context.get('request', None)
             entry = Diary(user=request.user,
                           dtype=attrs['dtype'],
-                          timestamp=attrs['timestamp'],
-                          entry=attrs['entry'])
+                          created=attrs['created'],
+                          entry=attrs['entry'],
+                          submitted=attrs['submitted'])
             return entry
         instance.entry = attrs['entry']
-        instance.timestamp = attrs['timestamp']
+        instance.created = attrs['created']
+        instance.submitted = attrs['submitted']
         return instance
