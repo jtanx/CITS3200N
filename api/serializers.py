@@ -33,7 +33,19 @@ class DiarySerializer(serializers.ModelSerializer):
         instance.submitted = attrs['submitted']
         return instance
 
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SurveyQuestion
+
 class SurveySerializer(serializers.ModelSerializer):
+    class QuestionsField(serializers.Field):
+        def to_native(self, obj):
+            queryset = SurveyQuestion.objects.filter(parent=obj)
+            serializer = QuestionSerializer(queryset, many=True)
+            return serializer.data
+    
     class Meta:
         model = Survey
         #fields = ('name', 'description')
+    
+    questions = QuestionsField()
