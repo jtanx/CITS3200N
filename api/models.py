@@ -36,7 +36,7 @@ class QuestionType(models.Model):
     name = models.CharField(max_length=40, unique=True)
 
     def __unicode__(self):
-        return '%s' % name
+        return '%s' % self.name
 
 class SurveyQuestion(models.Model):
     parent = models.ForeignKey(Survey)
