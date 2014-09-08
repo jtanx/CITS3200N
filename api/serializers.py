@@ -46,6 +46,6 @@ class SurveySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Survey
-        #fields = ('name', 'description')
+        fields = ('id', 'name', 'description', 'questions')
     
     questions = QuestionsField()
