@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, generics, serializers
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from django.contrib.auth.models import User
 from api.models import *
@@ -46,4 +48,10 @@ class SurveyViewSet(viewsets.ReadOnlyModelViewSet):
     model = Survey
     query_set = Survey.objects.all()
     
-
+class SurveySubmissionViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = SurveyResponseSerializer
+    model = SurveyResponse
+    
+    def get_queryset(self):
+        return SurveyResponse.objects.filter(creator=self.request.user)

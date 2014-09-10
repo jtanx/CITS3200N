@@ -26,7 +26,7 @@ class Survey(models.Model):
 
     def questions(self):
         if self.id:
-            return SurveyQuestion.objects.filter(parent = self.id)
+            return SurveyQuestion.objects.filter(parent = self)
         return None
 
     def __unicode__(self):
@@ -62,11 +62,17 @@ class SurveyQuestion(models.Model):
     class Meta:
         unique_together = (("parent", "number"),)
     
+    
 class SurveyResponse(models.Model):
     survey = models.ForeignKey(Survey)
     creator = models.ForeignKey(User)
     created = models.DateTimeField()
     submitted = models.DateTimeField(default=timezone.now)
+    
+    def responses(self):
+        if self.id:
+            return QuestionResponse.objects.filter(rid=self)
+        return None
 
     def __unicode__(self):
         return 'Response by %s to %s (%s)' % (self.creator, self.survey, \
@@ -78,4 +84,6 @@ class QuestionResponse(models.Model):
     entry = models.CharField(max_length=255)
 
     def __unicode__(self):
-        return '%s:%s: %s' % (self.rid, self.qid, self.entry)
+        return '%s:%s: %s' % (self.rid, self.qid, self.entry)                                              
+
+

@@ -7,7 +7,8 @@ router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'diary', DiaryViewSet)
 router.register(r'dtype', DiaryTypeViewSet)
-router.register(r'survey', SurveyViewSet)
+router.register(r'surveys', SurveyViewSet)
+router.register(r'survey', SurveySubmissionViewSet)
 
 urlpatterns = patterns('api.views',
     url(r'^', include(router.urls))

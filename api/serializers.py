@@ -1,4 +1,7 @@
 from rest_framework import serializers, permissions
+from StringIO import StringIO
+from rest_framework.parsers import JSONParser
+from rest_framework.exceptions import ParseError
 from django.contrib.auth.models import User
 from api.models import *
 
@@ -49,3 +52,38 @@ class SurveySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'questions')
     
     questions = QuestionsField()
+    
+class QuestionResponseSerializer(serializers.ModelSerializer):
+    def restore_object(self, attrs, instance=None):
+        if instance is None:
+            print(self.context)
+            return QuestionResponse(rid=self.parent, **attrs)
+        return instance
+    class Meta:
+        model = QuestionResponse
+        fields = ('qid', 'entry')
+        
+class SurveyResponseSerializer(serializers.ModelSerializer):
+    class ResponseField(serializers.WritableField):
+        def to_native(self, obj):
+            queryset = QuestionResponse.objects.filter(rid=obj)
+            serializer = QuestionResponseSerializer(data=queryset, many=True)
+            return serializer.data
+            
+        def from_native(self, value):
+            stream = StringIO(value)
+            try:
+                data = JSONParser().parse(stream)
+            except ParseError:
+                raise serializers.ValidationError("Invalid JSON format for responses")
+            print(self.context['view'])
+            responses = QuestionResponseSerializer(data=data, many=True)
+            print (responses.is_valid())
+            return None
+    class Meta:
+        model = SurveyResponse
+        fields = ('survey', 'created', 'submitted', 'responses')
+        read_only_fields = ('created',)
+        
+    responses = ResponseField()
+        
