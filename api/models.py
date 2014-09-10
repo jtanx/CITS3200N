@@ -32,16 +32,25 @@ class Survey(models.Model):
     def __unicode__(self):
         return '%s: %s' % (self.name, self.description)
 
-class QuestionType(models.Model):
-    name = models.CharField(max_length=40, unique=True)
-
-    def __unicode__(self):
-        return '%s' % self.name
-
 class SurveyQuestion(models.Model):
+    INTEGER = "INT"
+    INTSCALE = "INS"
+    TEXT = "TXT"
+    CHOICE = "CHC"
+    MULTICHOICE = "MCH"
+    
+    QTYPE_CHOICES = (
+        (INTEGER, "Integer"),
+        (INTSCALE, "Integer scale"),
+        (TEXT, "Text"),
+        (CHOICE, "Single choice"),
+        (MULTICHOICE, "Multi choice")
+    )
+    
     parent = models.ForeignKey(Survey)
+    number = models.IntegerField()
     description = models.CharField(max_length=255)
-    qtype = models.ForeignKey(QuestionType)
+    qtype = models.CharField(max_length=3, choices=QTYPE_CHOICES, default=TEXT)
     required = models.BooleanField(default=True)
     #Only required for multi-choice/radio type
     choices = models.TextField(blank=True, null=True)
@@ -49,6 +58,9 @@ class SurveyQuestion(models.Model):
     def __unicode__(self):
         return '%s:%s:%s: %s' % (self.parent, self.qtype, self.required, \
                                    self.description)
+                                   
+    class Meta:
+        unique_together = (("parent", "number"),)
     
 class SurveyResponse(models.Model):
     survey = models.ForeignKey(Survey)

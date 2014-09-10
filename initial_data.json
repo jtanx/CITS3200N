@@ -1,42 +1,6 @@
 [
 {
     "pk": 1, 
-    "model": "auth.user", 
-    "fields": {
-        "username": "admin", 
-        "first_name": "", 
-        "last_name": "", 
-        "is_active": true, 
-        "is_superuser": true, 
-        "is_staff": true, 
-        "last_login": "2014-09-03T12:46:05.063Z", 
-        "groups": [], 
-        "user_permissions": [], 
-        "password": "pbkdf2_sha256$12000$NoIV7DPEoFg1$mMBGArwJhtr10PiPa8BGsC0FoUYQWbe+hkAJKCVtYXo=", 
-        "email": "admin@noreply.no", 
-        "date_joined": "2014-09-02T01:01:43.723Z"
-    }
-},
-{
-    "pk": 2, 
-    "model": "auth.user", 
-    "fields": {
-        "username": "test", 
-        "first_name": "", 
-        "last_name": "", 
-        "is_active": true, 
-        "is_superuser": false, 
-        "is_staff": false, 
-        "last_login": "2014-09-03T12:47:53.639Z", 
-        "groups": [], 
-        "user_permissions": [], 
-        "password": "pbkdf2_sha256$12000$0tz6WGHVZ71V$o76YhvBHx7yvPKXBoIm3HfBZ//mFycvoAC/97/rPsno=", 
-        "email": "test@test.com", 
-        "date_joined": "2014-09-03T12:14:17.148Z"
-    }
-},
-{
-    "pk": 1, 
     "model": "api.diarytype", 
     "fields": {
         "name": "Breakfast", 
@@ -68,13 +32,275 @@
     }
 },
 {
-    "pk": 1, 
-    "model": "api.diary", 
     "fields": {
-        "dtype": 1, 
-        "entry": "jajaja", 
-        "user": 2, 
-        "timestamp": "2014-03-04"
-    }
+        "name": "MTDS Survey",
+        "description": "In the past 24 hours, how often have you felt..."
+    },
+    "model": "api.survey",
+    "pk": 1
+},
+{
+    "fields": {
+        "description": "Miserable",
+        "parent": 1,
+        "required": true,
+        "number": 1,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 1
+},
+{
+    "fields": {
+        "description": "Unhappy",
+        "parent": 1,
+        "required": true,
+        "number": 2,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 2
+},
+{
+    "fields": {
+        "description": "Bitter",
+        "parent": 1,
+        "required": true,
+        "number": 3,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 3
+},
+{
+    "fields": {
+        "description": "Downhearted",
+        "parent": 1,
+        "required": true,
+        "number": 4,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 4
+},
+{
+    "fields": {
+        "description": "Depressed",
+        "parent": 1,
+        "required": true,
+        "number": 5,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 5
+},
+{
+    "fields": {
+        "description": "Energetic",
+        "parent": 1,
+        "required": true,
+        "number": 6,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 6
+},
+{
+    "fields": {
+        "description": "Lively",
+        "parent": 1,
+        "required": true,
+        "number": 7,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 7
+},
+{
+    "fields": {
+        "description": "Active",
+        "parent": 1,
+        "required": true,
+        "number": 8,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 8
+},
+{
+    "fields": {
+        "description": "Alert",
+        "parent": 1,
+        "required": true,
+        "number": 9,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 9
+},
+{
+    "fields": {
+        "description": "Muscle soreness",
+        "parent": 1,
+        "required": true,
+        "number": 10,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 10
+},
+{
+    "fields": {
+        "description": "Heavy arms or legs",
+        "parent": 1,
+        "required": true,
+        "number": 11,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 11
+},
+{
+    "fields": {
+        "description": "Stiff or sore joints",
+        "parent": 1,
+        "required": true,
+        "number": 12,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 12
+},
+{
+    "fields": {
+        "description": "It was difficult to sleep",
+        "parent": 1,
+        "required": true,
+        "number": 13,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 13
+},
+{
+    "fields": {
+        "description": "Your sleep was restless",
+        "parent": 1,
+        "required": true,
+        "number": 14,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 14
+},
+{
+    "fields": {
+        "description": "Insomnia",
+        "parent": 1,
+        "required": true,
+        "number": 15,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 15
+},
+{
+    "fields": {
+        "description": "Stressed",
+        "parent": 1,
+        "required": true,
+        "number": 16,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 16
+},
+{
+    "fields": {
+        "description": "Like you could not cope",
+        "parent": 1,
+        "required": true,
+        "number": 17,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 17
+},
+{
+    "fields": {
+        "description": "Difficulties piling up",
+        "parent": 1,
+        "required": true,
+        "number": 18,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 18
+},
+{
+    "fields": {
+        "description": "Nervous",
+        "parent": 1,
+        "required": true,
+        "number": 19,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 19
+},
+{
+    "fields": {
+        "description": "Tired",
+        "parent": 1,
+        "required": true,
+        "number": 20,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 20
+},
+{
+    "fields": {
+        "description": "Sleepy",
+        "parent": 1,
+        "required": true,
+        "number": 21,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 21
+},
+{
+    "fields": {
+        "description": "Worn out",
+        "parent": 1,
+        "required": true,
+        "number": 22,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 22
 }
 ]
