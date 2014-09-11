@@ -67,7 +67,6 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
     class ResponseField(serializers.WritableField):
         def to_native(self, obj):
             #raise Exception("You piece of shit")
-            queryset = QuestionResponse.objects.filter(rid=obj)
             serializer = QuestionResponseSerializer(obj, many=True)
             return serializer.data
             
@@ -91,19 +90,19 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
         if instance is not None:
             return instance
         user = self.context['request'].user
-        v = SurveyResponse(survey=attrs['survey'], creator=user, created=attrs['created'])
+        v = SurveyResponse(survey=attrs['survey'], creator=user, \
+                           created=attrs['created'])
             
-        self.parsed_responses = attrs['responses']
+        self.responses_tosave = attrs['responses']
         return v
         
     def save(self, **kwargs):
         ret = super(self.__class__, self).save(**kwargs)
         #print(ret)
-        for qr in self.parsed_responses:
+        for qr in self.responses_tosave:
             qr.rid = ret
             qr.full_clean()
             qr.save()
-            print(qr)
         return ret
       
     responses = ResponseField()
