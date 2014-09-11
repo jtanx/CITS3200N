@@ -56,9 +56,9 @@ class SurveySerializer(serializers.ModelSerializer):
 class QuestionResponseSerializer(serializers.ModelSerializer):
     def restore_object(self, attrs, instance=None):
         if instance is None:
-            print(self.context)
-            return QuestionResponse(rid=self.parent, **attrs)
+            return QuestionResponse(qid=attrs['qid'], entry=attrs['entry'])
         return instance
+    
     class Meta:
         model = QuestionResponse
         fields = ('qid', 'entry')
@@ -66,8 +66,9 @@ class QuestionResponseSerializer(serializers.ModelSerializer):
 class SurveyResponseSerializer(serializers.ModelSerializer):
     class ResponseField(serializers.WritableField):
         def to_native(self, obj):
+            #raise Exception("You piece of shit")
             queryset = QuestionResponse.objects.filter(rid=obj)
-            serializer = QuestionResponseSerializer(data=queryset, many=True)
+            serializer = QuestionResponseSerializer(obj, many=True)
             return serializer.data
             
         def from_native(self, value):
@@ -76,14 +77,34 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
                 data = JSONParser().parse(stream)
             except ParseError:
                 raise serializers.ValidationError("Invalid JSON format for responses")
-            print(self.context['view'])
-            responses = QuestionResponseSerializer(data=data, many=True)
-            print (responses.is_valid())
-            return None
+            responses = QuestionResponseSerializer(data=data, many=True, partial=True)
+            
+            if responses.is_valid():
+                return responses.object
+
     class Meta:
         model = SurveyResponse
-        fields = ('survey', 'created', 'submitted', 'responses')
-        read_only_fields = ('created',)
+        fields = ('id', 'survey', 'created', 'submitted', 'responses')
+        read_only_fields = ('id', 'submitted',)
         
+    def restore_object(self, attrs, instance=None):
+        if instance is not None:
+            return instance
+        user = self.context['request'].user
+        v = SurveyResponse(survey=attrs['survey'], creator=user, created=attrs['created'])
+            
+        self.parsed_responses = attrs['responses']
+        return v
+        
+    def save(self, **kwargs):
+        ret = super(self.__class__, self).save(**kwargs)
+        #print(ret)
+        for qr in self.parsed_responses:
+            qr.rid = ret
+            qr.full_clean()
+            qr.save()
+            print(qr)
+        return ret
+      
     responses = ResponseField()
         

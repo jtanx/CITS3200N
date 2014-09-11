@@ -79,11 +79,11 @@ class SurveyResponse(models.Model):
                                               self.created)
 
 class QuestionResponse(models.Model):
-    rid = models.ForeignKey(SurveyResponse)
+    rid = models.ForeignKey(SurveyResponse, blank=True)
     qid = models.ForeignKey(SurveyQuestion)
     entry = models.CharField(max_length=255)
 
     def __unicode__(self):
-        return '%s:%s: %s' % (self.rid, self.qid, self.entry)                                              
+        return '%s:%s: %s' % (self.rid, self.qid, self.entry)  
 
 

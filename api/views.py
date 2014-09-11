@@ -3,6 +3,9 @@ from rest_framework import viewsets, generics, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
+from StringIO import StringIO
+from rest_framework.parsers import JSONParser
+from rest_framework.exceptions import ParseError
 from django.contrib.auth.models import User
 from api.models import *
 from api.serializers import *
@@ -53,5 +56,14 @@ class SurveySubmissionViewSet(viewsets.ModelViewSet):
     serializer_class = SurveyResponseSerializer
     model = SurveyResponse
     
+    '''
+    def create(self, request, *args, **kwargs):
+        stream = StringIO(request.DATA.get('responses', ''))
+        try:
+            data = JSONParser().parse(stream)
+        except ParseError:
+            raise serializers.ValidationError("Invalid JSON format for responses")
+        print(data)
+    '''
     def get_queryset(self):
         return SurveyResponse.objects.filter(creator=self.request.user)
