@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.management import call_command
 
 def add_users(apps, schema_editor):
-    su = User.objects.create_user('admin', 'admin@no.no', 'admin')
+    su = User.objects.create_superuser('admin', 'admin@no.no', 'admin')
     su.save()
     
 def add_fixtures(apps, schema_editor):
