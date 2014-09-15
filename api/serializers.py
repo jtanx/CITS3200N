@@ -74,9 +74,11 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
             if responses.is_valid():
                 return responses.object
             else:
+                #Get (any) one of the validation error messages
                 for entry in responses.errors:
                     if "__all__" in entry:
                         raise ValidationError(entry["__all__"])
+                #...
                 raise ValidationError("Invalid question response")
             
     class Meta:
@@ -89,8 +91,6 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
         survey = attrs['survey']
         
         questions = survey.questions()
-        if len(questions) != len(responses):
-            raise serializers.ValidationError("Invalid number of question responses")
         
         seen = set()
         for response in responses:
@@ -100,6 +100,10 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
             elif q.pk in seen:
                 raise ValidationError("Multiple responses to question %d" % q.number)
             seen.add(q.pk)
+        
+        for question in questions:
+            if question.pk not in seen and question.required:
+                raise ValidationError("Response to question %d is required" % question.number)
         
         return attrs
         
