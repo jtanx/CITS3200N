@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.utils import timezone
 
@@ -39,7 +40,7 @@ class SurveyQuestion(models.Model):
     CHOICE = "CHC"
     MULTICHOICE = "MCH"
     
-    QTYPE_CHOICES = (
+    QTYPES = (
         (INTEGER, "Integer"),
         (INTSCALE, "Integer scale"),
         (TEXT, "Text"),
@@ -50,11 +51,36 @@ class SurveyQuestion(models.Model):
     parent = models.ForeignKey(Survey)
     number = models.IntegerField()
     description = models.CharField(max_length=255)
-    qtype = models.CharField(max_length=3, choices=QTYPE_CHOICES, default=TEXT)
+    qtype = models.CharField(max_length=3, choices=QTYPES, default=TEXT)
     required = models.BooleanField(default=True)
     #Only required for multi-choice/radio type
     choices = models.TextField(blank=True, null=True)
+    
+    def clean_response(self, entry):
+        entry = entry.strip()
+        if not entry and self.required:
+            raise ValueError("An entry is required for this question.")
+        elif self.qtype == self.INTEGER or self.qtype == self.INTSCALE:
+            try:
+                ret = int(entry)
+            except ValueError:
+                raise ValueError("Non-integer value given for an integer field")
+            
+            if self.qtype == self.INTSCALE and ret < 1 or ret > 5:
+                raise ValueError("Invalid integer scale value %d" % ret)
+            return int(entry)
+        elif self.qtype == self.CHOICE:
+            #Fixme somewhat inefficient
+            if entry not in self.choices():
+                raise ValueError("Not a valid choice.") #hurrr
+        return entry
 
+    def choices(self):
+        if self.qtype != self.CHOICE or self.qtype != self.MULTICHOICE:
+           raise ValueError("Cannot get choices for non-choice type question.")
+        
+        return [x.strip() for x in self.choices.split("|")]
+    
     def __unicode__(self):
         return '%s:%s:%s: %s' % (self.parent, self.qtype, self.required, \
                                    self.description)
@@ -82,8 +108,17 @@ class QuestionResponse(models.Model):
     rid = models.ForeignKey(SurveyResponse, blank=True)
     qid = models.ForeignKey(SurveyQuestion)
     entry = models.CharField(max_length=255)
+    
+    def clean(self):
+        try:
+            self.entry = self.qid.clean_response(self.entry)
+        except ValueError, e:
+            raise ValidationError(e)
 
     def __unicode__(self):
         return '%s:%s: %s' % (self.rid, self.qid, self.entry)  
+        
+    class Meta:
+        unique_together = (("rid", "qid"),)
 
 

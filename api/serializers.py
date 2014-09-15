@@ -1,4 +1,5 @@
 from rest_framework import serializers, permissions
+from rest_framework.serializers import ValidationError
 from StringIO import StringIO
 from rest_framework.parsers import JSONParser
 from rest_framework.exceptions import ParseError
@@ -18,7 +19,7 @@ class DiaryTypeSerializer(serializers.ModelSerializer):
 class DiarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Diary
-	fields = ('id', 'created', 'submitted', 'entry', 'dtype')
+	fields = ('id', 'created', 'entry', 'dtype')
 	read_only_fields = ('id',)
 	
 	
@@ -28,12 +29,10 @@ class DiarySerializer(serializers.ModelSerializer):
             entry = Diary(user=request.user,
                           dtype=attrs['dtype'],
                           created=attrs['created'],
-                          entry=attrs['entry'],
-                          submitted=attrs['submitted'])
+                          entry=attrs['entry'])
             return entry
         instance.entry = attrs['entry']
         instance.created = attrs['created']
-        instance.submitted = attrs['submitted']
         return instance
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -41,17 +40,10 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = SurveyQuestion
 
 class SurveySerializer(serializers.ModelSerializer):
-    class QuestionsField(serializers.Field):
-        def to_native(self, obj):
-            queryset = SurveyQuestion.objects.filter(parent=obj)
-            serializer = QuestionSerializer(queryset, many=True)
-            return serializer.data
-    
     class Meta:
         model = Survey
         fields = ('id', 'name', 'description', 'questions')
-    
-    questions = QuestionsField()
+    questions = QuestionSerializer()
     
 class QuestionResponseSerializer(serializers.ModelSerializer):
     def restore_object(self, attrs, instance=None):
@@ -74,17 +66,42 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
             stream = StringIO(value)
             try:
                 data = JSONParser().parse(stream)
-            except ParseError:
+            except ParseError, e:
+                print(e)
                 raise serializers.ValidationError("Invalid JSON format for responses")
             responses = QuestionResponseSerializer(data=data, many=True, partial=True)
             
             if responses.is_valid():
                 return responses.object
-
+            else:
+                for entry in responses.errors:
+                    if "__all__" in entry:
+                        raise ValidationError(entry["__all__"])
+                raise ValidationError("Invalid question response")
+            
     class Meta:
         model = SurveyResponse
         fields = ('id', 'survey', 'created', 'submitted', 'responses')
         read_only_fields = ('id', 'submitted',)
+        
+    def validate(self, attrs):
+        responses = attrs['responses']
+        survey = attrs['survey']
+        
+        questions = survey.questions()
+        if len(questions) != len(responses):
+            raise serializers.ValidationError("Invalid number of question responses")
+        
+        seen = set()
+        for response in responses:
+            q = response.qid
+            if q.pk is None or not questions.filter(pk=q.pk).exists():
+                raise ValidationError("Response to question not from this survey")     
+            elif q.pk in seen:
+                raise ValidationError("Multiple responses to question %d" % q.number)
+            seen.add(q.pk)
+        
+        return attrs
         
     def restore_object(self, attrs, instance=None):
         if instance is not None:
