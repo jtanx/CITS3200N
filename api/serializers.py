@@ -45,6 +45,31 @@ class SurveySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'questions')
     questions = QuestionSerializer()
     
+'''
+class QuestionResponseSerializer(serializers.Serializer):
+    qid = serializers.IntegerField(required=False)
+    number = serializers.IntegerField(required=False)
+    entry = serializers.CharField(max_length=255)
+    
+    def validate(self, attrs):
+        if 'qid' not in attrs and 'number' not in attrs:
+            raise ValidationError("Either the question ID or number is required.")
+        elif 'qid' in attrs:
+            qid = attrs['qid']
+            if not SurveyQuestion.objects.filter(pk=qid).exists():
+                raise ValidationError("No such question with ID %d" % qid)
+            q = SurveyQuestion.objects.get(pk=qid)
+            if 'number' in attrs and q.number != attrs['number']:
+                raise ValidationError("Question number %d does not match value for question with ID %d" % qid)
+            attrs['number'] = q.number
+        return attrs
+    
+    def restore_object(self, attrs, instance=None):
+        if instance is None:
+            return attrs
+        return instance
+'''
+    
 class QuestionResponseSerializer(serializers.ModelSerializer):
     def restore_object(self, attrs, instance=None):
         if instance is None:
