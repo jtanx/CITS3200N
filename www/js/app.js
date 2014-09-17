@@ -57,6 +57,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         }
       }
     })
+    
+    .state('tab.sleep-detail',  {
+      url: '/diary/sleep/:date',
+      views: {
+        'tab-diary' : {
+          templateUrl: 'templates/sleep-detail.html',
+          controller: 'SleepDetailCtrl'
+        }
+      }
+    })
 	
     .state('tab.schedule', {
       url: '/schedule',

@@ -1,6 +1,62 @@
 <ion-view title="Diary">
-  <ion-content class="has-header padding">
-    <h1>Diary</h1>
-	<h2>Coming Soon</h2>
+  <ion-nav-buttons side="right">
+    <button class="button icon ion-navicon" ng-click="doSomething()">
+    </button>
+  </ion-nav-buttons>
+  
+  <ion-header-bar class="bar bar-subheader">
+  <h1 class="title">Wednesday 17 Sept</h1>
+  </ion-header-bar>
+  
+  <ion-content class="has-header">
+    <div class="list padding-top">
+      <div class="item item-divider item-positive list-positive">
+        Sleep
+      </div>
+      <a class="item item-icon-right" href="#/tab/diary/sleep/{{today}}">
+        <i class="icon ion-ios7-arrow-right"></i>
+        9 Hours
+      </a>
+    </div>
+    
+    <div class="list padding-top">
+      <div class="item item-divider item-positive item-positive">
+        Breakfast
+      </div>
+      <a class="item item-icon-right" href="#">
+        <i class="icon ion-ios7-arrow-right"></i>
+        <span class="prefill">None</a>
+      </a>
+    </div>
+    
+    <div class="list padding-top">
+      <div class="item item-divider item-positive">
+        Lunch
+      </div>
+      <a class="item item-icon-right" href="#">
+        <i class="icon ion-ios7-arrow-right"></i>
+        <span class="prefill">None</a>
+      </a>
+    </div>
+    
+    <div class="list padding-top">
+      <div class="item item-divider item-positive">
+        Dinner
+      </div>
+      <a class="item item-icon-right" href="#">
+        <i class="icon ion-ios7-arrow-right"></i>
+        <span class="prefill">None</a>
+      </a>
+    </div>
+    
+    <div class="list padding-top">
+      <div class="item item-divider item-positive">
+        Other meal
+      </div>
+      <a class="item item-icon-right" href="#">
+        <i class="icon ion-ios7-arrow-right"></i>
+        <span class="prefill">None</a>
+      </a>
+    </div>
   </ion-content>
 </ion-view>

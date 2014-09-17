@@ -25,6 +25,27 @@ angular.module('starter.services', [])
   }
 })
 
+.factory('SleepEntries', function() {
+  //Some fake data
+  var entries = [
+    {date : new Date(2014,9,16), hours : 4, quality : 2},
+    {date : new Date(), hours : 1, quality : 0, start : new Date(), end : new Date()} //This entry will always be present
+  ];
+  
+  return {
+    all: function() {
+      return entries;
+    },
+    get: function(day) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].date.getDate() == day.getDate())
+          return entries[i];
+        console.log("No entry found for this date.");
+      }
+    }
+  }
+})
+
 .factory('MTDSSurvey', function() {
     var surveyItems = [
         "Miserable", "Unhappy", "Bitter", "Downhearted", "Depressed",

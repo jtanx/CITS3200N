@@ -15,6 +15,12 @@ angular.module('starter.controllers', [])
 })
 
 .controller('diaryCtrl', function($scope) {
+  //http://stackoverflow.com/questions/3552461/how-to-format-javascript-date
+  $scope.today = new Date().toISOString().slice(0, 10);
+})
+
+.controller('SleepDetailCtrl', function($scope, $stateParams, SleepEntries) {
+  $scope.sleep = SleepEntries.get(new Date($stateParams.date));
 })
 
 .controller('mentaltestCtrl', function($scope, MTDSSurvey) {
