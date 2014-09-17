@@ -77,7 +77,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       }
     })
 
-    .state('tab.stats', {
+   
+	.state('tab.stats', {
       url: '/stats',
       views: {
         'tab-stats': {
@@ -86,7 +87,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         }
       }
     })
-
+	
     .state('tab.mentaltest', {
       url: '/mentaltest',
       views: {

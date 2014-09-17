@@ -1,0 +1,36 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files (x86)\\nodejs\\\\node.exe',
+1 verbose cli   'C:\\Program Files (x86)\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'update',
+1 verbose cli   '-g',
+1 verbose cli   'ionic' ]
+2 info using npm@1.4.21
+3 info using node@v0.10.30
+4 verbose node symlink C:\Program Files (x86)\nodejs\\node.exe
+5 verbose request where is /ionic
+6 verbose request registry https://registry.npmjs.org/
+7 verbose request id d49c88abaff2ff62
+8 verbose url raw /ionic
+9 verbose url resolving [ 'https://registry.npmjs.org/', './ionic' ]
+10 verbose url resolved https://registry.npmjs.org/ionic
+11 verbose request where is https://registry.npmjs.org/ionic
+12 info trying registry request attempt 1 at 15:37:47
+13 verbose etag "6ZZPZ9DN76VWHHM0MWAWFV2E4"
+14 http GET https://registry.npmjs.org/ionic
+15 info outdated updating []
+16 error Failed to parse json
+16 error Unexpected end of input
+17 error File: C:\Users\Joel\AppData\Roaming\npm\node_modules\phonegap\node_modules\connect-phonegap\node_modules\socket.io\node_modules\socket.io-client\node_modules\engine.io-client\node_modules\parseqs\node_modules\better-assert\package.json
+18 error Failed to parse package.json data.
+18 error package.json must be actual JSON, not just JavaScript.
+18 error
+18 error This is not a bug in npm.
+18 error Tell the package author to fix their package.json file. JSON.parse
+19 error System Windows_NT 6.1.7601
+20 error command "C:\\Program Files (x86)\\nodejs\\\\node.exe" "C:\\Program Files (x86)\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "update" "-g" "ionic"
+21 error cwd E:\Users\Joel\Documents\GitHub\project\.git\refs\CITS3200N
+22 error node -v v0.10.30
+23 error npm -v 1.4.21
+24 error file C:\Users\Joel\AppData\Roaming\npm\node_modules\phonegap\node_modules\connect-phonegap\node_modules\socket.io\node_modules\socket.io-client\node_modules\engine.io-client\node_modules\parseqs\node_modules\better-assert\package.json
+25 error code EJSONPARSE
+26 verbose exit [ 1, true ]

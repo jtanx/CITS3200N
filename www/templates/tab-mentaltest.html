@@ -1,41 +1,75 @@
 <ion-view title="Mental Test">
-  <ion-nav-buttons side="right">
-    <button class="button icon ion-navicon" ng-click="doSomething()">
-    </button>
-  </ion-nav-buttons>
+  <ion-content class="has-header">
+  <h5 align="center"  class="title">
+    In the past 24 hours, how often have you felt...
+    </h5>
+  <ion-slide-box>
     
-  <ion-content class="padding">
-    <div class="card">
-      <div class="item item-icon-left item-text-wrap">
-        <i class="icon ion-information"></i>
-        This questionnaire is for 14 July 2014.
+      <ion-slide ng-repeat="question in questions" type="item-text-wrap" href="#/tab/mentaltest/{{question}}">
+		
+		
+		<div class="questionbox">
+		
+		 <div class="list card">
+      <div class="item item-divider">
+        {{(question.id) + ". " + question.name}}
       </div>
+      <label class="item item-radio">
+        <input type="radio" name="group">
+        <div class="item-content">
+          Not at all
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+      </label>
+      <label class="item item-radio">
+        <input type="radio" name="group">
+        <div class="item-content">
+          A little
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+      </label>
+      <label class="item item-radio">
+        <input type="radio" name="group">
+        <div class="item-content">
+          Moderately
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+      </label>
+      <label class="item item-radio">
+        <input type="radio" name="group">
+        <div class="item-content">
+          Quite a lot
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+      </label>
+      <label class="item item-radio">
+        <input type="radio" name="group">
+        <div class="item-content">
+          Extremely
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+      </label>
     </div>
-	
-	<div class="card">
-      <div class="item item-icon-left item-text-wrap">
-        In the past 24 hours have you felt:
+		
       </div>
-    </div>
-  
-    <div class="list">
-      <!--
-      <ion-checkbox ng-repeat="item in surveyOne" ng-model="item.checked" ng-checked="item.checked">{{item.text}}</ion-checkbox>
-      -->
-      
-      <div class="card" ng-repeat="question in surveyOne">
-        <div class="item item-divider">
-        {{question.id+1}}. {{question.text}}
-        </div>
-        <div class="item item-text-wrap range">
-          <input type="range" name="survey-question-{{question.id}}" max="4" ng-model="question.value" style="height:60px;">
-        </div>
-        <div class="item item-divider" ng-bind="descriptors[question.value]">
-        </div>
-      </div>
-      <button class="button button-block button-positive">
-      Submit
-      </button>
-    </div>
-  </ion-content>
+		
+		
+		</ion-slide>
+    
+	</ion-slide-box>
+	<button class="button button-block button-light">
+		this button does literally nothing
+	</button>
+</ion-content> 
+  <ion-footer-bar class="bar-assertive">
+  <div class="buttons">
+    <button class="button"><i class="button-icon ion-arrow-left-a"></i></button>
+  </div>
+  <h1 class="title">
+  1/22
+  </h1>
+  <div class="buttons" ng-click="doSomething()">
+    <button class="button"><i class="button-icon ion-arrow-right-a"></i></button>
+  </div>  
+  </ion-footer-bar>
 </ion-view>
