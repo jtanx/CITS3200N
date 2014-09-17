@@ -1,12 +1,83 @@
 <ion-view title="Schedule">
+  <ion-nav-buttons side="right">
+    <button class="button icon ion-navicon" ng-click="doSomething()">
+    </button>
+  </ion-nav-buttons>
+  
+
+  
+
+  
   <ion-content class="has-header">
-    <ion-list>
-      <ion-item ng-repeat="friend in friends" type="item-text-wrap" href="#/tab/friend/{{friend.id}}">
-        {{friend.name}}
-      </ion-item>
-    </ion-list>
-	<button class="button button-block button-light">
-		this button does literally nothing
-	</button>
+    <div class="list padding-top">
+      <div class="list padding-top">
+      <div class="item item-divider item-positive item-positive">
+        Sunday
+      </div>
+      <a class="item item-icon-right" href="#">
+        <i class="icon ion-ios7-arrow-right"></i>
+        <span class="prefill">None</a>
+      </a>
+    </div>
+    
+    <div class="list padding-top">
+      <div class="item item-divider item-positive item-positive">
+        Monday
+      </div>
+      <a class="item item-icon-right" href="#">
+        <i class="icon ion-ios7-arrow-right"></i>
+        <span class="prefill">None</a>
+      </a>
+    </div>
+    
+    <div class="list padding-top">
+      <div class="item item-divider item-positive">
+        Tuesday
+      </div>
+      <a class="item item-icon-right" href="#">
+        <i class="icon ion-ios7-arrow-right"></i>
+        <span class="prefill">None</a>
+      </a>
+    </div>
+    
+    <div class="list padding-top">
+      <div class="item item-divider item-positive">
+        Wednesday
+      </div>
+      <a class="item item-icon-right" href="#">
+        <i class="icon ion-ios7-arrow-right"></i>
+        <span class="prefill">None</a>
+      </a>
+    </div>
+    
+    <div class="list padding-top">
+      <div class="item item-divider item-positive">
+        Thursday
+      </div>
+      <a class="item item-icon-right" href="#">
+        <i class="icon ion-ios7-arrow-right"></i>
+        <span class="prefill">None</a>
+      </a>
+    </div>
+	
+	<div class="list padding-top">
+      <div class="item item-divider item-positive">
+        Friday
+      </div>
+      <a class="item item-icon-right" href="#">
+        <i class="icon ion-ios7-arrow-right"></i>
+        <span class="prefill">None</a>
+      </a>
+    </div>
+	
+	<div class="list padding-top">
+      <div class="item item-divider item-positive">
+        Saturday
+      </div>
+      <a class="item item-icon-right" href="#">
+        <i class="icon ion-ios7-arrow-right"></i>
+        <span class="prefill">None</a>
+      </a>
+    </div>
   </ion-content>
 </ion-view>
