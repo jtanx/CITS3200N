@@ -7,8 +7,8 @@ angular.module('starter.controllers', [])
   $scope.days = Days.all();
 })
 
-.controller('FriendDetailCtrl', function($scope, $stateParams, Friends) {
-  $scope.friend = Friends.get($stateParams.friendId);
+.controller('DayAddCtrl', function($scope, $stateParams, Days) {
+  $scope.day = Days.get($stateParams.dayId);
 })
 
 .controller('mentaltestCtrl', function($scope, Questions) {
