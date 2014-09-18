@@ -51,15 +51,18 @@
       </label>
     </div>
 		
-      </div>
+      
 		
-		
+		<div ng-class="{invisible: '{{question.id}}' != '2'}">
+		<a href="#"><button>
+		Submit
+		</button></a>
+		</div>
+		</div>
 		</ion-slide>
     
 	</ion-slide-box>
 	
-	<button class="button button-block button-light">
-		this button does literally nothing
-	</button>
+	
 </ion-content> 
 </ion-view>

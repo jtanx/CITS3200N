@@ -3,3 +3,7 @@
     background-color: #4a87ee;
     color: #fff;
 }
+
+.invisible {
+	display: none;
+}
