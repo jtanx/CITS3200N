@@ -3,8 +3,8 @@ angular.module('starter.controllers', [])
 .controller('goalsCtrl', function($scope) {
 })
 
-.controller('scheduleCtrl', function($scope, Friends) {
-  $scope.friends = Friends.all();
+.controller('scheduleCtrl', function($scope, Days) {
+  $scope.days = Days.all();
 })
 
 .controller('FriendDetailCtrl', function($scope, $stateParams, Friends) {
