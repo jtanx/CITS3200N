@@ -1,9 +1,10 @@
 from django.conf.urls import patterns, include, url
-from django.views.generic.base import TemplateView
-from manager.views import *
+from manager import views
 
 # Routers provide an easy way of automatically determining the URL conf.
 
 urlpatterns = patterns('manager.views',
-    url(r'^',  TemplateView.as_view(template_name="index.html"), name='index'),
+    url(r'^$', views.Index.as_view(), name='index'),
+    url(r'^login/?$', views.login_user, name='login'),
+    url(r'^logout$', views.logout_user, name='logout'),
 )
