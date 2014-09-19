@@ -26,6 +26,9 @@ angular.module('starter.controllers', [])
   $scope.edit = function(id, text) {
 		Days.edit(id, text);
 	};
+	$scope.remove = function(id) {
+		Days.remove(id);
+	};
 })
 
 .controller('mentaltestCtrl', function($scope, Questions, Answers) {

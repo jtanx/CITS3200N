@@ -13,7 +13,10 @@
    Enter text and hit enter:
    <input type="text" ng-model="text" name="text" placeholder={{entry.name}} />
    <a href="#/tab/schedule">
-   <button ng-click="edit(entry.id, text)"/>submit</button>
+   <button ng-click="edit(entry.id, text)"/>Submit</button>
+   </a>
+   <a href="#/tab/schedule">
+   <button ng-click="remove(entry.id)"/>Delete</button>
    </a>
   </ion-content>
 </ion-view>

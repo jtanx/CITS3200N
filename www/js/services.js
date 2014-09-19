@@ -36,6 +36,14 @@ angular.module('starter.services', [])
 		idcount++;
       entries.push({id: idcount, name: text, day: newday});
     },
+	remove: function(id) {
+		entries.splice(id, 1);
+		for(var i = id+1; i<entries.length ; i++)
+		{
+			entries[i].id = i-1;
+		}
+		idcount--;
+    },
 	edit: function(id, text) {
 		var day = entries[id].day;
       entries[id] = {id: id, name: text, day: day}
@@ -59,6 +67,7 @@ angular.module('starter.services', [])
 	
   }
 })
+
 
 .factory('SleepEntries', function() {
   //Some fake data
