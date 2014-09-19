@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
     url(r'^$', TemplateView.as_view(template_name="temp_index.html"), name="home"),
     url(r'^api/', include(api.urls), name='api'),
-    url(r'^manage/', include(manager.urls), name='manage'),
+    url(r'^manage/', include(manager.urls, namespace='manager'), name='manage'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls), name='admin'),
 )

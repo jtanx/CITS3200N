@@ -5,5 +5,5 @@ from manager.views import *
 # Routers provide an easy way of automatically determining the URL conf.
 
 urlpatterns = patterns('manager.views',
-    url(r'^',  TemplateView.as_view(template_name="index.html")),
+    url(r'^',  TemplateView.as_view(template_name="index.html"), name='index'),
 )
