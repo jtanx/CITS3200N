@@ -16,15 +16,17 @@ angular.module('starter.controllers', [])
 
 .controller('DayAddCtrl', function($scope, $stateParams, Days) {
   $scope.day = Days.get($stateParams.dayId);
-  $scope.addTo = function(text, newday) {
-		Days.add(text, newday);
+  $scope.addTo = function(text, newday, time) {
+		Days.add(text, newday, time);
 	};
 })
 
 .controller('SchedEditCtrl', function($scope, $stateParams, Days) {
   $scope.entry = Days.getex($stateParams.entryId);
-  $scope.edit = function(id, text) {
-		Days.edit(id, text);
+  $scope.text = $scope.entry.name;
+  $scope.time = $scope.entry.time;
+  $scope.edit = function(id, text, time) {
+		Days.edit(id, text, time);
 	};
 	$scope.remove = function(id) {
 		Days.remove(id);

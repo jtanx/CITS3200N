@@ -9,11 +9,12 @@
   
   <h1>time to edit</h1>
   
-	<form ng-submit="submit()">
-   Enter text and hit enter:
-   <input type="text" ng-model="text" name="text" placeholder={{entry.name}} />
+   Type:
+   <input type="text" ng-model="text" name="text" />
+   Duration:
+   <input type="number" ng-model="time" name="time" />
    <a href="#/tab/schedule">
-   <button ng-click="edit(entry.id, text)"/>Submit</button>
+   <button ng-click="edit(entry.id, text, time)"/>Submit</button>
    </a>
    <a href="#/tab/schedule">
    <button ng-click="remove(entry.id)"/>Delete</button>

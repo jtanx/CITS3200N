@@ -10,11 +10,9 @@ angular.module('starter.services', [])
 	{ id: 4, name: 'Thursday'}, { id: 5, name: 'Friday'}, { id: 6, name: 'Saturday'},
   ];
   
-  var entries = [
-    { id: 0, name: 'run' , day: 'Sunday'}, {id: 1, name: 'run' , day: 'Tuesday'}
-  ];
+  var entries = [];
   
-  var idcount = 1;
+  var idcount = -1;
 
   return {
     all: function() {
@@ -32,21 +30,21 @@ angular.module('starter.services', [])
 	allentries: function() {
       return entries;
     },
-	add: function(text, newday) {
+	add: function(text, newday, time) {
 		idcount++;
-      entries.push({id: idcount, name: text, day: newday});
+      entries.push({id: idcount, name: text, day: newday, 
+						time: time});
     },
 	remove: function(id) {
 		entries.splice(id, 1);
-		for(var i = id+1; i<entries.length ; i++)
-		{
-			entries[i].id = i-1;
+		for(var i = id; id < entries.length; i++){
+			entries[i].id = i;
 		}
 		idcount--;
     },
-	edit: function(id, text) {
+	edit: function(id, text, time) {
 		var day = entries[id].day;
-      entries[id] = {id: id, name: text, day: day}
+      entries[id] = {id: id, name: text, day: day, time: time}
     }
   }
 })
