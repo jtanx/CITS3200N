@@ -24,7 +24,7 @@
 			</div>
 			
 			<div ng-repeat="entry in entries | filter:day.name">
-			<a class="item item-icon-right" href="#">
+			<a class="item item-icon-right" href="#/tab/schedule/edit/{{entry.id}}">
 				<i class="icon ion-ios7-arrow-right" ></i>
 				<span class="prefill">{{entry.name}}</a>
 			</a>

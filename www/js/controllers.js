@@ -21,6 +21,13 @@ angular.module('starter.controllers', [])
 	};
 })
 
+.controller('SchedEditCtrl', function($scope, $stateParams, Days) {
+  $scope.entry = Days.getex($stateParams.entryId);
+  $scope.edit = function(id, text) {
+		Days.edit(id, text);
+	};
+})
+
 .controller('mentaltestCtrl', function($scope, Questions, Answers) {
   $scope.questions = Questions.all();
   

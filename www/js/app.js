@@ -77,12 +77,21 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         }
       }
     })
-    .state('tab.friend-detail', {
+    .state('tab.day-add', {
       url: '/schedule/:dayId',
       views: {
         'tab-schedule': {
           templateUrl: 'templates/day-add.html',
           controller: 'DayAddCtrl'
+        }
+      }
+    })
+	.state('tab.shed-edit', {
+      url: '/schedule/edit/:entryId',
+      views: {
+        'tab-schedule': {
+          templateUrl: 'templates/sched-edit.html',
+          controller: 'SchedEditCtrl'
         }
       }
     })

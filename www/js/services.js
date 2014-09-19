@@ -11,8 +11,10 @@ angular.module('starter.services', [])
   ];
   
   var entries = [
-    { name: 'run' , day: 'Sunday'}, {name: 'run' , day: 'Tuesday'}
+    { id: 0, name: 'run' , day: 'Sunday'}, {id: 1, name: 'run' , day: 'Tuesday'}
   ];
+  
+  var idcount = 1;
 
   return {
     all: function() {
@@ -22,13 +24,22 @@ angular.module('starter.services', [])
       // Simple index lookup
       return days[dayId];
     },
+	getex: function(entryId) {
+      // Simple index lookup
+      return entries[entryId];
+	  
+    },
 	allentries: function() {
       return entries;
     },
 	add: function(text, newday) {
-      entries.push({name: text, day: newday});
+		idcount++;
+      entries.push({id: idcount, name: text, day: newday});
+    },
+	edit: function(id, text) {
+		var day = entries[id].day;
+      entries[id] = {id: id, name: text, day: day}
     }
-	
   }
 })
 
