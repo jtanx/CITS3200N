@@ -9,6 +9,11 @@
 
   
   <ion-content class="has-header">
+  
+  
+   
+ </form>
+	
     <div ng-repeat="day in days" class="list padding-top">
 		<div class="list padding-top">
 			<div class="item item-divider item-positive item-positive">
@@ -18,13 +23,15 @@
 				</a>
 			</div>
 			
+			<div ng-repeat="entry in entries | filter:day.name">
 			<a class="item item-icon-right" href="#">
 				<i class="icon ion-ios7-arrow-right" ></i>
-				<span class="prefill">None</a>
+				<span class="prefill">{{entry.name}}</a>
 			</a>
+			</div>
 		</div>
 	</div>
-    
-    
+
+	
   </ion-content>
 </ion-view>

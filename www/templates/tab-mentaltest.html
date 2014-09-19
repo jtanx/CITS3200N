@@ -14,51 +14,21 @@
       <div class="item item-divider">
         {{(question.id) + ". " + question.name}}
       </div>
-      <label class="item item-radio">
-        <input type="radio" name="group">
+      <label class="item item-radio" ng-repeat="answer in answers" ng-click="next()">
+	    <input type="radio" name="group">
         <div class="item-content">
-          Not at all
+          {{answer.name}}
         </div>
         <i class="radio-icon ion-checkmark"></i>
       </label>
-      <label class="item item-radio">
-        <input type="radio" name="group">
-        <div class="item-content">
-          A little
-        </div>
-        <i class="radio-icon ion-checkmark"></i>
-      </label>
-      <label class="item item-radio">
-        <input type="radio" name="group">
-        <div class="item-content">
-          Moderately
-        </div>
-        <i class="radio-icon ion-checkmark"></i>
-      </label>
-      <label class="item item-radio">
-        <input type="radio" name="group">
-        <div class="item-content">
-          Quite a lot
-        </div>
-        <i class="radio-icon ion-checkmark"></i>
-      </label>
-      <label class="item item-radio">
-        <input type="radio" name="group">
-        <div class="item-content">
-          Extremely
-        </div>
-        <i class="radio-icon ion-checkmark"></i>
-      </label>
-    </div>
-		
-      
+		</div>
 		
 		<div ng-class="{invisible: '{{question.id}}' != '2'}">
 		<a href="#"><button>
 		Submit
 		</button></a>
 		</div>
-		</div>
+		
 		</ion-slide>
     
 	</ion-slide-box>

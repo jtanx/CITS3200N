@@ -1,21 +1,15 @@
 <ion-view title="Goals">
   <ion-content class="has-header padding">
-    <body ng-controller="MyCtrl">
-  <ion-slide-box>
-    <ion-slide>
-      <div class="box blue" align="center">
-		Slide 1!
-      </div>
-    </ion-slide>
-    <ion-slide>
-      <div class="box red" align="center">
-        Slide 2!
-      </div>
-    </ion-slide>
-  </ion-slide-box>
-
-
-
+<body ng-controller="goalsCtrl">
+ <form ng-submit="submit()">
+   Enter text and hit enter:
+   <input type="text" ng-model="text" name="text" />
+   <button ng-click="addTo(text)"/>submit</button>
+   
+ </form>
+	<div ng-repeat="thing in things">
+	<p>{{thing.name}} {{thing.day}}</p>
+	</div>
 </body>
   </ion-content>
 </ion-view>

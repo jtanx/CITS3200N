@@ -1,18 +1,34 @@
 angular.module('starter.controllers', [])
 
-.controller('goalsCtrl', function($scope) {
+.controller('goalsCtrl', function($scope, List) {
+	$scope.things = List.all();
+	$scope.addTo = function(text) {
+		List.add(text);
+	};
+	
 })
 
 .controller('scheduleCtrl', function($scope, Days) {
   $scope.days = Days.all();
+  $scope.entries = Days.allentries();
+	
 })
 
 .controller('DayAddCtrl', function($scope, $stateParams, Days) {
   $scope.day = Days.get($stateParams.dayId);
+  $scope.addTo = function(text, newday) {
+		Days.add(text, newday);
+	};
 })
 
-.controller('mentaltestCtrl', function($scope, Questions) {
+.controller('mentaltestCtrl', function($scope, Questions, Answers) {
   $scope.questions = Questions.all();
+  
+  $scope.answers = Answers.all();
+  
+  $scope.next = function() {
+    $scope.$broadcast('slideBox.nextSlide');
+  };
 })
 
 .controller('statsCtrl', function($scope) {

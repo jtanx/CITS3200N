@@ -9,6 +9,10 @@ angular.module('starter.services', [])
     { id: 0, name: 'Sunday'}, { id: 1, name: 'Monday'}, { id: 2, name: 'Tuesday'},{ id: 3, name: 'Wednsday'}, 
 	{ id: 4, name: 'Thursday'}, { id: 5, name: 'Friday'}, { id: 6, name: 'Saturday'},
   ];
+  
+  var entries = [
+    { name: 'run' , day: 'Sunday'}, {name: 'run' , day: 'Tuesday'}
+  ];
 
   return {
     all: function() {
@@ -17,7 +21,31 @@ angular.module('starter.services', [])
     get: function(dayId) {
       // Simple index lookup
       return days[dayId];
+    },
+	allentries: function() {
+      return entries;
+    },
+	add: function(text, newday) {
+      entries.push({name: text, day: newday});
     }
+	
+  }
+})
+
+.factory('List', function() {
+
+  var things = [
+    { name: 'Sunday' , day: 'Sunday'}, {name: 'Monday' , day: 'Tuesday'}
+  ];
+
+  return {
+    all: function() {
+      return things;
+    },
+	add: function(text) {
+      things.push({name: text, day: 'Sunday'});
+    }
+	
   }
 })
 
@@ -42,6 +70,7 @@ angular.module('starter.services', [])
   }
 })
 
+
 .factory('Questions', function() {
   // Might use a resource here that returns a JSON array
 
@@ -63,6 +92,20 @@ angular.module('starter.services', [])
     get: function(questionId) {
       // Simple index lookup
       return questions[questionId];
+    }
+  }
+})
+
+.factory('Answers', function() {
+  var answers = [
+    { id: 1, name: 'Not at all'}, { id: 2, name: 'A little'}, 
+	{ id: 3, name: 'Moderately'}, { id: 4, name: 'Quite a lot'}, 
+	{ id: 5, name: 'Extremely'}
+  ];
+
+  return {
+    all: function() {
+      return answers;
     }
   }
 })

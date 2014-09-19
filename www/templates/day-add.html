@@ -6,6 +6,13 @@
 -->
 <ion-view title="Add To {{day.name}}">
   <ion-content has-header="true" padding="true">
+  
+	<form ng-submit="submit()">
+   Enter text and hit enter:
+   <input type="text" ng-model="text" name="text" />
+   <a href="#/tab/schedule">
+   <button ng-click="addTo(text, day.name)"/>submit</button>
+   </a>
     <ion-list>
       <ion-item type="item-text-wrap">
 	  hello
