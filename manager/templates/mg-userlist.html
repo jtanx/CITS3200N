@@ -3,8 +3,14 @@
 
 {% block main %}
 <div class="page-header clearfix">
-<h1 class="pull-left">User list</h1>
+<h1 class="pull-left">Users
+  <a class="btn" href="#">
+    <span class="glyphicon glyphicon-plus"></span>
+  </a>
+</h1>
+<div class="pull-right right-group">
 <h4 class="pull-right right-group">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</h4>
+</div>
 </div>
 {% if users %}
 
@@ -24,7 +30,7 @@
       {% for user in users %}
       <tr>
         <td>
-          <a href="#">
+          <a href="{% url 'manager:user_detail' pk=user.id %}">
           {{user.id}}
           </a>
         </td>

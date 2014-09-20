@@ -4,7 +4,10 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect,render
 from django.views.generic import *
+from django.http import *
 from django.contrib.auth.models import User, Group
+from django.contrib import messages
+from django.core.urlresolvers import reverse_lazy
 from manager.forms import *
 from api.models import *
 
@@ -24,6 +27,26 @@ class AdminRequiredMixin(object):
         return super(AdminRequiredMixin, self).\
                dispatch(request, *args, **kwargs)
 
+class MessageMixin(object):
+    ''' Modification of class found at: http://goo.gl/aKvuWY'''
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message, extra_tags="alert-success")
+        return super(MessageMixin, self).delete(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            return super(MessageMixin, self).get(request, *args, **kwargs)
+        except Http404:
+            if self.error_message:
+                messages.error(self.request, self.error_message, extra_tags="alert-warning")
+            if self.error_url:
+                return redirect(self.error_url)
+            raise Http404
+
+    def form_valid(self, form):
+        messages.success(self.request, self.success_message, extra_tags="alert-success")
+        return super(MessageMixin, self).form_valid(form)
+               
 def login_user(request):
     '''Logs in the user, based on provided credentials'''
     if request.user.is_authenticated():
@@ -89,4 +112,20 @@ class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
         context = super(self.__class__, self).get_context_data(**kwargs)
         # Set the active nav tab to the home button
         context['nav_users'] = 'active'
+        return context
+        
+class UserDetailView(LoginRequiredMixin, AdminRequiredMixin, MessageMixin, FormView):
+    '''Only for admins - details about a user'''
+    model = User
+    template_name='mg-userdetail.html'
+    error_message="That user doesn't exist"
+    error_url=reverse_lazy('manager:user_list')
+    form_class = UserForm
+    success_message="User updated successfully."
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(self.__class__, self).get_context_data(**kwargs)
+        user = User.objects.get(pk=self.kwargs['pk'])
+
         return context

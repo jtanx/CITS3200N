@@ -1,0 +1,28 @@
+{% extends "mg-base.html" %}
+
+{% block main %}
+<form class="form-horizontal" role="form">
+  <div class="form-group">
+    {% csrf_token %}
+      {# Include the hidden fields #}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+      {# Include the visible fields #}
+      {% for field in form.visible_fields %}
+          <div class="form-group">
+              <label for="{{ field.auto_id }}" class="col-sm-2 control-label">
+                {{ field.label }}
+              </label>
+              <div class="col-sm-8">
+              {{ field }}
+              </div>
+              {% for error in field.errors %}
+              
+              <div class="col-danger" role="alert">{{ error|escape }}</div>
+              {% endfor %}
+          </div>
+    {% endfor %}
+  </div>
+</form>
+{% endblock %}

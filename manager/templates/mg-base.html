@@ -84,7 +84,17 @@
       </div>
     </div>
 
-  <div class="container theme-showcase" role="main">      
+  <div class="container theme-showcase" role="main">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}" role="alert">
+          <a href="#" class="close" data-dismiss="alert">
+            &times;
+          </a>
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}  
     {% block main %}
     {% endblock %}
   </div>
@@ -95,6 +105,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="{{STATIC_URL}}mg-style.js"></script>
   </body>
 
 </html>
