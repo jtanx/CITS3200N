@@ -46,11 +46,12 @@ angular.module('starter.controllers', [])
 .controller('statsCtrl', function($scope) {
 })
 
-.controller('diaryCtrl', function($scope, Meals) {
+.controller('diaryCtrl', function($scope, Meals, SleepEntries) {
   //http://stackoverflow.com/questions/3552461/how-to-format-javascript-date
   $scope.today = new Date().toISOString().slice(0, 10);
   $scope.types = Meals.types();
-  $scope.meals = Meals.all();
+  $scope.meals = Meals.today(new Date());
+  $scope.sleep = SleepEntries.get(new Date());
 })
 
 .controller('MealDetailCtrl', function($scope, $stateParams, Meals) {

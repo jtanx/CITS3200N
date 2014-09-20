@@ -15,7 +15,7 @@
       </div>
       <a class="item item-icon-right" href="#/tab/diary/sleep/{{today}}">
         <i class="icon ion-ios7-arrow-right"></i>
-        9 Hours
+        {{sleep.hours}} Hours
       </a>
     </div>
     
@@ -26,7 +26,7 @@
 	  <div>
       <a class="item item-icon-right" href="#/tab/diary/meal/{{today}}/{{type.name}}">
         <i class="icon ion-ios7-arrow-right"></i>
-        <span class="prefill" ng-repeat="meal in meals | filter:type.name">{{meal.text}}</a>
+        <span class="prefill" ng-repeat="meal in meals | filter:type.name:todaydate">{{meal.text}}</a>
       </a>
     </div>
     
