@@ -71,6 +71,13 @@ class MessageMixin(object):
 class SuperMixin(LoginRequiredMixin, AdminRequiredMixin, MessageMixin):
     '''yeah'''
     pass
+    
+class NoGetMixin(object):
+    '''Do not allow the get method'''
+    def get(self, request, *args, **kwargs):
+        messages.error(self.request, self.error_message, 
+                       extra_tags="alert-warning")
+        return redirect(self.error_url)
                
 def login_user(request):
     '''Logs in the user, based on provided credentials'''
@@ -123,14 +130,15 @@ class Index(TemplateView):
         return context
 
         
-class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
+class UserListView(SuperMixin, ListView):
     '''Only for admin - a list of users'''
     template_name = 'mg-userlist.html'
     context_object_name = 'users'
     paginate_by = 15 #15 members per page
 
     def get_queryset(self):
-        return User.objects.filter(is_superuser=False, is_staff=False).order_by('is_active', 'id')
+        return User.objects.filter(is_superuser=False, is_staff=False).\
+                    order_by('is_active', 'id')
         
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -139,11 +147,11 @@ class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
         context['nav_users'] = 'active'
         return context
         
-class UserDetailView(LoginRequiredMixin, AdminRequiredMixin, MessageMixin, UpdateView):
+class UserDetailView(SuperMixin, UpdateView):
     '''Only for admins - details about a user'''
     model = User
     template_name='mg-userdetail.html'
-    form_class = UserForm
+    form_class = UserUpdateForm
     success_message="User updated successfully."
     error_message="That user doesn't exist"
     error_url=reverse_lazy('manager:user_list')
@@ -163,16 +171,24 @@ class UserDetailView(LoginRequiredMixin, AdminRequiredMixin, MessageMixin, Updat
     def get_queryset(self):
         return User.objects.filter(is_superuser=False, is_staff=False)
         
-class UserDeleteView(SuperMixin, DeleteView):
+class UserCreateView(SuperMixin, CreateView):
+    model = User
+    success_url = reverse_lazy('manager:user_list')
+    success_message='The user was added successfully.'
+    error_message='Could not create the user.'
+    error_url=success_url
+    template_name="mg-useradd.html"
+    form_class = UserCreateForm
+    
+    
+    
+        
+class UserDeleteView(SuperMixin, NoGetMixin, DeleteView):
     model = User
     success_url = reverse_lazy('manager:user_list')
     success_message='The user was deleted successfully.'
     error_message="The user could not be deleted."
     error_url=success_url
-    
-    def get(self, request, *args, **kwargs):
-        messages.error(self.request, self.error_message, extra_tags="alert-warning")
-        return redirect(self.error_url)
     
     def get_queryset(self):
         valid = User.objects.filter(is_superuser=False, is_staff=False)
