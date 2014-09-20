@@ -8,6 +8,8 @@ from django.core.management import call_command
 def add_users(apps, schema_editor):
     su = User.objects.create_superuser('admin', 'admin@no.no', 'admin')
     su.save()
+    test = User.objects.create('test', 'test@no.no', 'test')
+    test.save()
     
 def add_fixtures(apps, schema_editor):
     #Well this is... perplexing

@@ -37,7 +37,7 @@
             <li class="{{ nav_home }}"><a href="{% url 'manager:index' %}">Home</a></li>
             
             {% block main-nav %}
-            <li class="{{ nav_users }}"><a href="#about">Users</a></li>
+            <li class="{{ nav_users }}"><a href="{% url 'manager:user_list' %}">Users</a></li>
             <li class="{{ nav_backup }}"><a href="#contact">Backup</a></li>
             <li class="dropdown {{nav_data}}">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data management<span class="caret"></span></a>

@@ -2,3 +2,9 @@ div .col-danger {
     color: #843534;
     font-weight: bold;
 }
+
+.page-header .right-group {
+    bottom: 20px;
+    position: relative;
+    top: 20px;
+}
