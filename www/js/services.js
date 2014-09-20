@@ -10,11 +10,18 @@ angular.module('starter.services', [])
 	{ id: 4, name: 'Thursday'}, { id: 5, name: 'Friday'}, { id: 6, name: 'Saturday'},
   ];
   
+  var types = [ 
+	{name:'Run'} , {name:'Cycle'} , {name:'Swim'}
+  ];
+  
   var entries = [];
   
   var idcount = -1;
 
   return {
+	types: function() {
+      return types;
+    },
     all: function() {
       return days;
     },

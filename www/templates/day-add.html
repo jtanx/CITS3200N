@@ -9,11 +9,11 @@
   
 	<form ng-submit="submit()">
    Type:
-   <input type="text" ng-model="text" name="text" />
+   <select ng-model="text" ng-options="type.name for type in types"></select><br>
    Duration:
    <input type="number" ng-model="time" name="time" />
    <a href="#/tab/schedule">
-   <button ng-click="addTo(text, day.name, time)"/>submit</button>
+   <button ng-click="addTo(text, day.name, time)"/>Add</button>
    </a>
   </ion-content>
 </ion-view>

@@ -4,20 +4,21 @@
   The FriendsCtrl pulls data from the Friends service (service.js)
   The Friends service returns an array of friend data
 -->
-<ion-view title="Edit {{entry.name}}">
+<ion-view title="Edit {{entry.name.name}}">
   <ion-content has-header="true" padding="true">
   
   <h1>time to edit</h1>
   
    Type:
-   <input type="text" ng-model="text" name="text" />
+   <select ng-model="entry.name" ng-options="type.name for type in types"></select><br>
    Duration:
-   <input type="number" ng-model="time" name="time" />
-   <a href="#/tab/schedule">
-   <button ng-click="edit(entry.id, text, time)"/>Submit</button>
-   </a>
+   <input type="number" ng-model="entry.time" name="time" />
    <a href="#/tab/schedule">
    <button ng-click="remove(entry.id)"/>Delete</button>
    </a>
+   
+   
+  
+   
   </ion-content>
 </ion-view>

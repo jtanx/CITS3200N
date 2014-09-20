@@ -19,18 +19,20 @@ angular.module('starter.controllers', [])
   $scope.addTo = function(text, newday, time) {
 		Days.add(text, newday, time);
 	};
+	$scope.types = Days.types();
+	
 })
 
 .controller('SchedEditCtrl', function($scope, $stateParams, Days) {
   $scope.entry = Days.getex($stateParams.entryId);
-  $scope.text = $scope.entry.name;
-  $scope.time = $scope.entry.time;
   $scope.edit = function(id, text, time) {
 		Days.edit(id, text, time);
 	};
 	$scope.remove = function(id) {
 		Days.remove(id);
 	};
+  $scope.types = Days.types();
+  $scope.firsttype = $scope.types[0];
 })
 
 .controller('mentaltestCtrl', function($scope, Questions, Answers) {
