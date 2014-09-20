@@ -52,6 +52,7 @@ angular.module('starter.controllers', [])
   $scope.types = Meals.types();
   $scope.meals = Meals.today(new Date());
   $scope.sleep = SleepEntries.get(new Date());
+  $scope.diff = SleepEntries.diff(new Date());
 })
 
 .controller('MealDetailCtrl', function($scope, $stateParams, Meals) {

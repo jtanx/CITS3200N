@@ -100,10 +100,7 @@ angular.module('starter.services', [])
 
 .factory('SleepEntries', function() {
   //Some fake data
-  var entries = [
-    {date : new Date(2014,9,20), hours : 4, quality : 2},
-    {date : new Date(), hours : 1, quality : 0, start : new Date(), end : new Date()} //This entry will always be present
-  ];
+  var entries = [];
   
   return {
     all: function() {
@@ -115,6 +112,17 @@ angular.module('starter.services', [])
           return entries[i];
         console.log("No entry found for this date.");
       }
+	  entries.push({date : new Date(), quality : '', start : new Date(2014,9,20,0,0,0,0), end : new Date(2014,9,20,0,0,0,0)});
+    },
+	diff: function(day) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].date.getDate() == day.getDate()){
+			return Math.floor((entries[i].end - entries[i].start) / 1800000) / 2;
+		}
+        console.log("No entry found for this date.");
+      }
+	  return entries.length;
+	  
     }
   }
 })
