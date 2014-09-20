@@ -7,7 +7,12 @@
   </h1>
   <ul class="nav nav-tabs">
     <li><a href="{% url 'manager:user_list' %}">Back</a></li>
-    <li class="pull-right"><a href="#">Delete user</a></li>
+    <li class="pull-right">
+      <form role="form" method="post" action="{% url 'manager:user_delete' pk=object.id %}">
+        {% csrf_token %}
+        <input class="btn btn-danger" type="submit" value="Delete user">
+      </form>
+    </li>
   </ul>
 </div>
 

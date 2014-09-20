@@ -30,7 +30,7 @@ class AdminRequiredMixin(object):
 class MessageMixin(object):
     ''' Modification of class found at: http://goo.gl/aKvuWY'''
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message, extra_tags="alert-success")
+        self.__mmi_success = True
         return super(MessageMixin, self).delete(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -38,14 +38,39 @@ class MessageMixin(object):
             return super(MessageMixin, self).get(request, *args, **kwargs)
         except Http404:
             if self.error_message:
-                messages.error(self.request, self.error_message, extra_tags="alert-warning")
+                messages.error(self.request, self.error_message,
+                               extra_tags="alert-warning")
             if self.error_url:
                 return redirect(self.error_url)
             raise Http404
-
+            
+    def post(self, request, *args, **kwargs):
+        try:
+            ret = super(MessageMixin, self).post(request, *args, **kwargs)
+            
+            try:
+                if self.__mmi_success:
+                     messages.success(self.request, self.success_message, 
+                                      extra_tags="alert-success")
+            except AttributeError:
+                pass
+                
+            return ret
+        except Http404:
+            if self.error_message:
+                messages.error(self.request, self.error_message, 
+                               extra_tags="alert-warning")
+            if self.error_url:
+                return redirect(self.error_url)
+            raise Http404
+            
     def form_valid(self, form):
-        messages.success(self.request, self.success_message, extra_tags="alert-success")
+        self.__mmi_success = True
         return super(MessageMixin, self).form_valid(form)
+        
+class SuperMixin(LoginRequiredMixin, AdminRequiredMixin, MessageMixin):
+    '''yeah'''
+    pass
                
 def login_user(request):
     '''Logs in the user, based on provided credentials'''
@@ -105,7 +130,7 @@ class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
     paginate_by = 15 #15 members per page
 
     def get_queryset(self):
-        return User.objects.all().order_by('is_active', 'id')
+        return User.objects.filter(is_superuser=False, is_staff=False).order_by('is_active', 'id')
         
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -125,7 +150,32 @@ class UserDetailView(LoginRequiredMixin, AdminRequiredMixin, MessageMixin, Updat
     #success_url = reverse_lazy('manager:user_list')
     
     def get_object(self):
-        return User.objects.get(pk=self.kwargs['pk'])
+        ret = User.objects.filter(pk=self.kwargs['pk'],
+                                  is_superuser=False, is_staff=False)
+        if ret:
+            return ret[0]
+        raise Http404
     
     def get_success_url(self):
-        return reverse_lazy('manager:user_detail', kwargs={'pk' : self.kwargs['pk']})
+        return reverse_lazy('manager:user_detail', 
+                            kwargs={'pk' : self.kwargs['pk']})
+                            
+    def get_queryset(self):
+        return User.objects.filter(is_superuser=False, is_staff=False)
+        
+class UserDeleteView(SuperMixin, DeleteView):
+    model = User
+    success_url = reverse_lazy('manager:user_list')
+    success_message='The user was deleted successfully.'
+    error_message="The user could not be deleted."
+    error_url=success_url
+    
+    def get(self, request, *args, **kwargs):
+        messages.error(self.request, self.error_message, extra_tags="alert-warning")
+        return redirect(self.error_url)
+    
+    def get_queryset(self):
+        valid = User.objects.filter(is_superuser=False, is_staff=False)
+        return valid.filter(pk=self.kwargs['pk'])
+    
+    
