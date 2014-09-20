@@ -167,9 +167,6 @@ class UserDetailView(SuperMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('manager:user_detail', 
                             kwargs={'pk' : self.kwargs['pk']})
-                            
-    def get_queryset(self):
-        return User.objects.filter(is_superuser=False, is_staff=False)
         
 class UserCreateView(SuperMixin, CreateView):
     model = User
@@ -179,9 +176,6 @@ class UserCreateView(SuperMixin, CreateView):
     error_url=success_url
     template_name="mg-useradd.html"
     form_class = UserCreateForm
-    
-    
-    
         
 class UserDeleteView(SuperMixin, NoGetMixin, DeleteView):
     model = User
@@ -194,4 +188,14 @@ class UserDeleteView(SuperMixin, NoGetMixin, DeleteView):
         valid = User.objects.filter(is_superuser=False, is_staff=False)
         return valid.filter(pk=self.kwargs['pk'])
     
+class PersonalDetailsView(SuperMixin, UpdateView):
+    model = User
+    template_name='mg-changepersonaldetails.html'
+    form_class = PersonalDetailsForm
+    success_message="Details updated successfully."
+    success_url = reverse_lazy('manager:account_details')
+    error_message="You cannot do that."
+    error_url = success_url
     
+    def get_object(self):
+        return self.request.user

@@ -18,6 +18,12 @@ class LoginForm(BootstrapMixin, Form):
     password = forms.CharField(widget=forms.PasswordInput())
     next_location = forms.CharField(required=False, widget=forms.HiddenInput)
     
+class PersonalDetailsForm(BootstrapMixin, ModelForm):
+    '''A form to modify personal details'''
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+    
 class UserUpdateForm(BootstrapMixin, ModelForm):
     '''A user add/modification form'''
     class Meta:
