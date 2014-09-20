@@ -114,18 +114,18 @@ class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
         context['nav_users'] = 'active'
         return context
         
-class UserDetailView(LoginRequiredMixin, AdminRequiredMixin, MessageMixin, FormView):
+class UserDetailView(LoginRequiredMixin, AdminRequiredMixin, MessageMixin, UpdateView):
     '''Only for admins - details about a user'''
     model = User
     template_name='mg-userdetail.html'
-    error_message="That user doesn't exist"
-    error_url=reverse_lazy('manager:user_list')
     form_class = UserForm
     success_message="User updated successfully."
-
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(self.__class__, self).get_context_data(**kwargs)
-        user = User.objects.get(pk=self.kwargs['pk'])
-
-        return context
+    error_message="That user doesn't exist"
+    error_url=reverse_lazy('manager:user_list')
+    #success_url = reverse_lazy('manager:user_list')
+    
+    def get_object(self):
+        return User.objects.get(pk=self.kwargs['pk'])
+    
+    def get_success_url(self):
+        return reverse_lazy('manager:user_detail', kwargs={'pk' : self.kwargs['pk']})

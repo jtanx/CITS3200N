@@ -23,6 +23,7 @@
         <th>Username</th>
         <th>First name</th>
         <th>Last name</th>
+        <th>Email</th>
         <th>Active</th>
       </tr>
     </thead>
@@ -37,6 +38,7 @@
         <td>{{user.username}}</td>
         <td>{{user.first_name}}</td>
         <td>{{user.last_name}}</td>
+        <td>{{user.email}}</td>
         <td>{% if user.is_active %}Yes {% else %} No {% endif %}</td>
       </tr>
       {% endfor %}

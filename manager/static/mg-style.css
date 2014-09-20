@@ -8,3 +8,7 @@ div .col-danger {
     position: relative;
     top: 20px;
 }
+
+.page-header-norule {
+    margin: 40px 0px 20px;
+}
