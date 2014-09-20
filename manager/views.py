@@ -63,7 +63,10 @@ class MessageMixin(object):
             if self.error_url:
                 return redirect(self.error_url)
             raise Http404
-            
+    
+    def success(self, message):
+        messages.success(self.request, message, extra_tags="alert-success")
+     
     def form_valid(self, form):
         self.__mmi_success = True
         return super(MessageMixin, self).form_valid(form)
@@ -176,6 +179,24 @@ class UserCreateView(SuperMixin, CreateView):
     error_url=success_url
     template_name="mg-useradd.html"
     form_class = UserCreateForm
+    
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        prefix = user.last_name[:3].lower() + user.first_name[:1].lower()
+        i = 1
+        while True:
+            username = "%s%02d" % (prefix, i)
+            if not User.objects.filter(username=username).exists():
+                break
+            i += 1
+        password = User.objects.make_random_password(length=8) #:8
+        user.username = username
+        user.set_password(password)
+        user.save()
+        self.success("This user's username is '%s' and their password is '%s'" % \
+                        (username, password))
+        return super(self.__class__, self).form_valid(form)
+        
         
 class UserDeleteView(SuperMixin, NoGetMixin, DeleteView):
     model = User
