@@ -46,20 +46,17 @@ angular.module('starter.controllers', [])
 .controller('statsCtrl', function($scope) {
 })
 
-.controller('diaryCtrl', function($scope) {
+.controller('diaryCtrl', function($scope, Meals) {
   //http://stackoverflow.com/questions/3552461/how-to-format-javascript-date
   $scope.today = new Date().toISOString().slice(0, 10);
+  $scope.types = Meals.types();
+  $scope.meals = Meals.all();
+})
+
+.controller('MealDetailCtrl', function($scope, $stateParams, Meals) {
+  $scope.meal = Meals.get(new Date($stateParams.date), $stateParams.type);
 })
 
 .controller('SleepDetailCtrl', function($scope, $stateParams, SleepEntries) {
   $scope.sleep = SleepEntries.get(new Date($stateParams.date));
 })
-/*
-.controller('mentaltestCtrl', function($scope, MTDSSurvey) {
-  $scope.surveyOne = MTDSSurvey.newSurvey();
-  $scope.descriptors = ["Not at all", "A little", "Moderately", 
-                        "Quite a bit", "Extremely"];*/
-  /*$scope.colours = ["inherit", "#F29727", "#E05723", "#FF5144", "#E34570"];*/
-/*});*/
-
-	

@@ -66,6 +66,32 @@ angular.module('starter.services', [])
   }
 })
 
+.factory('Meals', function() {
+  
+	var meals = [];
+  
+  var types = [
+	{name: 'Breakfast'}, {name: 'Lunch'}, {name: 'Dinner'}, {name: 'Other'}
+  ];
+
+  return {
+	all: function() {
+		return meals;
+	},
+	types: function() {
+		return types;
+	},
+	get: function(day, type) {
+      for (var i = 0; i < meals.length; i++) {
+        if (meals[i].date.getDate() == day.getDate() && meals[i].type == type)
+          return meals[i];
+        console.log("No entry found for this date.");
+      }
+	  meals.push({date: new Date(), type: type, text: ''});
+	  return meals[meals.length-1];
+	}
+  }
+})
 
 .factory('SleepEntries', function() {
   //Some fake data

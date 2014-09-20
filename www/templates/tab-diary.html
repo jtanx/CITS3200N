@@ -19,44 +19,17 @@
       </a>
     </div>
     
-    <div class="list padding-top">
+    <div class="list padding-top" ng-repeat="type in types">
       <div class="item item-divider item-positive item-positive">
-        Breakfast
+        {{type.name}}
       </div>
-      <a class="item item-icon-right" href="#">
+	  <div>
+      <a class="item item-icon-right" href="#/tab/diary/meal/{{today}}/{{type.name}}">
         <i class="icon ion-ios7-arrow-right"></i>
-        <span class="prefill">None</a>
+        <span class="prefill" ng-repeat="meal in meals | filter:type.name">{{meal.text}}</a>
       </a>
     </div>
     
-    <div class="list padding-top">
-      <div class="item item-divider item-positive">
-        Lunch
-      </div>
-      <a class="item item-icon-right" href="#">
-        <i class="icon ion-ios7-arrow-right"></i>
-        <span class="prefill">None</a>
-      </a>
-    </div>
     
-    <div class="list padding-top">
-      <div class="item item-divider item-positive">
-        Dinner
-      </div>
-      <a class="item item-icon-right" href="#">
-        <i class="icon ion-ios7-arrow-right"></i>
-        <span class="prefill">None</a>
-      </a>
-    </div>
-    
-    <div class="list padding-top">
-      <div class="item item-divider item-positive">
-        Other meal
-      </div>
-      <a class="item item-icon-right" href="#">
-        <i class="icon ion-ios7-arrow-right"></i>
-        <span class="prefill">None</a>
-      </a>
-    </div>
   </ion-content>
 </ion-view>
