@@ -7,13 +7,21 @@
 <ion-view title="Add To {{day.name}}">
   <ion-content has-header="true" padding="true">
   
-	<form ng-submit="submit()">
+  <form name="add">
+  
    Type:
-   <select ng-model="text" ng-options="type.name for type in types"></select><br>
+   <select required ng-model="text" ng-options="type.name for type in types" name="type"></select><br>
+	<div ng-if="add.type.$error.required" style="color:red;">enter field</div>
+
    Duration:
-   <input type="number" ng-model="time" name="time" />
+   <input type="number" ng-model="time" min="0" max="24" name="time" required />
+  <div ng-if="add.time.$error.required" style="color:red;">enter field</div>
+
    <a href="#/tab/schedule">
-   <button ng-click="addTo(text, day.name, time)"/>Add</button>
+   <button ng-if="!add.time.$error.required && !add.type.$error.required" 
+					ng-click="submit(text, day.name, time)"/>Add</button>
    </a>
+   <button ng-if="add.time.$error.required || add.type.$error.required" />Add</button>
+   </form>
   </ion-content>
 </ion-view>

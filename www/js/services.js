@@ -74,10 +74,10 @@ angular.module('starter.services', [])
       // Simple index lookup
       return exercises[exId];
     },
-	add: function(type, start, end, exertion) {
+	add: function(type, start, end, distance, exertion) {
 		idcount++;
       exercises.push({id: idcount, date: new Date(), type: type, 
-			start : start, end : end, exertion : exertion});
+			start : start, end : end, distance : distance, exertion : exertion});
     },
 	remove: function(id) {
 		exercises.splice(id, 1);

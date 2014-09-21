@@ -19,7 +19,7 @@
 	  <div ng-repeat="exercise in exercises">
       <a class="item item-icon-right" href="#/tab/diary/exercise/{{exercise.id}}">
         <i class="icon ion-ios7-arrow-right"></i>
-        {{exercise.type.name}}
+        {{exercise.distance + " km " + exercise.type.name}}
       </a>
 	  </div>
     </div>

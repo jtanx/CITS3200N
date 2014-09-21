@@ -16,16 +16,17 @@ angular.module('starter.controllers', [])
 
 .controller('DayAddCtrl', function($scope, $stateParams, Days) {
   $scope.day = Days.get($stateParams.dayId);
-  $scope.addTo = function(text, newday, time) {
+  $scope.submit = function(text, newday, time) {
 		Days.add(text, newday, time);
 	};
 	$scope.types = Days.types();
+
 	
 })
 
 .controller('ExAddCtrl', function($scope, $stateParams, Exercises) {
-  $scope.add = function(type, start, end, exertion) {
-		Exercises.add(type, start, end, exertion);
+  $scope.submit = function(type, start, end, distance, exertion) {
+		Exercises.add(type, start, end, distance, exertion);
 	};
   $scope.types = Exercises.types();
 })

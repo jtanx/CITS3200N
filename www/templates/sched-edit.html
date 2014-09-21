@@ -12,7 +12,7 @@
    Type:
    <select ng-model="entry.name" ng-options="type.name for type in types"></select><br>
    Duration:
-   <input type="number" ng-model="entry.time" name="time" />
+   <input type="number" min="0" max="24" ng-model="entry.time" name="time" />
    <a href="#/tab/schedule">
    <button ng-click="remove(entry.id)"/>Delete</button>
    </a>
