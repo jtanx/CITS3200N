@@ -48,11 +48,44 @@ angular.module('starter.services', [])
 			entries[i].id = i;
 		}
 		idcount--;
-    },
-	edit: function(id, text, time) {
-		var day = entries[id].day;
-      entries[id] = {id: id, name: text, day: day, time: time}
     }
+  }
+})
+
+.factory('Exercises', function() {
+
+  var exercises = [
+  ];
+  
+  var types = [ 
+	{name:'Run'} , {name:'Cycle'} , {name:'Swim'}
+  ];
+  
+  var idcount = -1;
+
+  return {
+	types: function() {
+      return types;
+    },
+    all: function() {
+      return exercises;
+    },
+	get: function(exId) {
+      // Simple index lookup
+      return exercises[exId];
+    },
+	add: function(type, start, end, exertion) {
+		idcount++;
+      exercises.push({id: idcount, date: new Date(), type: type, 
+			start : start, end : end, exertion : exertion});
+    },
+	remove: function(id) {
+		exercises.splice(id, 1);
+		for(var i = id; id < exercises.length; i++){
+			exercises[i].id = i;
+		}
+		idcount--;
+    },
   }
 })
 
@@ -72,6 +105,7 @@ angular.module('starter.services', [])
 	
   }
 })
+
 
 .factory('Meals', function() {
   

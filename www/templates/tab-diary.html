@@ -11,6 +11,21 @@
   <ion-content class="has-header">
     <div class="list padding-top">
       <div class="item item-divider item-positive list-positive">
+        Exercise
+	  <a style="float:right;" href="#/tab/diary/exercise/add">
+		<i class="icon ion-ios7-plus-empty" style="font-size: 45px; color: white;"></i>
+	  </a>
+      </div>
+	  <div ng-repeat="exercise in exercises">
+      <a class="item item-icon-right" href="#/tab/diary/exercise/{{exercise.id}}">
+        <i class="icon ion-ios7-arrow-right"></i>
+        {{exercise.type.name}}
+      </a>
+	  </div>
+    </div>
+    
+	<div class="list padding-top">
+      <div class="item item-divider item-positive list-positive">
         Sleep
       </div>
       <a class="item item-icon-right" href="#/tab/diary/sleep/{{today}}">
@@ -18,7 +33,7 @@
         {{diff}} Hours
       </a>
     </div>
-    
+	
     <div class="list padding-top" ng-repeat="type in types">
       <div class="item item-divider item-positive item-positive">
         {{type.name}}

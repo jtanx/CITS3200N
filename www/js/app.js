@@ -68,6 +68,26 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       }
     })
 	
+	.state('tab.exercise-add',  {
+      url: '/diary/exercise/add',
+      views: {
+        'tab-diary' : {
+          templateUrl: 'templates/exercise-add.html',
+          controller: 'ExAddCtrl'
+        }
+      }
+    })
+	
+	.state('tab.exercise-edit',  {
+      url: '/diary/exercise/:exId',
+      views: {
+        'tab-diary' : {
+          templateUrl: 'templates/exercise-edit.html',
+          controller: 'ExerciseCtrl'
+        }
+      }
+    })
+	
 	.state('tab.meal-detail',  {
       url: '/diary/meal/:date/:type',
       views: {

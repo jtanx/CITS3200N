@@ -1,0 +1,23 @@
+<!--
+  This template loads for the 'tab.friend-detail' state (app.js)
+  'firend' is a $scope variable created in the FriendsCtrl controller (controllers.js)
+  The FriendsCtrl pulls data from the Friends service (service.js)
+  The Friends service returns an array of friend data
+-->
+<ion-view title="Add Exercise">
+  <ion-content has-header="true" padding="true">
+  
+        <select ng-model="type" ng-options="type.name for type in types"></select><br>
+
+        <input type="date" ng-model="start">
+        <input type="date" ng-model="end">
+
+        <input type="number" ng-model="exertion">
+
+
+   <a href="#/tab/diary">
+   <button ng-click="add(type, start, end, exertion)"/>Add</button>
+   </a>
+   
+  </ion-content>
+</ion-view>

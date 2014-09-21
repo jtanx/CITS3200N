@@ -23,12 +23,25 @@ angular.module('starter.controllers', [])
 	
 })
 
+.controller('ExAddCtrl', function($scope, $stateParams, Exercises) {
+  $scope.add = function(type, start, end, exertion) {
+		Exercises.add(type, start, end, exertion);
+	};
+  $scope.types = Exercises.types();
+})
+
+.controller('ExerciseCtrl', function($scope, $stateParams, Exercises) {
+  $scope.exercise = Exercises.get($stateParams.exId);
+  $scope.remove = function(id) {
+		Exercises.remove(id);
+	};
+  
+  $scope.types = Exercises.types();
+})
+
 .controller('SchedEditCtrl', function($scope, $stateParams, Days) {
   $scope.entry = Days.getex($stateParams.entryId);
-  $scope.edit = function(id, text, time) {
-		Days.edit(id, text, time);
-	};
-	$scope.remove = function(id) {
+  $scope.remove = function(id) {
 		Days.remove(id);
 	};
   $scope.types = Days.types();
@@ -48,13 +61,14 @@ angular.module('starter.controllers', [])
 .controller('statsCtrl', function($scope) {
 })
 
-.controller('diaryCtrl', function($scope, Meals, SleepEntries) {
+.controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises) {
   //http://stackoverflow.com/questions/3552461/how-to-format-javascript-date
   $scope.today = new Date().toISOString().slice(0, 10);
   $scope.types = Meals.types();
   $scope.meals = Meals.today(new Date());
   $scope.sleep = SleepEntries.get(new Date());
   $scope.diff = SleepEntries.diff(new Date());
+  $scope.exercises = Exercises.all();
 })
 
 .controller('MealDetailCtrl', function($scope, $stateParams, Meals) {
