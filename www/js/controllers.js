@@ -50,11 +50,13 @@ angular.module('starter.controllers', [])
 
 .controller('mentaltestCtrl', function($scope, Questions, Answers) {
   $scope.questions = Questions.all();
-  
-  $scope.answers = Answers.all();
-  
-  $scope.next = function() {
+  $scope.options = Answers.options();
+  $scope.answer = function(question, option) {
     $scope.$broadcast('slideBox.nextSlide');
+	Answers.answer(question, option);
+  };
+  $scope.submit = function() {
+	Answers.submit();
   };
 })
 

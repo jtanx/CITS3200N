@@ -14,17 +14,17 @@
       <div class="item item-divider">
         {{(question.id) + ". " + question.name}}
       </div>
-      <label class="item item-radio" ng-repeat="answer in answers" ng-click="next()">
+      <label class="item item-radio" ng-repeat="option in options" ng-click="answer(question.id,option.id)">
 	    <input type="radio" name="group">
         <div class="item-content">
-          {{answer.name}}
+          {{option.name}}
         </div>
         <i class="radio-icon ion-checkmark"></i>
       </label>
 		</div>
 		
-		<div ng-class="{invisible: '{{question.id}}' != '2'}">
-		<a href="#"><button>
+		<div ng-class="{invisible: '{{question.id}}' != '22'}">
+		<a href="#" ng-click="submit()"><button>
 		Submit
 		</button></a>
 		</div>

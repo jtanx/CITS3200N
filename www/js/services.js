@@ -195,16 +195,24 @@ angular.module('starter.services', [])
 })
 
 .factory('Answers', function() {
-  var answers = [
+  var options = [
     { id: 1, name: 'Not at all'}, { id: 2, name: 'A little'}, 
 	{ id: 3, name: 'Moderately'}, { id: 4, name: 'Quite a lot'}, 
 	{ id: 5, name: 'Extremely'}
   ];
 
+  var answers = [];
+  
   return {
-    all: function() {
-      return answers;
-    }
+    options: function() {
+		return options;
+    },
+	answer: function(question, option) {
+		answers[question-1] = option;
+	},
+	submit: function () {
+		console.log(answers);
+	}
   }
 })
 
