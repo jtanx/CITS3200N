@@ -81,7 +81,7 @@ angular.module('starter.services', [])
     },
 	remove: function(id) {
 		exercises.splice(id, 1);
-		for(var i = id; id < exercises.length; i++){
+		for(var i = id; i < exercises.length; i++){
 			exercises[i].id = i;
 		}
 		idcount--;
@@ -201,6 +201,8 @@ angular.module('starter.services', [])
 	{ id: 5, name: 'Extremely'}
   ];
 
+  var days = [];
+  
   var answers = [];
   
   return {
@@ -211,7 +213,17 @@ angular.module('starter.services', [])
 		answers[question-1] = option;
 	},
 	submit: function () {
+		days.push(new Date());
 		console.log(answers);
+	},
+	completed: function () {
+		var d = new Date();
+		for(var i = 0; i < days.length; i++){
+			if(d.getDate() == days[i].getDate() ) {
+				return true;
+			}
+		}
+		return false;
 	}
   }
 })

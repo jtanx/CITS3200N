@@ -59,6 +59,7 @@ angular.module('starter.controllers', [])
   $scope.submit = function() {
 	Answers.submit();
   };
+  $scope.completed = Answers.completed();
 })
 
 .controller('statsCtrl', function($scope) {
