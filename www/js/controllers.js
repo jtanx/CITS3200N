@@ -56,6 +56,7 @@ angular.module('starter.controllers', [])
     $scope.$broadcast('slideBox.nextSlide');
 	Answers.answer(question, option);
   };
+  $scope.testanswers = Answers.all();
   $scope.submit = function() {
 	Answers.submit();
   };

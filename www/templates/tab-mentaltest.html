@@ -18,8 +18,9 @@
 	    <input type="radio" name="group">
         <div class="item-content">
           {{option.name}}
+		<p ng-if="testanswers[question.id-1] == option.id">selected</p>
         </div>
-        <i class="radio-icon ion-checkmark"></i>
+        <i ng-if="testanswers[question.id-1] == option.id" class="radio-icon ion-checkmark"></i>
       </label>
 		</div>
 		

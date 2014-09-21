@@ -206,6 +206,9 @@ angular.module('starter.services', [])
   var answers = [];
   
   return {
+    all: function() {
+		return answers;
+    },
     options: function() {
 		return options;
     },
@@ -213,8 +216,10 @@ angular.module('starter.services', [])
 		answers[question-1] = option;
 	},
 	submit: function () {
+		if(answers.length == 22) {
 		days.push(new Date());
 		console.log(answers);
+		}
 	},
 	completed: function () {
 		var d = new Date();
@@ -226,29 +231,6 @@ angular.module('starter.services', [])
 		return false;
 	}
   }
-})
-
-.factory('MTDSSurvey', function() {
-    var surveyItems = [
-        "Miserable", "Unhappy", "Bitter", "Downhearted", "Depressed",
-        "Energetic", "Lively", "Active", "Alert", "Muscle soreness",
-        "Heavy arms or legs", "Stiff or sore joints", "It was difficult to fall asleep",
-        "Your sleep was restless", "Insomnia", "Stressed", "Like you could not cope",
-        "Difficulties piling up", "Nervous", "Tired", "Sleepy", "Worn-out"
-    ];
-    
-    return {
-        all: function() {
-            return surveyItems;
-        },
-        newSurvey: function() {
-            var ret = [];
-            surveyItems.forEach(function(entry, index) {
-                ret.push({id: index, value: 0, text: entry});
-            });
-            return ret;
-        }
-    };
 })
 
 .factory('SurveyOne', function() {
