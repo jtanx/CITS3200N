@@ -20,11 +20,9 @@ angular.module('starter.controllers', [])
 		Days.add(text, newday, time);
 	};
 	$scope.types = Days.types();
-
-	
 })
 
-.controller('ExAddCtrl', function($scope, $stateParams, Exercises) {
+.controller('ExAddCtrl', function($scope, $stateParams, Exercises, Save) {
   $scope.submit = function(type, start, end, distance, exertion) {
 		var todaydate = new Date();
 		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), start.substring(0,2), start.substring(3,5),0);
@@ -32,15 +30,17 @@ angular.module('starter.controllers', [])
 		Exercises.add(type, startdate, enddate, distance, exertion);
 	};
 	$scope.types = Exercises.types();
+	$scope.unsave = Save.unsave();
 })
 
-.controller('ExerciseCtrl', function($scope, $stateParams, Exercises) {
+.controller('ExerciseCtrl', function($scope, $stateParams, Exercises, Save) {
   $scope.exercise = Exercises.get($stateParams.exId);
   $scope.remove = function(id) {
 		Exercises.remove(id);
 	};
   
   $scope.types = Exercises.types();
+  $scope.unsave = Save.unsave();
 })
 
 .controller('SchedEditCtrl', function($scope, $stateParams, Days) {
@@ -69,20 +69,27 @@ angular.module('starter.controllers', [])
 .controller('statsCtrl', function($scope) {
 })
 
-.controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises) {
+.controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises, Save) {
   //http://stackoverflow.com/questions/3552461/how-to-format-javascript-date
   $scope.today = new Date().toISOString().slice(0, 10);
+  $scope.todaytext = Date().slice(0, 10);
   $scope.types = Meals.types();
   $scope.meals = Meals.today(new Date());
   $scope.sleep = SleepEntries.get(new Date());
   $scope.diff = SleepEntries.diff(new Date());
   $scope.exercises = Exercises.all();
+  $scope.saved = Save.status();
+  $scope.save = function() {
+		Save.save();
+  };
 })
 
-.controller('MealDetailCtrl', function($scope, $stateParams, Meals) {
+.controller('MealDetailCtrl', function($scope, $stateParams, Meals, Save) {
   $scope.meal = Meals.get(new Date($stateParams.date), $stateParams.type);
+  $scope.unsave = Save.unsave();
 })
 
-.controller('SleepDetailCtrl', function($scope, $stateParams, SleepEntries) {
+.controller('SleepDetailCtrl', function($scope, $stateParams, SleepEntries, Save) {
   $scope.sleep = SleepEntries.get(new Date($stateParams.date));
+  $scope.unsave = Save.unsave();
 })

@@ -107,6 +107,22 @@ angular.module('starter.services', [])
   }
 })
 
+.factory('Save', function() {
+  
+	var saved = true;
+  
+  return {
+	save: function() {
+		saved = true;
+	},
+	unsave: function() {
+		saved = false;
+	},
+	status: function() {
+		return saved;
+	}
+  }
+})
 
 .factory('Meals', function() {
   

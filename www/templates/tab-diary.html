@@ -1,11 +1,13 @@
 <ion-view title="Diary">
   <ion-nav-buttons side="right">
-    <button class="button icon ion-navicon" ng-click="doSomething()">
+    <button ng-if="!saved" class="button icon ion-ios7-bookmarks" ng-click="save()" href="#">
+    </button>
+	<button ng-if="saved" class="button icon ion-ios7-bookmarks-outline" >
     </button>
   </ion-nav-buttons>
   
   <ion-header-bar class="bar bar-subheader">
-  <h1 class="title">Wednesday 17 Sept</h1>
+  <h1 class="title">{{todaytext}}</h1>
   </ion-header-bar>
   
   <ion-content class="has-header">

@@ -14,14 +14,16 @@
 	<div ng-if="add.type.$error.required" style="color:red;">enter field</div>
 
    Duration:
-   <input type="number" ng-model="time" min="0" max="24" name="time" required />
-  <div ng-if="add.time.$error.required" style="color:red;">enter field</div>
-
+   <input type="number" ng-model="time" min="0.5" max="24" name="time" required />
+	<div ng-if="add.time.$error.required" style="color:red;">enter field</div>
+	<div ng-if="add.time.$error.min || add.time.$error.max" style="color:red;">invalid</div>
+	
    <a href="#/tab/schedule">
-   <button ng-if="!add.time.$error.required && !add.type.$error.required" 
-					ng-click="submit(text, day.name, time)"/>Add</button>
+   <button ng-if="!add.time.$error.required && !add.type.$error.required && !add.time.$error.min && 
+					!add.time.$error.max" ng-click="submit(text, day.name, time)"/>Add</button>
    </a>
-   <button ng-if="add.time.$error.required || add.type.$error.required" />Add</button>
+   <button ng-if="add.time.$error.required || add.type.$error.required || 
+					add.time.$error.min || add.time.$error.max" />Add</button>
    </form>
   </ion-content>
 </ion-view>

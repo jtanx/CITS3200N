@@ -2,19 +2,19 @@
 <ion-view title="Edit {{exercise.type}}">
   <ion-content has-header="true" padding="true">
   
-        <select ng-model="exercise.type" ng-options="type for type in types"></select><br>
+        <select ng-model="exercise.type" ng-change="unsave()" ng-options="type for type in types"></select><br>
 
-        <input type="datetime" ng-model="exercise.start">
+        <input type="datetime" ng-change="unsave()" ng-model="exercise.start">
 
-        <input type="datetime" ng-model="exercise.end">
+        <input type="datetime" ng-change="unsave()" ng-model="exercise.end">
 
-		<input type="number" min="0" min="50" ng-model="exercise.distance">
+		<input type="number" min="0" min="50" ng-change="unsave()" ng-model="exercise.distance">
 		
-        <input type="number" min="0" min="5" ng-model="exercise.exertion">
+        <input type="number" min="0" min="5" ng-change="unsave()" ng-model="exercise.exertion">
 
 
    <a href="#/tab/diary">
-   <button ng-click="remove(exercise.id)"/>Delete</button>
+   <button ng-click="remove(exercise.id); unsave()"/>Delete</button>
    </a>
    
   
