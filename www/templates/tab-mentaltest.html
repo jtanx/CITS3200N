@@ -1,5 +1,6 @@
 <ion-view title="Mental Test">
-  <ion-content class="has-header">
+  
+  <ion-content class="has-header" ng-controller="mentaltestCtrl">
   <div ng-if="!completed">
   <h5 align="center"  class="title">
     In the past 24 hours, how often have you felt...
@@ -37,6 +38,6 @@
 	<div ng-if="completed">
 		completed
 	</div>
-	
+
 </ion-content> 
 </ion-view>

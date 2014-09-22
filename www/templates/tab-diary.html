@@ -1,16 +1,18 @@
 <ion-view title="Diary">
-  <ion-nav-buttons side="right">
-    <button ng-if="!saved" class="button icon ion-ios7-bookmarks" ng-click="save()" href="#">
+
+  <ion-nav-buttons side="right" ng-controller="diaryCtrl">
+    <button ng-if="!saved" class="button button-icon ion-ios7-bookmarks" ng-click="save()">
     </button>
-	<button ng-if="saved" class="button icon ion-ios7-bookmarks-outline" >
+	<button ng-if="saved" class="button button-icon ion-ios7-bookmarks-outline" >
     </button>
   </ion-nav-buttons>
+
   
-  <ion-header-bar class="bar bar-subheader">
+  <ion-header-bar class="bar bar-subheader" ng-controller="diaryCtrl">
   <h1 class="title">{{todaytext}}</h1>
   </ion-header-bar>
   
-  <ion-content class="has-header">
+  <ion-content class="has-header" ng-controller="diaryCtrl">
     <div class="list padding-top">
       <div class="item item-divider item-positive list-positive">
         Exercise

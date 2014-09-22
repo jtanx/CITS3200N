@@ -250,20 +250,17 @@ angular.module('starter.services', [])
   }
 })
 
-.factory('SurveyOne', function() {
-    var surveyItems = [
-        { id: 0, value: 0, text: "Item 1"},
-        { id: 1, value: 0, text: "Item 2"},
-        { id: 2, value: 0, text: "Item 3"},
-        { id: 3, value: 0, text: "Item 4"}
-    ];
+.factory('Settings', function() {
+    
+	var firstname = "";
+	var lastname = "";
     
     return {
-      all: function() {
-        return surveyItems;
+      firstname: function() {
+        return firstname;
       },
-      get: function(itemId) {
-        return surveyItems[itemId];
-      }
+      lastname: function() {
+        return lastname;
+	}
     };
 });

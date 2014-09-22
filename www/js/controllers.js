@@ -69,6 +69,17 @@ angular.module('starter.controllers', [])
 .controller('statsCtrl', function($scope) {
 })
 
+.controller('settingsCtrl', function($scope, $ionicModal, Settings) {
+  $ionicModal.fromTemplateUrl('settings.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+  $scope.firstname = Settings.lastname();
+  $scope.lastname = Settings.lastname();
+})
+
 .controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises, Save) {
   //http://stackoverflow.com/questions/3552461/how-to-format-javascript-date
   $scope.today = new Date().toISOString().slice(0, 10);
