@@ -7,7 +7,7 @@ https://docs.djangoproject.com/en/1.6/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
-
+from django.conf import global_settings
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -111,4 +111,8 @@ TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 TEMPLATE_LOADERS = (
 'django.template.loaders.filesystem.Loader',
 'django.template.loaders.app_directories.Loader',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
+    "manager.misc.survey_list",
 )

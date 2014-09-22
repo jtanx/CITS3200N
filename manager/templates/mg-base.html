@@ -42,10 +42,14 @@
             <li class="dropdown {{nav_data}}">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data management<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
+                {% for survey in surveys %}
+                <li><a href="#">{{survey.name}}</a></li>
+                {% endfor %}
+                <!--
                 <li><a href="#">MTDS survey</a></li>
                 <li><a href="#">Sleep tracking</a></li>
                 <li><a href="#">Meal tracking</a></li>
-                
+                -->
                 <!-- Not for now
                 <li class="divider"></li>
                 <li class="dropdown-header">Nav header</li>
