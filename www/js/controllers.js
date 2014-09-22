@@ -31,10 +31,6 @@ angular.module('starter.controllers', [])
 		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
 		Exercises.add(type, startdate, enddate, distance, exertion);
 	};
-	$scope.attempted = false;
-	$scope.press = function() {
-		attempted = true;
-	};
 	$scope.types = Exercises.types();
 })
 
