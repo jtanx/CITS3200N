@@ -12,12 +12,17 @@ from django.conf import global_settings
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+# openshift is our PAAS for now.
+ON_PAAS = 'OPENSHIFT_REPO_DIR' in os.environ
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'wa6_!@@8*zhm^yi2ox2y#c!9*dh#^1sxdvb02=0$sab$f8-&(c'
+if ON_PAAS:
+    SECRET_KEY = os.environ['OPENSHIFT_SECRET_TOKEN']
+else:
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = 'wa6_!@@8*zhm^yi2ox2y#c!9*dh#^1sxdvb02=0$sab$f8-&(c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -36,9 +41,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'api',
     'manager',
-    'rest_framework'
+    
 )
 
 MIDDLEWARE_CLASSES = (
@@ -96,6 +102,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+if ON_PAAS:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'wsgi','static')
 
 # List of finder classes that know how to find static files in
 # various locations.
