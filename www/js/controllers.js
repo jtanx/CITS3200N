@@ -26,9 +26,16 @@ angular.module('starter.controllers', [])
 
 .controller('ExAddCtrl', function($scope, $stateParams, Exercises) {
   $scope.submit = function(type, start, end, distance, exertion) {
-		Exercises.add(type, start, end, distance, exertion);
+		var todaydate = new Date();
+		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), start.substring(0,2), start.substring(3,5),0);
+		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
+		Exercises.add(type, startdate, enddate, distance, exertion);
 	};
-  $scope.types = Exercises.types();
+	$scope.attempted = false;
+	$scope.press = function() {
+		attempted = true;
+	};
+	$scope.types = Exercises.types();
 })
 
 .controller('ExerciseCtrl', function($scope, $stateParams, Exercises) {

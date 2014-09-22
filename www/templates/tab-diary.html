@@ -19,7 +19,10 @@
 	  <div ng-repeat="exercise in exercises">
       <a class="item item-icon-right" href="#/tab/diary/exercise/{{exercise.id}}">
         <i class="icon ion-ios7-arrow-right"></i>
-        {{exercise.distance + " km " + exercise.type.name}}
+        {{exercise.distance + " km " + exercise.type + " for " }}
+				{{exercise.end.getHours()-exercise.start.getHours()}} 
+		<span ng-if="exercise.end.getHours()-exercise.start.getHours() == 1">hr</span>
+		<span ng-if="exercise.end.getHours()-exercise.start.getHours() != 1">hrs</span>
       </a>
 	  </div>
     </div>

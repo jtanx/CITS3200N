@@ -1,12 +1,12 @@
 
-<ion-view title="Edit {{exercise.type.name}}">
+<ion-view title="Edit {{exercise.type}}">
   <ion-content has-header="true" padding="true">
   
-        <select ng-model="exercise.type" ng-options="type.name for type in types"></select><br>
+        <select ng-model="exercise.type" ng-options="type for type in types"></select><br>
 
-        <input type="date" ng-model="exercise.start">
+        <input type="datetime" ng-model="exercise.start">
 
-        <input type="date" ng-model="exercise.end">
+        <input type="datetime" ng-model="exercise.end">
 
 		<input type="number" min="0" min="50" ng-model="exercise.distance">
 		

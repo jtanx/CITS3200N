@@ -7,14 +7,15 @@
 <ion-view title="Add Exercise">
   <ion-content has-header="true" padding="true">
 	<form name="add">
-        <select required ng-model="type" ng-options="type.name for type in types" name="type"></select><br>
-		<div ng-if="add.type.$error.required" style="color:red;">enter field</div>
+        <select required ng-model="typechosen" ng-options="type for type in types" name="typechosen"></select><br>
+		<div ng-if="add.typechosen.$error.required" style="color:red;">enter field</div>
 		
-        <input required type="date" ng-model="start" name="start" />
+        <input required type="time" name="start" ng-model="start" />
 		<div ng-if="add.start.$error.required" style="color:red;">enter field</div>
 		
-        <input required type="date" ng-model="end" name="end" />
+        <input required type="time" name="end" ng-model="end" />
 		<div ng-if="add.end.$error.required" style="color:red;">enter field</div>
+		<div ng-if="end < start" style="color:red;">invalid time</div>
 		
 		<input required type="number" min="0" min="50" ng-model="distance" name="distance" />
 		<div ng-if="add.distance.$error.required" style="color:red;">enter field</div>
@@ -22,12 +23,14 @@
         <input required type="number" min="0" min="5" ng-model="exertion" name="exertion" />
 		<div ng-if="add.exertion.$error.required" style="color:red;">enter field</div>
    <a href="#/tab/diary">
-   <button ng-if="!add.type.$error.required && !add.start.$error.required
-				&& !add.end.$error.required && !add.exertion.$error.required && !add.distance.$error.required"
-				ng-click="submit(type, start, end, distance, exertion)"/>Add</button>
+   <button ng-if="!add.typechosen.$error.required && !add.start.$error.required
+				&& !add.end.$error.required && !add.exertion.$error.required && !add.distance.$error.required
+				&& end > start"
+				ng-click="submit(typechosen, start, end, distance, exertion)"/>Add</button>
    </a>
-   <button ng-if="add.type.$error.required || add.start.$error.required
-				|| add.end.$error.required || add.exertion.$error.required" />Add</button>
+   <button ng-if="add.typechosen.$error.required || add.start.$error.required
+				|| add.end.$error.required || add.exertion.$error.required
+				|| end < start" />Add</button>
 	</form>
   </ion-content>
 </ion-view>

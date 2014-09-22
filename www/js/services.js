@@ -58,7 +58,7 @@ angular.module('starter.services', [])
   ];
   
   var types = [ 
-	{name:'Run'} , {name:'Cycle'} , {name:'Swim'}
+	'Run', 'Cycle', 'Swim'
   ];
   
   var idcount = -1;
@@ -78,6 +78,7 @@ angular.module('starter.services', [])
 		idcount++;
       exercises.push({id: idcount, date: new Date(), type: type, 
 			start : start, end : end, distance : distance, exertion : exertion});
+			console.log(exercises[idcount]);
     },
 	remove: function(id) {
 		exercises.splice(id, 1);
