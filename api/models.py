@@ -75,7 +75,7 @@ class SurveyQuestion(models.Model):
                 raise ValueError("Not a valid choice.") #hurrr
         return entry
 
-    def choices(self):
+    def choicelist(self):
         if self.qtype != self.CHOICE or self.qtype != self.MULTICHOICE:
            raise ValueError("Cannot get choices for non-choice type question.")
         

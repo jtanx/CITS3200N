@@ -101,6 +101,10 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to='api.SurveyResponse', blank=True),
             preserve_default=True,
         ),
+        migrations.AlterUniqueTogether(
+            name='questionresponse',
+            unique_together=set([('rid', 'qid')]),
+        ),
         migrations.AddField(
             model_name='diary',
             name='dtype',
