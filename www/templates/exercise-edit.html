@@ -1,21 +1,33 @@
 
 <ion-view title="Edit {{exercise.type}}">
-  <ion-content has-header="true" padding="true">
-  
-        <select ng-model="exercise.type" ng-change="unsave()" ng-options="type for type in types"></select><br>
-
-        <input type="datetime" ng-change="unsave()" ng-model="exercise.start">
-
-        <input type="datetime" ng-change="unsave()" ng-model="exercise.end">
-
-		<input type="number" min="0" min="50" ng-change="unsave()" ng-model="exercise.distance">
+  <ion-content has-header="true" pediting="true">
+  <form name="edit">
+        <select required ng-model="typechosen" ng-options="type for type in types" name="typechosen"></select><br>
+		<div ng-if="edit.typechosen.$error.required" style="color:red;">enter field</div>
 		
-        <input type="number" min="0" min="5" ng-change="unsave()" ng-model="exercise.exertion">
-
-
+        <input required type="time" name="start" ng-model="start" />
+		<div ng-if="edit.start.$error.required" style="color:red;">enter field</div>
+		
+        <input required type="time" name="end" ng-model="end" />
+		<div ng-if="edit.end.$error.required" style="color:red;">enter field</div>
+		<div ng-if="end < start" style="color:red;">invalid time</div>
+		
+		<input required type="number" min="0" min="50" ng-model="distance" name="distance" />
+		<div ng-if="edit.distance.$error.required" style="color:red;">enter field</div>
+		
+        <input required type="number" min="0" min="5" ng-model="exertion" name="exertion" />
+		<div ng-if="edit.exertion.$error.required" style="color:red;">enter field</div>
    <a href="#/tab/diary">
-   <button ng-click="remove(exercise.id); unsave()"/>Delete</button>
+   
+   <button ng-if="!edit.typechosen.$error.required && !edit.start.$error.required
+				&& !edit.end.$error.required && !edit.exertion.$error.required && !edit.distance.$error.required
+				&& end > start"
+				ng-click="submit(typechosen, start, end, distance, exertion)"/>edit</button>
    </a>
+   <button ng-if="edit.typechosen.$error.required || edit.start.$error.required
+				|| edit.end.$error.required || edit.exertion.$error.required
+				|| end < start" />edit</button>
+	</form>
    
   
    

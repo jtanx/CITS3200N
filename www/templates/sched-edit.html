@@ -10,13 +10,15 @@
   <h1>time to edit</h1>
   
    Type:
-   <select ng-model="entry.name" ng-options="type.name for type in types"></select><br>
+   <select ng-model="newtype" ng-options="type.name for type in types"></select><br>
    Duration:
-   <input type="number" min="0" max="24" ng-model="entry.time" name="time" />
+   <input type="number" min="0" max="24" ng-model="newtime" name="time" />
    <a href="#/tab/schedule">
    <button ng-click="remove(entry.id)"/>Delete</button>
    </a>
-   
+   <a href="#/tab/schedule">
+   <button ng-click="edit(newtype, newtime)"/>Save</button>
+   </a>
    
   
    
