@@ -97,6 +97,7 @@ angular.module('starter.controllers', [])
   $scope.saved = Save.status();
   $scope.save = function() {
 		Save.save();
+		$scope.saved = Save.status();
   };
 })
 
