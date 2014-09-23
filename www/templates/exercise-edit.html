@@ -7,7 +7,6 @@
 		
         <input required type="time" name="start" ng-model="start" />
 		<div ng-if="edit.start.$error.required" style="color:red;">enter field</div>
-		
         <input required type="time" name="end" ng-model="end" />
 		<div ng-if="edit.end.$error.required" style="color:red;">enter field</div>
 		<div ng-if="end < start" style="color:red;">invalid time</div>

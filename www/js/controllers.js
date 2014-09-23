@@ -36,12 +36,27 @@ angular.module('starter.controllers', [])
 .controller('ExerciseCtrl', function($scope, $stateParams, Exercises, Save) {
   $scope.exercise = Exercises.get($stateParams.exId);
   $scope.typechosen = $scope.exercise.type;
-  $scope.start = $scope.exercise.start;
-  $scope.end = $scope.exercise.end;
+  
+  var starthours = $scope.exercise.start.getHours();
+	var startminutes = $scope.exercise.start.getMinutes();
+
+	if (starthours<10) starthours = "0" + starthours;
+	if (startminutes<10) startminutes = "0" + startminutes;
+  
+  $scope.start = starthours + ":" + startminutes;
+  
+  var endhours = $scope.exercise.end.getHours();
+	var endminutes = $scope.exercise.end.getMinutes();
+
+	if (endhours<10) endhours = "0" + endhours;
+	if (endminutes<10) endminutes = "0" + endminutes;
+  
+  $scope.end = endhours + ":" + endminutes;
+  
   $scope.distance = $scope.exercise.distance;
   $scope.exertion = $scope.exercise.exertion;
   $scope.submit = function(type, start, end, distance, exertion) {
-		var todaydate = new Date();
+		var todaydate = $scope.exercise.date;
 		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), start.substring(0,2), start.substring(3,5),0);
 		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
 		Exercises.edit($stateParams.exId, type, startdate, enddate, distance, exertion);
