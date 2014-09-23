@@ -69,15 +69,14 @@ angular.module('starter.controllers', [])
 .controller('statsCtrl', function($scope) {
 })
 
-.controller('settingsCtrl', function($scope, $ionicModal, Settings) {
-  $ionicModal.fromTemplateUrl('settings.html', {
-    scope: $scope,
-    animation: 'slide-in-up'
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-  $scope.firstname = Settings.lastname();
+.controller('settingsCtrl', function($scope, Settings, Save) {
+  $scope.firstname = Settings.firstname();
   $scope.lastname = Settings.lastname();
+  $scope.saved = Save.status();
+  $scope.save = function() {
+		Save.save();
+		$scope.saved = Save.status();
+  };
 })
 
 .controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises, Save) {

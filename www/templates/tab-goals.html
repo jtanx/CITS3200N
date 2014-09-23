@@ -1,16 +1,20 @@
-<ion-view title="Goals">
+<ion-view title="Settings">
 
-  <ion-content class="has-header padding">
-<body ng-controller="goalsCtrl">
- <form ng-submit="submit()">
-   Enter text and hit enter:
-   <input type="text" ng-model="text" name="text" />
-   <button ng-click="addTo(text)"/>submit</button>
-   
- </form>
-	<div ng-repeat="thing in things">
-	<p>{{thing.name}} {{thing.day}}</p>
-	</div>
-</body>
-  </ion-content>
+ <ion-nav-buttons side="right" ng-controller="settingsCtrl">
+    <button class="button button-icon" ng-click="save()" ng-class="{'ion-ios7-bookmarks':!saved, 'ion-ios7-bookmarks-outline':saved}">
+	</button>
+  </ion-nav-buttons>
+  
+  <ion-content class="padding">
+          <div class="list">
+            <label class="item item-input">
+              <span class="input-label">First Name</span>
+              <input ng-change="unsave()" ng-model="firstname" type="text">
+            </label>
+            <label class="item item-input">
+              <span class="input-label">Last Name</span>
+              <input ng-change="unsave()" ng-model="lastname" type="text">
+            </label>
+          </div>
+        </ion-content>
 </ion-view>

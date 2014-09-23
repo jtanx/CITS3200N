@@ -43,7 +43,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       views: {
         'tab-goals': {
           templateUrl: 'templates/tab-goals.html',
-          controller: 'goalsCtrl'
+          controller: 'settingsCtrl'
         }
       }
     })
