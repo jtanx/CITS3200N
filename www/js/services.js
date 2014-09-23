@@ -180,7 +180,11 @@ angular.module('starter.services', [])
           return entries[i];
         console.log("No entry found for this date.");
       }
-	  entries.push({date : new Date(), quality : '', start : new Date(2014,9,20,0,0,0,0), end : new Date(2014,9,20,0,0,0,0)});
+	  
+	  var d = new Date();
+	  d.setDate(d.getDate() - 1);
+	  d.setHours(d.getDate() - 9);
+	  entries.push({date : new Date(), quality : '', start : d, end : new Date()});
     },
 	diff: function(day) {
       for (var i = 0; i < entries.length; i++) {
