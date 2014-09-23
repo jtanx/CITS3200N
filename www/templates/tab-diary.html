@@ -1,7 +1,14 @@
+<!--
+link to the font-awesome style sheet, which is needed to use the floppy disc icon for the save button
+-->
+<head>
+	<link rel="stylesheet" type="text/css" href="/css/font-awesome-4.2.0/css/font-awesome.min.css">
+</head>
+
 <ion-view title="Diary">
 
   <ion-nav-buttons side="right" ng-controller="diaryCtrl">
-    <button class="button button-icon" ng-click="save()" ng-class="{'ion-ios7-bookmarks':!saved, 'ion-ios7-bookmarks-outline':saved}">
+    <button ng-disabled="saved" class="button button-icon fa fa-floppy-o" ng-click="save()">
 	</button>
   </ion-nav-buttons>
 
