@@ -35,6 +35,17 @@ angular.module('starter.controllers', [])
 
 .controller('ExerciseCtrl', function($scope, $stateParams, Exercises, Save) {
   $scope.exercise = Exercises.get($stateParams.exId);
+  $scope.typechosen = $scope.exercise.type;
+  $scope.start = $scope.exercise.start;
+  $scope.end = $scope.exercise.end;
+  $scope.distance = $scope.exercise.distance;
+  $scope.exertion = $scope.exercise.exertion;
+  $scope.submit = function(type, start, end, distance, exertion) {
+		var todaydate = new Date();
+		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), start.substring(0,2), start.substring(3,5),0);
+		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
+		Exercises.edit($stateParams.exId, type, startdate, enddate, distance, exertion);
+	};
   $scope.remove = function(id) {
 		Exercises.remove(id);
 	};

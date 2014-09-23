@@ -54,15 +54,13 @@ angular.module('starter.services', [])
     },
 	remove: function(id) {
 		entries.splice(this.indexOf(id), 1);
-		idcount--;
     }
   }
 })
 
 .factory('Exercises', function() {
 
-  var exercises = [
-  ];
+  var exercises = [];
   
   var types = [ 
 	'Run', 'Cycle', 'Swim'
@@ -79,20 +77,25 @@ angular.module('starter.services', [])
     },
 	get: function(exId) {
       // Simple index lookup
-      return exercises[exId];
+      return exercises[this.indexOf(exId)];
     },
 	add: function(type, start, end, distance, exertion) {
 		idcount++;
       exercises.push({id: idcount, date: new Date(), type: type, 
 			start : start, end : end, distance : distance, exertion : exertion});
-			console.log(exercises[idcount]);
     },
+	edit: function(id, type, start, end, distance, exertion) {
+      exercises[this.indexOf(id)] = ({id: id, date: exercises[this.indexOf(id)].date, type: type, 
+			start : start, end : end, distance : distance, exertion : exertion});
+    },
+	indexOf: function(exerciseId) {
+		for(var i = 0; i < exercises.length; i++){
+		if(exercises[i].id == exerciseId)
+			return i;
+	  }
+	},
 	remove: function(id) {
-		exercises.splice(id, 1);
-		for(var i = id; i < exercises.length; i++){
-			exercises[i].id = i;
-		}
-		idcount--;
+		exercises.splice(this.indexOf(id), 1);
     },
   }
 })
