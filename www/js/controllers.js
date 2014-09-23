@@ -85,13 +85,17 @@ angular.module('starter.controllers', [])
 .controller('statsCtrl', function($scope) {
 })
 
-.controller('settingsCtrl', function($scope, Settings, Save) {
+.controller('settingsCtrl', function($scope, Settings) {
   $scope.firstname = Settings.firstname();
   $scope.lastname = Settings.lastname();
-  $scope.saved = Save.status();
+  $scope.saved = Settings.status();
+  $scope.unsave = function(){
+		Settings.unsave();
+		$scope.saved = Settings.status();
+  };
   $scope.save = function() {
-		Save.save();
-		$scope.saved = Save.status();
+		Settings.save($scope.firstname, $scope.lastname);
+		$scope.saved = Settings.status();
   };
 })
 
