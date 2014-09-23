@@ -1,0 +1,54 @@
+{% extends "mg-base.html" %}
+{% with paginate_view='manager:surveylist' %}
+
+{% block main %}
+<div class="page-header clearfix">
+<h1 class="pull-left">{{survey.name}} responses
+</h1>
+<div class="pull-right right-group">
+<h4 class="pull-right right-group">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</h4>
+</div>
+</div>
+{% if responses %}
+
+<div class="table-responsive">
+  {% include 'mg-paginate.html' %}
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Response ID</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Survey date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for response in responses %}
+      <tr>
+        <td>
+          <a href="{# url 'manager:user_detail' pk=user.id #}">
+          {{response.creator.id}}
+          </a>
+        </td>
+        <td>
+          {{response.id}}
+        </td>
+        <td>{{response.creator.username}}</td>
+        <td>{{response.creator.first_name}}</td>
+        <td>{{response.creator.last_name}}</td>
+        <td>{{response.created}}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% include 'mg-paginate.html' %}
+</div>
+{% else %}
+<p>There are no responses.</p>
+{% endif %}
+
+{% endblock %}
+
+{% endwith %}

@@ -220,3 +220,28 @@ class PersonalDetailsView(SuperMixin, UpdateView):
     
     def get_object(self):
         return self.request.user
+        
+    
+class SurveyListView(SuperMixin, ListView):
+    model = SurveyResponse
+    template_name = 'mg-responselist.html'
+    context_object_name = 'responses'
+    paginate_by = 15 #15 members per page
+    error_message = "That survey doesn't exist"
+    error_url = reverse_lazy('manager:index')
+
+    def get_queryset(self):
+        return SurveyResponse.objects.filter(survey__id = self.kwargs['pk']).\
+                              order_by('created')
+        
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(self.__class__, self).get_context_data(**kwargs)
+        print(self.kwargs['pk'])
+        try:
+            survey = Survey.objects.get(pk=self.kwargs['pk'])
+        except AttributeError:
+            raise Http404
+        
+        context['survey'] = survey
+        return context

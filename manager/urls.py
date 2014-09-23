@@ -14,4 +14,5 @@ urlpatterns = patterns('manager.views',
     url(r'^user/delete/(?P<pk>\d+)$', views.UserDeleteView.as_view(),
         name='user_delete'),
     url(r'^user/add$', views.UserCreateView.as_view(), name='user_add'),
+    url(r'^surveys/(?P<pk>\d+)$', views.SurveyListView.as_view(), name='response_list')
 )
