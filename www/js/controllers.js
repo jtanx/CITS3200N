@@ -48,7 +48,12 @@ angular.module('starter.controllers', [])
   $scope.remove = function(id) {
 		Days.remove(id);
 	};
+	$scope.edit = function(type, time) {
+		Days.edit($stateParams.entryId, type, time);
+	}
   $scope.types = Days.types();
+  $scope.newtype = $scope.entry.name;
+  $scope.newtime = $scope.entry.time;
   $scope.firsttype = $scope.types[0];
 })
 

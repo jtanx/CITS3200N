@@ -31,9 +31,19 @@ angular.module('starter.services', [])
     },
 	getex: function(entryId) {
       // Simple index lookup
-      return entries[entryId];
-	  
-    },
+      return entries[this.indexOf(entryId)];
+	 },
+	indexOf: function(entryindex) {
+		for(var i = 0; i < entries.length; i++){
+		if(entries[i].id == entryindex)
+			return i;
+	  }
+	},
+	edit: function (id, type, time) {
+		var index = this.indexOf(id);
+		entries[index] = {id: id, name: type, day: entries[index].day, 
+						time: time};
+	},
 	allentries: function() {
       return entries;
     },
@@ -43,10 +53,7 @@ angular.module('starter.services', [])
 						time: time});
     },
 	remove: function(id) {
-		entries.splice(id, 1);
-		for(var i = id; id < entries.length; i++){
-			entries[i].id = i;
-		}
+		entries.splice(this.indexOf(id), 1);
 		idcount--;
     }
   }
