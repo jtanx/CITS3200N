@@ -28,9 +28,9 @@ angular.module('starter.controllers', [])
 		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), start.substring(0,2), start.substring(3,5),0);
 		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
 		Exercises.add(type, startdate, enddate, distance, exertion);
+		$scope.unsave = Save.unsave();
 	};
 	$scope.types = Exercises.types();
-	$scope.unsave = Save.unsave();
 })
 
 .controller('ExerciseCtrl', function($scope, $stateParams, Exercises, Save) {
@@ -60,13 +60,15 @@ angular.module('starter.controllers', [])
 		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), start.substring(0,2), start.substring(3,5),0);
 		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
 		Exercises.edit($stateParams.exId, type, startdate, enddate, distance, exertion);
+		Save.unsave();
 	};
   $scope.remove = function(id) {
 		Exercises.remove(id);
+		Save.unsave();
 	};
   
   $scope.types = Exercises.types();
-  $scope.unsave = Save.unsave();
+  
 })
 
 .controller('SchedEditCtrl', function($scope, $stateParams, Days) {

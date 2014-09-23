@@ -17,11 +17,12 @@
         <input required type="number" min="0" min="5" ng-model="exertion" name="exertion" />
 		<div ng-if="edit.exertion.$error.required" style="color:red;">enter field</div>
    <a href="#/tab/diary">
-   
+   <button 	ng-click="remove(exercise.id)"/>Delete</button>
+   </a>
    <button ng-if="!edit.typechosen.$error.required && !edit.start.$error.required
 				&& !edit.end.$error.required && !edit.exertion.$error.required && !edit.distance.$error.required
 				&& end > start"
-				ng-click="submit(typechosen, start, end, distance, exertion)"/>edit</button>
+				ng-click="submit(typechosen, start, end, distance, exertion)"/>Edit</button>
    </a>
    <button ng-if="edit.typechosen.$error.required || edit.start.$error.required
 				|| edit.end.$error.required || edit.exertion.$error.required
