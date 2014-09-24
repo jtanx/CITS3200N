@@ -245,3 +245,4 @@ class SurveyListView(SuperMixin, ListView):
         
         context['survey'] = survey
         return context
+       

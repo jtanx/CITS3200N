@@ -27,7 +27,7 @@ class Survey(models.Model):
 
     def questions(self):
         if self.id:
-            return SurveyQuestion.objects.filter(parent = self)
+            return SurveyQuestion.objects.filter(parent = self).order_by('number')
         return None
 
     def __unicode__(self):
