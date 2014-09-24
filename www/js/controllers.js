@@ -86,7 +86,8 @@ angular.module('starter.controllers', [])
 })
 
 .controller('mentaltestCtrl', function($scope, Questions, Answers) {
-  $scope.questions = Questions.all();
+ $scope.completed = Answers.completed();
+ $scope.questions = Questions.all();
   $scope.options = Answers.options();
   $scope.answer = function(question, option) {
     $scope.$broadcast('slideBox.nextSlide');
@@ -95,8 +96,9 @@ angular.module('starter.controllers', [])
   $scope.testanswers = Answers.all();
   $scope.submit = function() {
 	Answers.submit();
+	$scope.completed = Answers.completed();
   };
-  $scope.completed = Answers.completed();
+  
 })
 
 .controller('statsCtrl', function($scope) {
