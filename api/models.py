@@ -23,7 +23,7 @@ class Diary(models.Model):
     
 class Survey(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, blank=True)
 
     def questions(self):
         if self.id:

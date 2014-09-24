@@ -9,6 +9,8 @@ def add_users(apps, schema_editor):
     su = User.objects.create_superuser('admin', 'admin@no.no', 'admin')
     su.save()
     test = User.objects.create_user('test', 'test@no.no', 'test')
+    test.first_name = "Test"
+    test.last_name = "User"
     test.save()
     
 def add_fixtures(apps, schema_editor):

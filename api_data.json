@@ -1,35 +1,35 @@
 [
 {
-    "pk": 1, 
-    "model": "api.diarytype", 
     "fields": {
-        "name": "Breakfast", 
+        "name": "Breakfast",
         "description": "What did you have for breakfast?"
-    }
+    },
+    "model": "api.diarytype",
+    "pk": 1
 },
 {
-    "pk": 2, 
-    "model": "api.diarytype", 
     "fields": {
-        "name": "Lunch", 
+        "name": "Lunch",
         "description": "What did you have for lunch?"
-    }
+    },
+    "model": "api.diarytype",
+    "pk": 2
 },
 {
-    "pk": 3, 
-    "model": "api.diarytype", 
     "fields": {
-        "name": "Dinner", 
+        "name": "Dinner",
         "description": "What did you have for dinner?"
-    }
+    },
+    "model": "api.diarytype",
+    "pk": 3
 },
 {
-    "pk": 4, 
-    "model": "api.diarytype", 
     "fields": {
-        "name": "Midnight snack", 
+        "name": "Midnight snack",
         "description": "What were you snacking on?"
-    }
+    },
+    "model": "api.diarytype",
+    "pk": 4
 },
 {
     "fields": {
@@ -38,6 +38,30 @@
     },
     "model": "api.survey",
     "pk": 1
+},
+{
+    "fields": {
+        "name": "Sleep quality",
+        "description": ""
+    },
+    "model": "api.survey",
+    "pk": 2
+},
+{
+    "fields": {
+        "name": "Training volume",
+        "description": ""
+    },
+    "model": "api.survey",
+    "pk": 3
+},
+{
+    "fields": {
+        "name": "Meal diary",
+        "description": "What did you have for this meal?"
+    },
+    "model": "api.survey",
+    "pk": 4
 },
 {
     "fields": {
@@ -302,5 +326,89 @@
     },
     "model": "api.surveyquestion",
     "pk": 22
+},
+{
+    "fields": {
+        "description": "How long did you sleep for?",
+        "parent": 2,
+        "required": true,
+        "number": 1,
+        "choices": "",
+        "qtype": "INT"
+    },
+    "model": "api.surveyquestion",
+    "pk": 23
+},
+{
+    "fields": {
+        "description": "What was the sleep quality?",
+        "parent": 2,
+        "required": true,
+        "number": 2,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 24
+},
+{
+    "fields": {
+        "description": "Training type",
+        "parent": 3,
+        "required": true,
+        "number": 1,
+        "choices": "Cycle;Running;Swimming",
+        "qtype": "CHC"
+    },
+    "model": "api.surveyquestion",
+    "pk": 25
+},
+{
+    "fields": {
+        "description": "Number of hours",
+        "parent": 3,
+        "required": true,
+        "number": 2,
+        "choices": "",
+        "qtype": "INT"
+    },
+    "model": "api.surveyquestion",
+    "pk": 26
+},
+{
+    "fields": {
+        "description": "Perceived training intensity",
+        "parent": 3,
+        "required": true,
+        "number": 3,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 27
+},
+{
+    "fields": {
+        "description": "Meal time",
+        "parent": 4,
+        "required": true,
+        "number": 1,
+        "choices": "Breakfast;Lunch;Dinner",
+        "qtype": "CHC"
+    },
+    "model": "api.surveyquestion",
+    "pk": 28
+},
+{
+    "fields": {
+        "description": "Meal description",
+        "parent": 4,
+        "required": true,
+        "number": 2,
+        "choices": "",
+        "qtype": "TXT"
+    },
+    "model": "api.surveyquestion",
+    "pk": 29
 }
 ]
