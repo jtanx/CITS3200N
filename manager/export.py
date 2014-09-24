@@ -1,14 +1,16 @@
 from api.models import *
+from django.http import HttpResponse
 import tablib 
 import tablib.packages.xlwt as xl
 
-def export_all():
-    pass
+def export_all(request, pk):
+    ret = export_survey(SurveyResponse.objects.filter(survey__id = pk))
+    return HttpResponse(ret.xlsx, content_type='application/octet-stream')
     
-def export_for_user():
+def export_for_user(request, pk1, pk2):
     pass
 
-def export_survey(responses=None, format='csv'):
+def export_survey(responses, format='csv'):
     '''responses: QuerySet of survey responses'''
     if not responses.exists():
         return None
@@ -40,6 +42,4 @@ def export_survey(responses=None, format='csv'):
                 expmap[q.qid.number].append(q.entry)
     
     data = tablib.Dataset(*data, headers=headers)
-    with open('test.xlsx', 'wb') as fp:
-        fp.write(data.xlsx)
-    print(data.csv)
+    return data
