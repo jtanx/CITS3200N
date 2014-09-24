@@ -85,14 +85,15 @@ angular.module('starter.controllers', [])
   $scope.firsttype = $scope.types[0];
 })
 
-.controller('mentaltestCtrl', function($scope, Questions, Answers) {
+.controller('mentaltestCtrl', function($scope, $ionicSlideBoxDelegate, Questions, Answers) {
 	$scope.completed = Answers.completed();
 	$scope.questions = Questions.all();
 	$scope.options = Answers.options();
 	$scope.answer = function(question, option) {
-    $scope.$broadcast('slideBox.nextSlide');
-	Answers.answer(question, option);
-  };
+		Answers.answer(question, option);
+		$ionicSlideBoxDelegate.update();
+		$ionicSlideBoxDelegate.next();
+	};
   $scope.testanswers = Answers.all();
   $scope.submit = function() {
 	Answers.submit();

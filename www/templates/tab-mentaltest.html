@@ -7,8 +7,8 @@
     </h5>
   <ion-slide-box show-pager="false">
     
-      <ion-slide ng-repeat="question in questions" type="item-text-wrap">
-		
+	
+      <ion-slide  ng-repeat="question in questions" type="item-text-wrap">
 		
 		 <div class="list card">
       <div class="item item-divider">
@@ -30,16 +30,19 @@
 		</div>
 	  </label>
 		</div>
-		</ion-slide>
-	</ion-slide-box>
-	<button class="button button-full button-positive" ng-click="submit()">
+		<button ng-if="question.id == 22 && testanswers[question.id-1] != null" class="button button-full button-positive" ng-click="submit()">
 				Submit
 		</button>
-	
-
-	<div ng-if="completed">
-		completed
+		</ion-slide>
+		
+	</ion-slide-box>
 	</div>
-
-</ion-content> 
+	<div class="card" ng-if="completed" align="center">
+		<div class="item item-text-wrap">
+			
+			Completed
+		</div>
+	</div>
+	
+</ion-content > 
 </ion-view>
