@@ -86,10 +86,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('mentaltestCtrl', function($scope, Questions, Answers) {
- $scope.completed = Answers.completed();
- $scope.questions = Questions.all();
-  $scope.options = Answers.options();
-  $scope.answer = function(question, option) {
+	$scope.completed = Answers.completed();
+	$scope.questions = Questions.all();
+	$scope.options = Answers.options();
+	$scope.answer = function(question, option) {
     $scope.$broadcast('slideBox.nextSlide');
 	Answers.answer(question, option);
   };

@@ -5,36 +5,38 @@
   <h5 align="center"  class="title">
     In the past 24 hours, how often have you felt...
     </h5>
-  <ion-slide-box>
+  <ion-slide-box show-pager="false">
     
       <ion-slide ng-repeat="question in questions" type="item-text-wrap">
 		
-		<div class="questionbox">
 		
 		 <div class="list card">
       <div class="item item-divider">
         {{(question.id) + ". " + question.name}}
       </div>
       <label class="item item-radio" ng-repeat="option in options" ng-click="answer(question.id,option.id)">
-	    <input type="radio" name="group">
+	    <div ng-if="testanswers[question.id-1] != option.id">
+		<input type="radio" name="group">
         <div class="item-content">
           {{option.name}}
-		<p ng-if="testanswers[question.id-1] == option.id">selected</p>
         </div>
-        <i ng-if="testanswers[question.id-1] == option.id" class="radio-icon ion-checkmark"></i>
-      </label>
+		</input>
 		</div>
-		
-		<div ng-class="{invisible: '{{question.id}}' != '22'}">
-		<a ng-click="submit()"><button>
-		Submit
-		</button></a>
+	  <div class="item item-icon-right" ng-if="testanswers[question.id-1] == option.id" style="background-color:#F7F7F7;">
+			<span style="background-color:#F7F7F7;">
+          {{option.name}}
+			</span>
+			<i class="icon ion-checkmark"></i>
 		</div>
+	  </label>
 		</div>
 		</ion-slide>
-    
 	</ion-slide-box>
-	</div>
+	<button class="button button-full button-positive" ng-click="submit()">
+				Submit
+		</button>
+	
+
 	<div ng-if="completed">
 		completed
 	</div>
