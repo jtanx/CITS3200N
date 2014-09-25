@@ -246,11 +246,15 @@ angular.module('starter.services', [])
 	answer: function(question, option) {
 		answers[question-1] = option;
 	},
+	answered: function () {
+		var count = 0;
+		for(var answer in answers){
+			count++
+		};
+		return count
+	},
 	submit: function () {
-		if(answers.length == 22) {
 		days.push(new Date());
-		console.log(answers);
-		}
 	},
 	completed: function () {
 		var d = new Date();

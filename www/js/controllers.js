@@ -96,8 +96,10 @@ angular.module('starter.controllers', [])
 	};
   $scope.testanswers = Answers.all();
   $scope.submit = function() {
+	if(Answers.answered() == 22){
 	Answers.submit();
 	$scope.completed = Answers.completed();
+	}
   };
   
 })
