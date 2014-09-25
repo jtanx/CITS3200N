@@ -60,7 +60,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     
 
     .state('tab.sleep-detail',  {
-      url: '/diary/sleep/:date',
+      url: '/diary/sleep/add',
       views: {
         'tab-diary' : {
           templateUrl: 'templates/sleep-detail.html',

@@ -14,10 +14,11 @@
    Duration:
    <input type="number" min="0" max="24" ng-model="newtime" name="time" />
 
-   
+   <ion-nav-buttons side="right">
    <a href="#/tab/schedule">
-   <button ng-click="edit(newtype, newtime)"/>Save</button>
+   <button class="button button-icon" ng-click="edit(newtype, newtime)"/>Save</button>
    </a>
+   </ion-nav-buttons>
    
    <a href="#/tab/schedule">
   <button class="button button-full button-assertive" ng-click="remove(entry.id)"/>Delete</button>

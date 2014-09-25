@@ -127,14 +127,14 @@ angular.module('starter.controllers', [])
   $scope.todaytext = Date().slice(0, 10);
   $scope.types = Meals.types();
   $scope.meals = Meals.today(new Date());
-  $scope.sleep = SleepEntries.get(new Date());
-  $scope.diff = SleepEntries.diff(new Date());
   $scope.exercises = Exercises.all();
   $scope.saved = Save.status();
   $scope.save = function() {
 		Save.save();
 		$scope.saved = Save.status();
   };
+  $scope.added = SleepEntries.added();
+  $scope.diff = SleepEntries.diff();
 })
 
 .controller('MealDetailCtrl', function($scope, $stateParams, Meals, Save) {
@@ -143,6 +143,16 @@ angular.module('starter.controllers', [])
 })
 
 .controller('SleepDetailCtrl', function($scope, $stateParams, SleepEntries, Save) {
-  $scope.sleep = SleepEntries.get(new Date($stateParams.date));
-  $scope.unsave = Save.unsave();
+	$scope.submit = function(start,end,quality){
+		var todaydate = new Date();
+		var date = todaydate.getDate();
+		if(start.substring(0,2) >= 12){date--;}
+		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), date, start.substring(0,2), start.substring(3,5),0);
+		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
+		if(startdate < enddate){
+				SleepEntries.add(startdate, enddate, quality);
+		} else {$scope.timeerror = true;}
+	};
 })
+
+

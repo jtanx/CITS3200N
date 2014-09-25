@@ -174,28 +174,25 @@ angular.module('starter.services', [])
     all: function() {
       return entries;
     },
-    get: function(day) {
-      for (var i = 0; i < entries.length; i++) {
-        if (entries[i].date.getDate() == day.getDate())
-          return entries[i];
-        console.log("No entry found for this date.");
-      }
-	  
-	  var d = new Date();
-	  d.setDate(d.getDate() - 1);
-	  d.setHours(d.getDate() - 9);
-	  entries.push({date : new Date(), quality : '', start : d, end : new Date()});
-    },
-	diff: function(day) {
-      for (var i = 0; i < entries.length; i++) {
-        if (entries[i].date.getDate() == day.getDate()){
-			return Math.floor((entries[i].end - entries[i].start) / 1800000) / 2;
+    add: function(startdate, enddate, quality){
+		entries.push({date:new Date(), start:startdate, end:enddate, quality:quality});
+	},
+	added: function(){
+		for(var i = 0; i<entries.length;i++){
+			if(entries[i].date.getDate() == new Date().getDate()){return true;}
 		}
-        console.log("No entry found for this date.");
-      }
-	  return entries.length;
-	  
-    }
+		return false;
+	},
+	diff: function(){
+		for(var i = 0; i<entries.length;i++){
+			if(entries[i].date.getDate() == new Date().getDate()){
+			console.log(entries[i].end);
+			console.log(entries[i].start);
+			return (entries[i].end - entries[i].start)/3600000;
+			}
+		}
+		return 0;
+	}
   }
 })
 

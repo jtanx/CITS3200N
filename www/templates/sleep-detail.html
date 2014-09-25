@@ -6,27 +6,34 @@
 -->
 <ion-view title="Sleep for {{sleep.date.toDateString()}}">
   <ion-content has-header="true" padding="true">
-    <ion-list>   
-      <ion-item class="item-input">
-        <span class="input-label">Start</span>
-        <input type="datetime" ng-change="unsave()" ng-model="sleep.start">
-      </ion-item>
-      
-      <ion-item class="item-input">
-        <span class="input-label">End</span>
-        <input type="datetime" ng-change="unsave()" ng-model="sleep.end">
-      </ion-item>
-      
-      <ion-item class="item-input">
-        <span class="input-label">Sleep Quality</span>
-        <select>
+    <form name="add">
+        Start
+        <input type="time" name="start" ng-model="start" required>
+		<div ng-if="add.start.$error.required" style="color:red;">enter field</div>
+		
+	
+        End
+        <input type="time" name="end" ng-model="end" required>
+		<div ng-if="add.end.$error.required" style="color:red;">enter field</div>
+		
+        <div>Sleep Quality</div>
+        <select required ng-model="quality" name="quality">
 			<option value="1">Poor</option>
 			<option value="2">Fair</option>
 			<option value="3">Average</option>
 			<option value="4">Good</option>
 			<option value="5">Excellent</option>
 		</select>
-      </ion-item>
-    </ion-list>
+		<div ng-if="add.quality.$error.required" style="color:red;">enter field</div>
+		
+		<ion-nav-buttons side="right">
+			<a href="#/tab/diary">
+				<button class="button button-icon" ng-disabled="add.start.$error.required || 
+				add.end.$error.required || add.quality.$error.required" 
+				ng-click="submit(start,end,quality)" />Add</button>
+			</a>
+		</ion-nav-buttons>
+		
+    </form>
   </ion-content>
 </ion-view>
