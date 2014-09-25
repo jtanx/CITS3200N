@@ -22,15 +22,14 @@
 		
         <input required type="number" min="0" min="5" ng-model="exertion" name="exertion" />
 		<div ng-if="add.exertion.$error.required" style="color:red;">enter field</div>
+   
+   <ion-nav-buttons side="right">
    <a href="#/tab/diary">
-   <button ng-if="!add.typechosen.$error.required && !add.start.$error.required
-				&& !add.end.$error.required && !add.exertion.$error.required && !add.distance.$error.required
-				&& end > start"
-				ng-click="submit(typechosen, start, end, distance, exertion)"/>Add</button>
-   </a>
-   <button ng-if="add.typechosen.$error.required || add.start.$error.required
-				|| add.end.$error.required || add.exertion.$error.required
-				|| end < start" />Add</button>
+   <button class="button button-icon" ng-disabled="add.typechosen.$error.required || 
+			add.start.$error.required || add.end.$error.required || add.exertion.$error.required
+			|| end < start" ng-click="submit(typechosen, start, end, distance, exertion)"/>Add</button>
+	</a>
+	</ion-nav-buttons>
 	</form>
   </ion-content>
 </ion-view>

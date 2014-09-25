@@ -19,14 +19,15 @@
    <a href="#/tab/diary">
    <button 	ng-click="remove(exercise.id)"/>Delete</button>
    </a>
-   <button ng-if="!edit.typechosen.$error.required && !edit.start.$error.required
-				&& !edit.end.$error.required && !edit.exertion.$error.required && !edit.distance.$error.required
-				&& end > start"
-				ng-click="submit(typechosen, start, end, distance, exertion)"/>Edit</button>
+   
+   <ion-nav-buttons side="right">
+   <a href="#/tab/diary">
+   <button ng-disabled="edit.typechosen.$error.required || 
+		edit.start.$error.required || edit.end.$error.required || edit.exertion.$error.required 
+		|| end < start" class="button button-icon"  ng-click="submit(typechosen, start, end, distance, exertion)"/>Done</button>
    </a>
-   <button ng-if="edit.typechosen.$error.required || edit.start.$error.required
-				|| edit.end.$error.required || edit.exertion.$error.required
-				|| end < start" />edit</button>
+   </ion-nav-buttons>
+   
 	</form>
    
   

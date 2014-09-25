@@ -152,6 +152,22 @@ angular.module('starter.controllers', [])
 		if(startdate < enddate){
 				SleepEntries.add(startdate, enddate, quality);
 		} else {$scope.timeerror = true;}
+		Save.unsave();
+	};
+})
+
+.controller('SleepEditCtrl', function($scope, $stateParams, SleepEntries, Save) {
+	
+	$scope.submit = function(start,end,quality){
+		var todaydate = new Date();
+		var date = todaydate.getDate();
+		if(start.substring(0,2) >= 12){date--;}
+		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), date, start.substring(0,2), start.substring(3,5),0);
+		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
+		if(startdate < enddate){
+				SleepEntries.add(startdate, enddate, quality);
+		} else {$scope.timeerror = true;}
+		Save.unsave();
 	};
 })
 

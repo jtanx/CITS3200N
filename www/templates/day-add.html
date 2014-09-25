@@ -10,7 +10,6 @@
   <ion-content has-header="true" padding="true">
   
   <form name="add">
-  <ion-list> 
 
      Type:
    <select required ng-model="text" ng-options="type.name for type in types" name="type"></select><br>
@@ -21,7 +20,6 @@
 	<div ng-if="add.time.$error.required" style="color:red;">enter field</div>
 	<div ng-if="add.time.$error.min || add.time.$error.max" style="color:red;">invalid</div>
 
-   </ion-list> 
    
    <ion-nav-buttons side="right">
 	<a href="#/tab/schedule">

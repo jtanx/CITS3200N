@@ -186,9 +186,7 @@ angular.module('starter.services', [])
 	diff: function(){
 		for(var i = 0; i<entries.length;i++){
 			if(entries[i].date.getDate() == new Date().getDate()){
-			console.log(entries[i].end);
-			console.log(entries[i].start);
-			return (entries[i].end - entries[i].start)/3600000;
+				return (entries[i].end - entries[i].start)/3600000;
 			}
 		}
 		return 0;
