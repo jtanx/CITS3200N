@@ -291,7 +291,6 @@ angular.module('starter.services', [])
 	edit: function(first, last) {
         firstname = first;
 		lastname = last;
-		console.log(firstname);
 	}
     };
 });

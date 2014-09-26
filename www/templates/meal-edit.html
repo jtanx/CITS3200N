@@ -2,15 +2,16 @@
 <ion-view title="Edit {{type}}">
   <ion-content has-header="true" padding="true">
     <form name="add">
-	
+		
+		<label ng-disabled="signedin" class="item item-input">
         <input type="text" required name="text" ng-model="text">
-		<div ng-if="add.text.$error.required" style="color:red;">enter field</div>
+		</label>
 	
 	<ion-nav-buttons side="right">
-   <a href="#/tab/diary">
+
    <button class="button button-icon" ng-disabled="add.text.$error.required"
    ng-click="submit(text)"/>Done</button>
-	</a>
+
 	</ion-nav-buttons>
 	</form>
 	

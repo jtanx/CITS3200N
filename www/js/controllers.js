@@ -152,12 +152,13 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('MealEditCtrl', function($scope, $stateParams, Meals, Save) {
+.controller('MealEditCtrl', function($scope, $location, $stateParams, Meals, Save) {
   $scope.text = Meals.get($stateParams.type).text;
   $scope.type = $stateParams.type;
   $scope.submit = function(text){
 		Meals.edit($stateParams.type, text);
 		Save.unsave();
+		$location.path('#/tab/diary');
   };
 })
 
