@@ -69,6 +69,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       }
     })
 	
+	.state('tab.sleep-edit',  {
+      url: '/diary/sleep/edit',
+      views: {
+        'tab-diary' : {
+          templateUrl: 'templates/sleep-edit.html',
+          controller: 'SleepEditCtrl'
+        }
+      }
+    })
+	
 	.state('tab.exercise-add',  {
       url: '/diary/exercise/add',
       views: {

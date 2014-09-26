@@ -125,6 +125,7 @@ angular.module('starter.controllers', [])
   //http://stackoverflow.com/questions/3552461/how-to-format-javascript-date
   $scope.today = new Date().toISOString().slice(0, 10);
   $scope.todaytext = Date().slice(0, 10);
+  $scope.diff = SleepEntries.diff();
   $scope.types = Meals.types();
   $scope.meals = Meals.today(new Date());
   $scope.exercises = Exercises.all();
@@ -134,7 +135,6 @@ angular.module('starter.controllers', [])
 		$scope.saved = Save.status();
   };
   $scope.added = SleepEntries.added();
-  $scope.diff = SleepEntries.diff();
 })
 
 .controller('MealDetailCtrl', function($scope, $stateParams, Meals, Save) {
@@ -156,8 +156,26 @@ angular.module('starter.controllers', [])
 	};
 })
 
-.controller('SleepEditCtrl', function($scope, $stateParams, SleepEntries, Save) {
+.controller('SleepEditCtrl', function($scope, $rootScope, $stateParams, SleepEntries, Save) {
+	$scope.entry = SleepEntries.get();
 	
+	var starthours = $scope.entry.start.getHours();
+	var startminutes = $scope.entry.start.getMinutes();
+
+	if (starthours<10) starthours = "0" + starthours;
+	if (startminutes<10) startminutes = "0" + startminutes;
+  
+  $scope.start = starthours + ":" + startminutes;
+  
+  var endhours = $scope.entry.end.getHours();
+	var endminutes = $scope.entry.end.getMinutes();
+
+	if (endhours<10) endhours = "0" + endhours;
+	if (endminutes<10) endminutes = "0" + endminutes;
+  
+  $scope.end = endhours + ":" + endminutes;
+	
+	$scope.quality = $scope.entry.quality;
 	$scope.submit = function(start,end,quality){
 		var todaydate = new Date();
 		var date = todaydate.getDate();

@@ -183,6 +183,9 @@ angular.module('starter.services', [])
 		}
 		return false;
 	},
+	get: function(){
+		return entries[entries.length-1];
+	},
 	diff: function(){
 		for(var i = 0; i<entries.length;i++){
 			if(entries[i].date.getDate() == new Date().getDate()){
