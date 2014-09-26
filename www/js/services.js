@@ -276,27 +276,22 @@ angular.module('starter.services', [])
 
 .factory('Settings', function() {
     
-	var firstname = 'hi';
-	var lastname = 'there';
-    var saved = true;
+	var firstname = '';
+	var lastname = '';
 	
     return {
       firstname: function() {
-        return firstname;
+		var tempfirst = firstname;
+        return tempfirst;
       },
       lastname: function() {
-        return lastname;
+        var templast = lastname;
+        return templast;
 	},
-	save: function(first, last) {
-		firstname = first;
+	edit: function(first, last) {
+        firstname = first;
 		lastname = last;
-		saved = true;
-	},
-	unsave: function() {
-		saved = false;
-	},
-	status: function() {
-		return saved;
+		console.log(firstname);
 	}
     };
 });

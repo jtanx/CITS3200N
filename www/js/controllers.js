@@ -108,16 +108,17 @@ angular.module('starter.controllers', [])
 })
 
 .controller('settingsCtrl', function($scope, Settings) {
+  $scope.signedin = false;
   $scope.firstname = Settings.firstname();
   $scope.lastname = Settings.lastname();
-  $scope.saved = Settings.status();
-  $scope.unsave = function(){
-		Settings.unsave();
-		$scope.saved = Settings.status();
+  $scope.signin = function(first, last) {
+		Settings.edit(first, last);
+		$scope.firstname = Settings.firstname();
+		$scope.lastname = Settings.lastname();
+		$scope.signedin = true;
   };
-  $scope.save = function() {
-		Settings.save($scope.firstname, $scope.lastname);
-		$scope.saved = Settings.status();
+  $scope.signout = function() {
+		$scope.signedin = false;
   };
 })
 
