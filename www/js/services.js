@@ -74,7 +74,6 @@ angular.module('starter.services', [])
       return days[dayId];
     },
 	getex: function(entryId) {
-      // Simple index lookup
       return entries[this.indexOf(entryId)];
 	 },
 	indexOf: function(entryindex) {
@@ -82,6 +81,7 @@ angular.module('starter.services', [])
 		if(entries[i].id == entryindex)
 			return i;
 	  }
+	  return -1;
 	},
 	edit: function (id, type, time) {
 		var index = this.indexOf(id);
@@ -189,7 +189,6 @@ angular.module('starter.services', [])
   return {
 	add: function(type, text) {
 		meals.push({date: new Date(), type: type, text: text});
-		console.log(meals[0]);
 	},
 	types: function() {
 		return types;

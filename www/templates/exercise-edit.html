@@ -2,23 +2,36 @@
 <ion-view title="Edit {{exercise.type}}">
   <ion-content has-header="true" pediting="true">
   <form name="edit">
+		<label class="item item-input">
+		<span class="input-label">Type</span>
         <select required ng-model="typechosen" ng-options="type for type in types" name="typechosen"></select><br>
 		<div ng-if="edit.typechosen.$error.required" style="color:red;">enter field</div>
+		</label>
 		
+		<label class="item item-input">
+		<span class="input-label">Start</span>
         <input required type="time" name="start" ng-model="start" />
 		<div ng-if="edit.start.$error.required" style="color:red;">enter field</div>
+		</label>
+		
+		<label class="item item-input">
+		<span class="input-label">End</span>
         <input required type="time" name="end" ng-model="end" />
 		<div ng-if="edit.end.$error.required" style="color:red;">enter field</div>
 		<div ng-if="end < start" style="color:red;">invalid time</div>
+		</label>
 		
+		<label class="item item-input">
+		<span class="input-label">Distance</span>
 		<input required type="number" min="0" min="50" ng-model="distance" name="distance" />
 		<div ng-if="edit.distance.$error.required" style="color:red;">enter field</div>
+		</label>
 		
+		<label class="item item-input">
+		<span class="input-label">Exertion</span>
         <input required type="number" min="0" min="5" ng-model="exertion" name="exertion" />
 		<div ng-if="edit.exertion.$error.required" style="color:red;">enter field</div>
-   <a href="#/tab/diary">
-   <button 	ng-click="remove(exercise.id)"/>Delete</button>
-   </a>
+		</label>
    
    <ion-nav-buttons side="right">
    <a href="#/tab/diary">
@@ -27,9 +40,9 @@
 		|| end < start" class="button button-icon"  ng-click="submit(typechosen, start, end, distance, exertion)"/>Done</button>
    </a>
    </ion-nav-buttons>
+   </form>
    
-	</form>
-   
+   <button class="button button-full button-assertive" ng-click="remove(exercise.id)"/>Delete</button>
   
    
   </ion-content>
