@@ -31,6 +31,12 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# CORS for the API
+CORS_ORIGIN_ALLOW_ALL = True
+# Must allow CSRF tokens to be passed
+CORS_ALLOW_CREDENTIALS = True
+CORS_URLS_REGEX = r'^/api.*$'
+
 
 # Application definition
 
@@ -42,7 +48,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
     'api',
     'manager',
     
@@ -50,6 +55,7 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'api.corsmiddleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -81,8 +87,11 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-    )
+    ),
+    
+    #'DEFAULT_RENDERER_CLASSES': (
+    #    'rest_framework.renderers.JSONRenderer',
+    #)
 }
 
 # Internationalization

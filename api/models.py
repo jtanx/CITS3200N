@@ -120,6 +120,3 @@ class QuestionResponse(models.Model):
         
     class Meta:
         unique_together = (("rid", "qid"),)
-
-#Needed for auth token hook
-import api.authtoken
