@@ -11,13 +11,14 @@
   
   <form name="add">
 
-     Type:
+    <label class="item item-input">
+	<span class="input-label">Type</span>
    <select required ng-model="text" ng-options="type.name for type in types" name="type"></select><br>
-	<div ng-if="add.type.$error.required" style="color:red;">enter field</div>
-
-   Duration:
+	</label>
+	
+   <label class="item item-input">
+	<span class="input-label">Duration</span>
    <input type="number" ng-model="time" min="0.5" max="24" name="time" required />
-	<div ng-if="add.time.$error.required" style="color:red;">enter field</div>
 	<div ng-if="add.time.$error.min || add.time.$error.max" style="color:red;">invalid</div>
 
    

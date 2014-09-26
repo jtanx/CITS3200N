@@ -88,7 +88,7 @@ angular.module('starter.controllers', [])
 	$scope.types = Exercises.types();
 })
 
-.controller('ExerciseCtrl', function($scope, $stateParams, Exercises, Save) {
+.controller('ExerciseCtrl', function($scope, $location, $stateParams, Exercises, Save) {
   $scope.exercise = Exercises.get($stateParams.exId);
   $scope.typechosen = $scope.exercise.type;
   
@@ -120,24 +120,28 @@ angular.module('starter.controllers', [])
   $scope.remove = function(id) {
 		Exercises.remove(id);
 		Save.unsave();
+		$location.path('#/tab/diary');
 	};
   
   $scope.types = Exercises.types();
   
 })
 
-.controller('SchedEditCtrl', function($scope, $stateParams, Days) {
+.controller('SchedEditCtrl', function($scope, $location, $stateParams, Days) {
   $scope.entry = Days.getex($stateParams.entryId);
+  $scope.types = Days.types();
+  if($scope.entry != null){
+  $scope.newtype = $scope.entry.name;
+  $scope.newtime = $scope.entry.time;
+  }
   $scope.remove = function(id) {
 		Days.remove(id);
+		$location.path('#/tab/schedule');
 	};
 	$scope.edit = function(type, time) {
 		Days.edit($stateParams.entryId, type, time);
+		$location.path('#/tab/schedule');
 	}
-  $scope.types = Days.types();
-  $scope.newtype = $scope.entry.name;
-  $scope.newtime = $scope.entry.time;
-  $scope.firsttype = $scope.types[0];
 })
 
 .controller('mentaltestCtrl', function($scope, $ionicSlideBoxDelegate, Questions, Answers) {

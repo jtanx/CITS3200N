@@ -32,9 +32,6 @@
         <input required type="number" min="0" min="5" ng-model="exertion" name="exertion" />
 		<div ng-if="edit.exertion.$error.required" style="color:red;">enter field</div>
 		</label>
-   <a href="#/tab/diary">
-   <button 	ng-click="remove(exercise.id)"/>Delete</button>
-   </a>
    
    <ion-nav-buttons side="right">
    <a href="#/tab/diary">
@@ -43,9 +40,9 @@
 		|| end < start" class="button button-icon"  ng-click="submit(typechosen, start, end, distance, exertion)"/>Done</button>
    </a>
    </ion-nav-buttons>
+   </form>
    
-	</form>
-   
+   <button class="button button-full button-assertive" ng-click="remove(exercise.id)"/>Delete</button>
   
    
   </ion-content>
