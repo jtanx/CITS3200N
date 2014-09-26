@@ -30,7 +30,8 @@
 		</div>
 	  </label>
 		</div>
-		<button ng-if="question.id == 22 && testanswers[question.id-1] != null" class="button button-full button-positive" ng-click="submit()">
+		<button ng-if="question.id == 22 && testanswers[question.id-1] != null" class="button button-full button-positive" 
+					ng-click="submit()">
 				Submit
 		</button>
 		</ion-slide>
@@ -39,7 +40,6 @@
 	</div>
 	<div class="card" ng-if="completed" align="center">
 		<div class="item item-text-wrap">
-			
 			Completed
 		</div>
 	</div>
