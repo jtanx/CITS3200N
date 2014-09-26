@@ -100,11 +100,21 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     })
 	
 	.state('tab.meal-detail',  {
-      url: '/diary/meal/:date/:type',
+      url: '/diary/meal/add/:type',
       views: {
         'tab-diary' : {
           templateUrl: 'templates/meal-detail.html',
           controller: 'MealDetailCtrl'
+        }
+      }
+    })
+	
+	.state('tab.meal-edit',  {
+      url: '/diary/meal/edit/:type',
+      views: {
+        'tab-diary' : {
+          templateUrl: 'templates/meal-edit.html',
+          controller: 'MealEditCtrl'
         }
       }
     })

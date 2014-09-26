@@ -143,25 +143,30 @@ angular.module('starter.services', [])
   ];
 
   return {
-	today: function(day) {
-	var todaymeals = [];
-      for (var i = 0; i < meals.length; i++) {
-        if (meals[i].date.getDate() == day.getDate())
-          todaymeals.push(meals[i]);
-      }
-	  return todaymeals;
+	add: function(type, text) {
+		meals.push({date: new Date(), type: type, text: text});
+		console.log(meals[0]);
 	},
 	types: function() {
 		return types;
 	},
-	get: function(day, type) {
-      for (var i = 0; i < meals.length; i++) {
-        if (meals[i].date.getDate() == day.getDate() && meals[i].type == type)
-          return meals[i];
-        console.log("No entry found for this date.");
-      }
-	  meals.push({date: new Date(), type: type, text: ''});
-	  return meals[meals.length-1];
+	get: function(type) {
+		for(var i = meals.length-1;i>-1;i--){
+			if(meals[i].type == type){return meals[i];}
+		}
+	},
+	edit: function(type, text){
+		this.get(type).text = text;
+	},
+	today: function() {
+		var todaymeals = [];
+		var today = new Date;
+		for(var i = 0; i<meals.length;i++){
+			if(meals[i].date.getDate() == today.getDate()){
+				todaymeals.push(meals[i]);
+			};
+		}
+		return todaymeals;
 	}
   }
 })
@@ -193,7 +198,10 @@ angular.module('starter.services', [])
 			}
 		}
 		return 0;
-	}
+	},
+	edit: function(startdate, enddate, quality){
+	entries[entries.length-1] = {date:entries[entries.length-1].date, start:startdate, end:enddate, quality:quality};
+	},
   }
 })
 

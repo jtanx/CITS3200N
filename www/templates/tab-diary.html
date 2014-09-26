@@ -39,27 +39,32 @@ link to the font-awesome style sheet, which is needed to use the floppy disc ico
 	<div class="list padding-top">
       <div class="item item-divider item-positive list-positive">
         Sleep
-		<a style="float:right;" ng-if="!added" href="#/tab/diary/sleep/add">
+		<a style="float:right;" ng-if="!sleepadded" href="#/tab/diary/sleep/add">
 		<i class="icon ion-ios7-plus-empty" style="font-size: 45px; color: white;"></i>
 	  </a>
       </div>
-      <a class="item item-icon-right" ng-if="added" href="#/tab/diary/sleep/edit">
+      <a class="item item-icon-right" ng-if="sleepadded" href="#/tab/diary/sleep/edit">
         <i class="icon ion-ios7-arrow-right"></i>
-        {{diff}} Hours
+        {{diff}}
+		<span ng-if="diff == 1">hr</span>
+		<span ng-if="diff != 1">hrs</span>
       </a>
     </div>
 	
     <div class="list padding-top" ng-repeat="type in types">
       <div class="item item-divider item-positive item-positive">
         {{type.name}}
+		<a style="float:right;" ng-if="!added(type.name)" href="#/tab/diary/meal/add/{{type.name}}">
+		<i class="icon ion-ios7-plus-empty" style="font-size: 45px; color: white;"></i>
+		</a>
       </div>
-	  <div>
-      <a class="item item-icon-right" href="#/tab/diary/meal/{{today}}/{{type.name}}">
+	  <div ng-repeat="meal in meals | filter:type.name">
+      <a class="item item-icon-right" href="#/tab/diary/meal/edit/{{type.name}}">
         <i class="icon ion-ios7-arrow-right"></i>
-        <span class="prefill" ng-repeat="meal in meals | filter:type.name:todaydate">{{meal.text}}</a>
-      </a>
+        {{meal.text}}
+	  </a>
     </div>
-    
+    </div>
     
   </ion-content>
 </ion-view>

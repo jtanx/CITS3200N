@@ -127,19 +127,37 @@ angular.module('starter.controllers', [])
   $scope.todaytext = Date().slice(0, 10);
   $scope.diff = SleepEntries.diff();
   $scope.types = Meals.types();
-  $scope.meals = Meals.today(new Date());
+  $scope.meals = Meals.today();
   $scope.exercises = Exercises.all();
   $scope.saved = Save.status();
   $scope.save = function() {
 		Save.save();
 		$scope.saved = Save.status();
   };
-  $scope.added = SleepEntries.added();
+  $scope.sleepadded = SleepEntries.added();
+  $scope.added = function(type){
+		for(var i = 0; i<$scope.meals.length;i++){
+			if ($scope.meals[i].type == type){return true;}
+		}
+		return false;
+  };
 })
 
 .controller('MealDetailCtrl', function($scope, $stateParams, Meals, Save) {
-  $scope.meal = Meals.get(new Date($stateParams.date), $stateParams.type);
-  $scope.unsave = Save.unsave();
+  $scope.type = $stateParams.type;
+  $scope.submit = function(text){
+		Meals.add($stateParams.type, text);
+		Save.unsave();
+  };
+})
+
+.controller('MealEditCtrl', function($scope, $stateParams, Meals, Save) {
+  $scope.text = Meals.get($stateParams.type).text;
+  $scope.type = $stateParams.type;
+  $scope.submit = function(text){
+		Meals.edit($stateParams.type, text);
+		Save.unsave();
+  };
 })
 
 .controller('SleepDetailCtrl', function($scope, $stateParams, SleepEntries, Save) {
@@ -183,7 +201,7 @@ angular.module('starter.controllers', [])
 		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), date, start.substring(0,2), start.substring(3,5),0);
 		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
 		if(startdate < enddate){
-				SleepEntries.add(startdate, enddate, quality);
+				SleepEntries.edit(startdate, enddate, quality);
 		} else {$scope.timeerror = true;}
 		Save.unsave();
 	};
