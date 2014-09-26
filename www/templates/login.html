@@ -1,17 +1,21 @@
-<div class="modal" ng-controller="loginCtrl">
+
+<ion-modal-view ng-controller="loginCtrl">
   <ion-header-bar class="bar-stable">
       <h1 class="title">Login</h1>
-  </ion-header-bar> 
-  <ion-content has-header="true" padding="true">
+  </ion-header-bar>
+
+  <ion-content has-header="true">
   <form class="list">
-      <label class="item item-input">
-        <input type="text" placeholder="Username" ng-model="username" required>
-      </label>
-      <label class="item item-input">
-        <input type="password" placeholder="Password" ng-model="password" required>
-      </label>
-  
-      <div class="padding">
+    <label class="item item-input">
+			<span class="input-label">User Name</span>
+			<input name="username" ng-model="username" type="text">
+		</label>
+		<label class="item item-input">
+			<span class="input-label">Password</span>
+			<input name="password" ng-model="password" type="password">
+		</label>
+    
+    <div class="padding">
       {{message}}
       </div>
       
@@ -20,7 +24,6 @@
             Sign in
           </button>
       </div>
-      
   </form>
   </ion-content>
-</div>
+</ion-modal-view>

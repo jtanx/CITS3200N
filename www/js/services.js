@@ -1,7 +1,7 @@
 angular.module('starter.services', [])
 
 .factory('api', function($rootScope, $http, authService) {
-  var url = 'http://localhost:8000/api';
+  var url = 'http://ftracker-jtanx.rhcloud.com/api';
   var initted = false;
   var token;
   

@@ -29,8 +29,8 @@ angular.module('starter.controllers', [])
   });
  
   $scope.$on('event:auth-loginConfirmed', function() {
-     $scope.username = null;
-     $scope.password = null;
+     $scope.username = "";
+     $scope.password = "";
      $scope.loginModal.hide();
   });
   
