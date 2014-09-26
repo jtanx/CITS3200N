@@ -1,5 +1,60 @@
 angular.module('starter.controllers', [])
 
+.controller('loginDisplay', function($scope, $ionicModal) {
+  $ionicModal.fromTemplateUrl('templates/login.html', function(modal) {
+    $scope.loginModal = modal;
+  },
+  {
+    scope: $scope,
+    animation: 'slide-in-up',
+    focusFirstInput: true
+  });
+  
+  $scope.$on('$destroy', function() {
+    $scope.loginModal.remove();
+  });
+})
+
+.controller('loginCtrl', function($scope, $location, api) {
+  $scope.username = "";
+  $scope.password = "";
+  $scope.message = "";
+  
+  $scope.$on('event:auth-forbidden', function(e, rejection) {
+    $scope.loginModal.show();
+  });
+  
+  $scope.$on('event:auth-loginRequired', function(e, rejection) {
+    $scope.loginModal.show();
+  });
+ 
+  $scope.$on('event:auth-loginConfirmed', function() {
+     $scope.username = null;
+     $scope.password = null;
+     $scope.loginModal.hide();
+  });
+  
+  $scope.$on('event:auth-login-failed', function(e, status) {
+    var error = "Login failed.";
+    if (status == 401 || status == 403 || status == 400) {
+      error = "Invalid Username or Password.";
+    }
+    $scope.message = error;
+  });
+ 
+  $scope.$on('event:auth-logout-complete', function() {
+    $state.go('app.home', {}, {reload: true, inherit: false});
+  });
+  
+  $scope.login = function () {
+    var credentials = {
+      username: this.username,
+      password: this.password
+    };
+    api.login(credentials);
+  }
+})
+
 .controller('goalsCtrl', function($scope, List) {
 	$scope.things = List.all();
 	$scope.addTo = function(text) {
@@ -104,7 +159,8 @@ angular.module('starter.controllers', [])
   
 })
 
-.controller('statsCtrl', function($scope) {
+.controller('statsCtrl', function($scope, api) {
+  api.getStats();
 })
 
 .controller('settingsCtrl', function($scope, Settings) {

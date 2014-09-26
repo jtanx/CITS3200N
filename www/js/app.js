@@ -5,7 +5,44 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
+angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'starter.controllers', 'starter.services'])
+
+.config(['$httpProvider', function($httpProvider) {
+  $httpProvider.defaults.withCredentials = true;
+  $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+  $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+}])
+
+//http://ionicframework.com/blog/angularjs-authentication/
+.provider('myCSRF',[function(){
+  var headerName = 'X-CSRFToken';
+  var cookieName = 'csrftoken';
+  var allowedMethods = ['GET'];
+
+  this.setHeaderName = function(n) {
+    headerName = n;
+  }
+  this.setCookieName = function(n) {
+    cookieName = n;
+  }
+  this.setAllowedMethods = function(n) {
+    allowedMethods = n;
+  }
+  this.$get = ['$cookies', function($cookies){
+    return {
+      'request': function(config) {
+        if(allowedMethods.indexOf(config.method) === -1) {
+          // do something on success
+          config.headers[headerName] = $cookies[cookieName];
+          //console.log("Help", config.headers[headerName]);
+        }
+        return config;
+      }
+    }
+  }];
+}]).config(function($httpProvider) {
+  $httpProvider.interceptors.push('myCSRF');
+})
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -28,12 +65,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   // Set up the various states which the app can be in.
   // Each state's controller can be found in controllers.js
   $stateProvider
-
     // setup an abstract state for the tabs directive
     .state('tab', {
       url: "/tab",
       abstract: true,
-      templateUrl: "templates/tabs.html"
+      templateUrl: "templates/tabs.html",
+      controller: 'loginDisplay'
     })
 
     // Each tab has its own nav history stack:
@@ -153,8 +190,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       views: {
         'tab-stats': {
           templateUrl: 'templates/tab-stats.html',
-          controller: 'statsCtrl',
-		  controller: 'settingsCtrl'
+          controller: 'statsCtrl'
         }
       }
     })

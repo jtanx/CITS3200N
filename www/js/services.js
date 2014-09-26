@@ -1,5 +1,49 @@
 angular.module('starter.services', [])
 
+.factory('api', function($rootScope, $http, authService) {
+  var url = 'http://localhost:8000/api';
+  var initted = false;
+  var token;
+  
+  return {
+    isInitted: function() {
+      return initted;
+    },
+    login: function(credentials) {
+      $http.post(url + '-token-auth/', credentials).success(function (data, status, headers, config) {
+        $http.defaults.headers.common.Authorization = "Token " + data.token;
+        
+        //http://www.kdmooreconsulting.com/blogs/authentication-with-ionic-and-angular-js-in-a-cordovaphonegap-mobile-web-application/
+        // Need to inform the http-auth-interceptor that
+        // the user has logged in successfully.  To do this, we pass in a function that
+        // will configure the request headers with the authorization token so
+        // previously failed requests(aka with status == 401) will be resent with the
+        // authorization token placed in the header
+        authService.loginConfirmed(data, function(config) {  // Step 2 & 3
+          config.headers.Authorization = "Token " + data.token;
+          return config;
+        });
+      })
+      .error(function (data, status, headers, config) {
+        $rootScope.$broadcast('event:auth-login-failed', status);
+      });
+    },
+    
+    logout: function() {
+      delete $$http.defaults.headers.common.Authorization;
+      $rootScope.$broadcast('event:auth-logout-complete');
+    },
+    
+    loginCancelled: function() {
+      authService.loginCancelled();
+    },
+    
+    getStats: function() {
+      $http.get(url + "/surveys/");
+    }
+  };
+})
+
 /**
  * A simple example service that returns some data.
  */
