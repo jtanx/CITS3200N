@@ -1,7 +1,39 @@
 angular.module('starter.services', [])
 
+/** Local storage (persistent). For storing anything necessary.
+ *  Basis: http://learn.ionicframework.com/formulas/localstorage/
+ *  With modification to parse ISO8601 dates.
+ */
+.factory('$localStore', ['$window', function($window) {
+  //Reviver, currently for ISO8601 dates in Zulu time
+  var reviver = function(k, v) {
+    if (typeof v === "string" && v.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.?\d*Z$/g)) {
+      return moment(v);
+    }
+    return v;
+  };
+  
+  return {
+    set: function(key, value) {
+      $window.localStorage[key] = value;
+    },
+    get: function(key, defaultValue) {
+      return $window.localStorage[key] || defaultValue;
+    },
+    setObject: function(key, value) {
+      $window.localStorage[key] = JSON.stringify(value);
+    },
+    getObject: function(key, defaultStrValue) {
+      if (typeof defaultStrValue !== "undefined") {
+        return JSON.parse($window.localStorage[key] || defaultStrValue, reviver);
+      }
+      return JSON.parse($window.localStorage[key] || '{}', reviver);
+    }
+  }
+}])
+
 .factory('api', function($rootScope, $http, authService) {
-  var url = 'http://ftracker-jtanx.rhcloud.com/api';
+  var url = 'http://localhost:8000/api';
   var initted = false;
   var token;
   
@@ -30,13 +62,22 @@ angular.module('starter.services', [])
     },
     
     logout: function() {
-      delete $$http.defaults.headers.common.Authorization;
+      delete $http.defaults.headers.common.Authorization;
       $rootScope.$broadcast('event:auth-logout-complete');
     },
     
     loginCancelled: function() {
       authService.loginCancelled();
     },
+    
+    submitSurvey: function(surveyId, responses) {
+      
+    },
+    
+    submitSleep: function(details) {
+    
+    },
+    
     
     getStats: function() {
       $http.get(url + "/surveys/");
@@ -274,14 +315,14 @@ angular.module('starter.services', [])
   }
 })
 
-.factory('Answers', function() {
+.factory('Answers', function($localStore) {
   var options = [
     { id: 1, name: 'Not at all'}, { id: 2, name: 'A little'}, 
 	{ id: 3, name: 'Moderately'}, { id: 4, name: 'Quite a lot'}, 
 	{ id: 5, name: 'Extremely'}
   ];
 
-  var days = [];
+  var entries = $localStore.getObject('mentalResponses', '[]');
   
   var answers = [];
   
@@ -303,12 +344,30 @@ angular.module('starter.services', [])
 		return count
 	},
 	submit: function () {
-		days.push(new Date());
+    var responses = []
+    
+    //Build the response list
+    for (var i = 0; i < answers.length; i++) {
+      responses.push({number : i + 1, entry : answers[i].toString()})
+    }
+    
+    //The entry for today
+    var entry = {
+      created : moment(),
+      responses : responses
+    }
+    //Add to the entry list
+		entries.push(entry);
+    
+    $localStore.setObject('mentalResponses', entries);
+    //Clear the responses for the next survey
+    answers = []; 
 	},
 	completed: function () {
-		var d = new Date();
-		for(var i = 0; i < days.length; i++){
-			if(d.getDate() == days[i].getDate() ) {
+		var d = moment();
+    console.log(entries);
+		for(var i = 0; i < entries.length; i++){
+			if(d.isSame(entries[i].created, 'day')) {
 				return true;
 			}
 		}
