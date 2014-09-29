@@ -166,7 +166,7 @@ angular.module('starter.services', [])
     },
 	add: function(type, start, end, distance, exertion) {
 		idcount++;
-      exercises.push({id: idcount, date: new Date(), type: type, 
+      exercises.push({id: idcount, date: moment(), type: type, 
 			start : start, end : end, distance : distance, exertion : exertion});
     },
 	edit: function(id, type, start, end, distance, exertion) {
@@ -229,7 +229,7 @@ angular.module('starter.services', [])
 
   return {
 	add: function(type, text) {
-		meals.push({date: new Date(), type: type, text: text});
+		meals.push({date: moment(), type: type, text: text});
 	},
 	types: function() {
 		return types;
@@ -244,9 +244,9 @@ angular.module('starter.services', [])
 	},
 	today: function() {
 		var todaymeals = [];
-		var today = new Date;
+		var today = moment();
 		for(var i = 0; i<meals.length;i++){
-			if(meals[i].date.getDate() == today.getDate()){
+			if(meals[i].date.isSame(today, 'day')){
 				todaymeals.push(meals[i]);
 			};
 		}
@@ -264,11 +264,11 @@ angular.module('starter.services', [])
       return entries;
     },
     add: function(startdate, enddate, quality){
-		entries.push({date:new Date(), start:startdate, end:enddate, quality:quality});
+		entries.push({date:moment(), start:startdate, end:enddate, quality:quality});
 	},
 	added: function(){
 		for(var i = 0; i<entries.length;i++){
-			if(entries[i].date.getDate() == new Date().getDate()){return true;}
+			if(entries[i].date.isSame(moment(), 'day')){return true;}
 		}
 		return false;
 	},
@@ -276,9 +276,10 @@ angular.module('starter.services', [])
 		return entries[entries.length-1];
 	},
 	diff: function(){
+    var today = moment();
 		for(var i = 0; i<entries.length;i++){
-			if(entries[i].date.getDate() == new Date().getDate()){
-				return (entries[i].end - entries[i].start)/3600000;
+			if(entries[i].date.isSame(today, 'day')){
+        return entries[i].end.diff(entries[i].start, 'hours')
 			}
 		}
 		return 0;
@@ -359,6 +360,7 @@ angular.module('starter.services', [])
     //Add to the entry list
 		entries.push(entry);
     
+    //Todo: Push to the server...
     $localStore.setObject('mentalResponses', entries);
     //Clear the responses for the next survey
     answers = []; 

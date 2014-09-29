@@ -10,15 +10,15 @@
 		
 		<label class="item item-input">
 		<span class="input-label">Start</span>
-        <input required type="time" name="start" ng-model="start" />
+        <input required time-field type="time" name="start" ng-model="start" />
 		<div ng-if="edit.start.$error.required" style="color:red;">enter field</div>
 		</label>
 		
 		<label class="item item-input">
 		<span class="input-label">End</span>
-        <input required type="time" name="end" ng-model="end" />
+        <input required time-field type="time" name="end" ng-model="end" />
 		<div ng-if="edit.end.$error.required" style="color:red;">enter field</div>
-		<div ng-if="end < start" style="color:red;">invalid time</div>
+		<div ng-if="!end.isValid() || !start.isValid() || end < start" style="color:red;">invalid time</div>
 		</label>
 		
 		<label class="item item-input">

@@ -26,9 +26,9 @@ link to the font-awesome style sheet, which is needed to use the floppy disc ico
       <a class="item item-icon-right" href="#/tab/diary/exercise/{{exercise.id}}">
         <i class="icon ion-ios7-arrow-right"></i>
         {{exercise.distance + " km " + exercise.type + " for " }}
-				{{exercise.end.getHours()-exercise.start.getHours()}} 
-		<span ng-if="exercise.end.getHours()-exercise.start.getHours() == 1">hr</span>
-		<span ng-if="exercise.end.getHours()-exercise.start.getHours() != 1">hrs</span>
+				{{exercise.end.diff(exercise.start, 'hours')}} 
+		<span ng-if="exercise.end.diff(exercise.start, 'hours') == 1">hr</span>
+		<span ng-if="exercise.end.diff(exercise.start, 'hours') != 1">hrs</span>
       </a>
 	  </div>
     </div>

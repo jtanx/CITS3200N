@@ -58,6 +58,29 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
   });
 })
 
+//http://cameronspear.com/blog/how-cool-are-formatters-and-parsers/
+.directive('timeField', [function () {
+  return {
+    require: 'ngModel',
+    link: function (scope, elem, attrs, ngModel) {      
+      var toView = function (val) {
+        console.log(val);
+        if (typeof val !== "undefined")
+          return val.format("HH:mm");
+        return val;
+      };
+      
+      var toModel = function (val) {
+        console.log("tm", val);
+        return moment(val, "HH:mm");
+      };
+      
+      ngModel.$formatters.unshift(toView);
+      ngModel.$parsers.unshift(toModel);
+    }
+  };
+}])
+
 .config(function($stateProvider, $urlRouterProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states

@@ -14,13 +14,14 @@
 		
 		<label class="item item-input">
 		<span class="input-label">Start</span>
-        <input required type="time" name="start" ng-model="start" />
+        <input required time-field type="time" name="start" ng-model="start"/>
+        <div ng-if="start && !start.isValid()" style="color:red;">invalid time</div>
 		</label>
 		
 		<label class="item item-input">
 		<span class="input-label">End</span>
-        <input required type="time" name="end" ng-model="end" />
-		<div ng-if="end < start" style="color:red;">invalid time</div>
+        <input required time-field type="time" name="end" ng-model="end" />
+		<div ng-if="end && (!end.isValid() || !start.isValid()) || end < start" style="color:red;">invalid time</div>
 		</label>
 		
 		<label class="item item-input">
@@ -37,7 +38,7 @@
    <a href="#/tab/diary">
    <button class="button button-icon" ng-disabled="add.typechosen.$error.required || 
 			add.start.$error.required || add.end.$error.required || add.exertion.$error.required
-			|| end < start" ng-click="submit(typechosen, start, end, distance, exertion)"/>Add</button>
+			|| !end.isValid() || !start.isValid() || end < start" ng-click="submit(typechosen, start, end, distance, exertion)"/>Add</button>
 	</a>
 	</ion-nav-buttons>
 	</form>

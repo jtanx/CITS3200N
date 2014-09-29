@@ -79,10 +79,9 @@ angular.module('starter.controllers', [])
 
 .controller('ExAddCtrl', function($scope, $stateParams, Exercises, Save) {
   $scope.submit = function(type, start, end, distance, exertion) {
-		var todaydate = new Date();
-		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), start.substring(0,2), start.substring(3,5),0);
-		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
-		Exercises.add(type, startdate, enddate, distance, exertion);
+    var start = moment(start, "HH:mm");
+    var end = moment(end, "HH:mm");
+		Exercises.add(type, start, end, distance, exertion);
 		$scope.unsave = Save.unsave();
 	};
 	$scope.types = Exercises.types();
@@ -92,29 +91,16 @@ angular.module('starter.controllers', [])
   $scope.exercise = Exercises.get($stateParams.exId);
   $scope.typechosen = $scope.exercise.type;
   
-  var starthours = $scope.exercise.start.getHours();
-	var startminutes = $scope.exercise.start.getMinutes();
-
-	if (starthours<10) starthours = "0" + starthours;
-	if (startminutes<10) startminutes = "0" + startminutes;
-  
-  $scope.start = starthours + ":" + startminutes;
-  
-  var endhours = $scope.exercise.end.getHours();
-	var endminutes = $scope.exercise.end.getMinutes();
-
-	if (endhours<10) endhours = "0" + endhours;
-	if (endminutes<10) endminutes = "0" + endminutes;
-  
-  $scope.end = endhours + ":" + endminutes;
+  $scope.start = $scope.exercise.start;
+  $scope.end = $scope.exercise.end;
   
   $scope.distance = $scope.exercise.distance;
   $scope.exertion = $scope.exercise.exertion;
   $scope.submit = function(type, start, end, distance, exertion) {
-		var todaydate = $scope.exercise.date;
-		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), start.substring(0,2), start.substring(3,5),0);
-		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
-		Exercises.edit($stateParams.exId, type, startdate, enddate, distance, exertion);
+    console.log('submit', start, end);
+    var start = moment(start, 'HH:mm');
+    var end = moment(end, 'HH:mm');
+		Exercises.edit($stateParams.exId, type, start, end, distance, exertion);
 		Save.unsave();
 	};
   $scope.remove = function(id) {
@@ -183,9 +169,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises, Save) {
-  //http://stackoverflow.com/questions/3552461/how-to-format-javascript-date
-  $scope.today = new Date().toISOString().slice(0, 10);
-  $scope.todaytext = Date().slice(0, 10);
+  $scope.todaytext = moment().format('ll');
   $scope.diff = SleepEntries.diff();
   $scope.types = Meals.types();
   $scope.meals = Meals.today();
@@ -225,14 +209,14 @@ angular.module('starter.controllers', [])
 
 .controller('SleepDetailCtrl', function($scope, $stateParams, SleepEntries, Save) {
 	$scope.submit = function(start,end,quality){
-		var todaydate = new Date();
-		var date = todaydate.getDate();
-		if(start.substring(0,2) >= 12){date--;}
-		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), date, start.substring(0,2), start.substring(3,5),0);
-		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
-		if(startdate < enddate){
-				SleepEntries.add(startdate, enddate, quality);
-		} else {$scope.timeerror = true;}
+    if (end.isBefore(start)) {
+      end.add(1, 'd');
+    }
+    SleepEntries.add(start, end, quality);
+    
+		//if(startdate < enddate){
+		//		SleepEntries.add(startdate, enddate, quality);
+		//} else {$scope.timeerror = true;}
 		Save.unsave();
 	};
 })
@@ -240,32 +224,18 @@ angular.module('starter.controllers', [])
 .controller('SleepEditCtrl', function($scope, $rootScope, $stateParams, SleepEntries, Save) {
 	$scope.entry = SleepEntries.get();
 	
-	var starthours = $scope.entry.start.getHours();
-	var startminutes = $scope.entry.start.getMinutes();
-
-	if (starthours<10) starthours = "0" + starthours;
-	if (startminutes<10) startminutes = "0" + startminutes;
-  
-  $scope.start = starthours + ":" + startminutes;
-  
-  var endhours = $scope.entry.end.getHours();
-	var endminutes = $scope.entry.end.getMinutes();
-
-	if (endhours<10) endhours = "0" + endhours;
-	if (endminutes<10) endminutes = "0" + endminutes;
-  
-  $scope.end = endhours + ":" + endminutes;
+  $scope.start = $scope.entry.start;
+  $scope.end = $scope.entry.end;
 	
 	$scope.quality = $scope.entry.quality;
 	$scope.submit = function(start,end,quality){
-		var todaydate = new Date();
-		var date = todaydate.getDate();
-		if(start.substring(0,2) >= 12){date--;}
-		var startdate = new Date(todaydate.getFullYear(), todaydate.getMonth(), date, start.substring(0,2), start.substring(3,5),0);
-		var enddate = new Date(todaydate.getFullYear(), todaydate.getMonth(), todaydate.getDate(), end.substring(0,2), end.substring(3,5),0);
-		if(startdate < enddate){
-				SleepEntries.edit(startdate, enddate, quality);
-		} else {$scope.timeerror = true;}
+    if (end.isBefore(start)) {
+      end.add(1, 'd');
+    }
+    SleepEntries.edit(start, end, quality);
+		//if(startdate < enddate){
+		//		SleepEntries.edit(startdate, enddate, quality);
+		//} else {$scope.timeerror = true;}
 		Save.unsave();
 	};
 })
