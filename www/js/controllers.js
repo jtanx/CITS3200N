@@ -15,7 +15,7 @@ angular.module('starter.controllers', [])
   });
 })
 
-.controller('loginCtrl', function($scope, $location, api) {
+.controller('loginCtrl', function($scope, $state, api) {
   $scope.username = "";
   $scope.password = "";
   $scope.message = "";
@@ -88,7 +88,7 @@ angular.module('starter.controllers', [])
 	$scope.types = Exercises.types();
 })
 
-.controller('ExerciseCtrl', function($scope, $location, $stateParams, Exercises, Save) {
+.controller('ExerciseCtrl', function($scope, $state, $stateParams, Exercises, Save) {
   $scope.exercise = Exercises.get($stateParams.exId);
   $scope.typechosen = $scope.exercise.type;
   
@@ -120,14 +120,14 @@ angular.module('starter.controllers', [])
   $scope.remove = function(id) {
 		Exercises.remove(id);
 		Save.unsave();
-		$location.path('#/tab/diary');
+		$state.go('tab.diary');
 	};
   
   $scope.types = Exercises.types();
   
 })
 
-.controller('SchedEditCtrl', function($scope, $location, $stateParams, Days) {
+.controller('SchedEditCtrl', function($scope, $state, $stateParams, Days) {
   $scope.entry = Days.getex($stateParams.entryId);
   $scope.types = Days.types();
   if($scope.entry != null){
@@ -136,11 +136,11 @@ angular.module('starter.controllers', [])
   }
   $scope.remove = function(id) {
 		Days.remove(id);
-		$location.path('#/tab/schedule');
+		$state.go('tab.schedule');
 	};
 	$scope.edit = function(type, time) {
 		Days.edit($stateParams.entryId, type, time);
-		$location.path('#/tab/schedule');
+		$state.go('tab.schedule');
 	}
 })
 
@@ -212,12 +212,13 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('MealEditCtrl', function($scope, $location, $stateParams, Meals, Save) {
+.controller('MealEditCtrl', function($scope, $state, $stateParams, Meals, Save) {
   $scope.text = Meals.get($stateParams.type).text;
   $scope.type = $stateParams.type;
   $scope.submit = function(text){
 		Meals.edit($stateParams.type, text);
 		Save.unsave();
+		$state.go('tab.diary');
 		$location.path('#/tab/diary');
   };
 })
