@@ -155,7 +155,7 @@ angular.module('starter.controllers', [])
 	};
   $scope.testanswers = Answers.all();
   $scope.submit = function() {
-	if(Answers.answered() == 22){
+	if(Answers.answered() == Questions.all().length){
 	Answers.submit();
 	$scope.completed = Answers.completed();
 	}
