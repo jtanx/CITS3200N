@@ -15,35 +15,47 @@
 line-height:1;
 text-align:center;
 
-}.flaticon-bar5:before {
+}
+.flaticon-bar5:before {
 	content: "\e000";
-	font-size:39px;
 	line-height:0.85;
 }
-.flaticon-book82:before {
+.flaticon-bars5:before{
 	content: "\e001";
-	line-height:1.05;
 }
-.flaticon-calendar48:before {
+.flaticon-bars6:before{
 	content: "\e002";
 }
-.flaticon-emoticon5:before {
+.flaticon-book48:before {
 	content: "\e003";
+	line-height:1.05;
 }
-.flaticon-floppy1:before {
+.flaticon-book82:before {
 	content: "\e004";
+	line-height:1.05;
 }
-.flaticon-floppy6:before {
+.flaticon-calendar33:before {
 	content: "\e005";
 }
-.flaticon-floppy9:before {
+.flaticon-calendar48:before {
 	content: "\e006";
 }
-.flaticon-settings20:before {
+.flaticon-emoticon5:before {
 	content: "\e007";
+	font-size:42px;
+	line-height:0.85;
 }
-.flaticon-smiling55:before {
+.flaticon-emoticon7:before {
 	content: "\e008";
-	font-size:41px;
-	line-height: 0.85;
+	font-size:42px;
+	line-height:0.85;
+}
+.flaticon-floppy13:before {
+	content: "\e009";
+}
+.flaticon-settings18:before {
+	content: "\e00a";
+}
+.flaticon-tools4:before {
+	content: "\e00b";
 }
