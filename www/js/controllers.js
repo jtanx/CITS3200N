@@ -154,7 +154,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('statsCtrl', function($scope, api) {
-  api.getStats();
+	$scope.press = function() {
+		api.getStats();
+  };
+	
 })
 
 .controller('settingsCtrl', function($scope, Settings) {
