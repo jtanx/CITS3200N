@@ -416,7 +416,6 @@ angular.module('starter.services', [])
 
 .factory('Settings', function($localStore, $window) {
     
-	$window.localStorage.clear();
 	var firstname = '';
 	var lastname = '';
 	
@@ -432,6 +431,9 @@ angular.module('starter.services', [])
 	edit: function(first, last) {
         firstname = first;
 		lastname = last;
+	},
+	restore: function(){
+		$window.localStorage.clear();
 	}
     };
 });
