@@ -20,11 +20,9 @@ text-align:center;
 	content: "\e000";
 	line-height:0.85;
 }
-
 .flaticon-bars5:before{
 	content: "\e001";
 }
-
 .flaticon-bars6:before{
 	content: "\e002";
 }
@@ -32,16 +30,13 @@ text-align:center;
 	content: "\e003";
 	line-height:1.05;
 }
-
 .flaticon-book82:before {
 	content: "\e004";
 	line-height:1.05;
 }
-
 .flaticon-calendar33:before {
 	content: "\e005";
 }
-
 .flaticon-calendar48:before {
 	content: "\e006";
 }
@@ -50,21 +45,17 @@ text-align:center;
 	font-size:42px;
 	line-height:0.85;
 }
-
 .flaticon-emoticon7:before {
 	content: "\e008";
 	font-size:42px;
 	line-height:0.85;
 }
-
-.flaticon-floppy1:before {
+.flaticon-floppy13:before {
 	content: "\e009";
 }
-
 .flaticon-settings18:before {
 	content: "\e00a";
 }
-
 .flaticon-tools4:before {
 	content: "\e00b";
 }
