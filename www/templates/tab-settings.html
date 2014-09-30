@@ -1,31 +1,18 @@
 <ion-view title="Settings">
  
   <ion-content class="padding">
-	<div ng-hide="signedin" class="list">
-		<label ng-disabled="signedin" class="item item-input">
-			<span class="input-label">User Name</span>
-			<input name="firstname" ng-model="firstname" type="text">
-		</label>
-		<label class="item item-input">
-			<span class="input-label">Password</span>
-			<input name="lastname" ng-model="lastname" type="password">
-		</label>
-	</div>
-		
+		<div>
 	<button class="button button-full button-positive" ng-if="!signedin"
-		ng-click="signin(firstname, lastname)"/>Sign In</button>
+		ng-click="signin()"/>Sign In</button>
 	
-	<div ng-if="signedin" class="list">
-		<label style="background-color:#f8f8f8" class="item item-input">
-			<span style="color:grey" class="input-label">User Name</span>
-			<input style="color:grey" ng-disabled="signedin" class="greyed" ng-model="firstname" type="text">
-		</label>
-		<label style="background-color:#f8f8f8" class="item item-input">
-			<span style="color:grey" class="input-label">Password</span>
-			<input style="color:grey" ng-disabled="signedin" ng-model="lastname" type="password">
-		</label>
-    </div>
 	<button class="button button-full button-positive" ng-if="signedin"
 		ng-click="signout()"/>Sign Out</button>
-        </ion-content>
+
+		
+	<button class="button button-full button-positive" ng-click="helpme()"/>Help</button>
+        
+		</div>
+	<div ng-if="help">no</div>
+
+	</ion-content>
 </ion-view>
