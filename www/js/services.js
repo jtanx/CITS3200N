@@ -93,7 +93,7 @@ angular.module('starter.services', [])
 /**
  * A simple example service that returns some data.
  */
-.factory('Days', function() {
+.factory('Days', function($localStore) {
 
   var days = [
     { id: 0, name: 'Sunday'}, { id: 1, name: 'Monday'}, { id: 2, name: 'Tuesday'},{ id: 3, name: 'Wednesday'}, 
@@ -104,8 +104,7 @@ angular.module('starter.services', [])
 	{name:'Run'} , {name:'Cycle'} , {name:'Swim'}
   ];
   
-  var entries = [];
-  
+  var entries = $localStore.getObject('schedEntries', '[]');
   var idcount = -1;
 
   return {
@@ -133,6 +132,7 @@ angular.module('starter.services', [])
 		var index = this.indexOf(id);
 		entries[index] = {id: id, name: type, day: entries[index].day, 
 						time: time};
+		$localStore.setObject('schedEntries', entries);
 	},
 	allentries: function() {
       return entries;
@@ -141,9 +141,11 @@ angular.module('starter.services', [])
 		idcount++;
       entries.push({id: idcount, name: text, day: newday, 
 						time: time});
+		$localStore.setObject('schedEntries', entries);
     },
 	remove: function(id) {
 		entries.splice(this.indexOf(id), 1);
+		$localStore.setObject('schedEntries', entries);
     }
   }
 })

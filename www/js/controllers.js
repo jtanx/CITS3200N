@@ -120,15 +120,13 @@ angular.module('starter.controllers', [])
 .controller('SchedEditCtrl', function($scope, $state, $stateParams, Days) {
   $scope.entry = Days.getex($stateParams.entryId);
   $scope.types = Days.types();
-  if($scope.entry != null){
   $scope.newtype = $scope.entry.name;
   $scope.newtime = $scope.entry.time;
-  }
   $scope.remove = function(id) {
 		Days.remove(id);
 		$state.go('tab.schedule');
 	};
-	$scope.edit = function(type, time) {
+	$scope.submit = function(type, time) {
 		Days.edit($stateParams.entryId, type, time);
 		$state.go('tab.schedule');
 	}
