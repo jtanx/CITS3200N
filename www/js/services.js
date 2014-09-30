@@ -23,11 +23,21 @@ angular.module('starter.services', [])
     setObject: function(key, value) {
       $window.localStorage[key] = JSON.stringify(value);
     },
-    getObject: function(key, defaultStrValue) {
-      if (typeof defaultStrValue !== "undefined") {
-        return JSON.parse($window.localStorage[key] || defaultStrValue, reviver);
+    getObject: function(key, defaultStrValue, customReviver) {
+      var rev = reviver;
+      
+      //Hook in a custom reviver, if provided.
+      if (typeof customReviver === "function") {
+        rev = function(k, v) {
+          ret = reviver(k, v);
+          return customReviver(k, ret);
+        }
       }
-      return JSON.parse($window.localStorage[key] || '{}', reviver);
+      
+      if (typeof defaultStrValue !== "undefined") {
+        return JSON.parse($window.localStorage[key] || defaultStrValue, rev);
+      }
+      return JSON.parse($window.localStorage[key] || '{}', rev);
     }
   }
 }])
@@ -117,7 +127,23 @@ angular.module('starter.services', [])
 	{name:'Run'} , {name:'Cycle'} , {name:'Swim'}
   ];
   
-  var entries = $localStore.getObject('schedEntries', '[]');
+  /**
+   * As ngModel compares by reference and not value, we must return the actual
+   * object corresponding to that type.
+   */
+  var typeReviver = function(k, v) {
+    if (k === "name") {
+      for (var i = 0; i < types.length; i++) {
+        if (v.name === types[i].name) {
+          return types[i];
+        }
+      }
+    }
+    console.log(k);
+    return v;
+  }
+  
+  var entries = $localStore.getObject('schedEntries', '[]', typeReviver);
   var idcount = -1;
 
   return {
