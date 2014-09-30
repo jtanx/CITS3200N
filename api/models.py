@@ -109,6 +109,9 @@ class QuestionResponse(models.Model):
     qid = models.ForeignKey(SurveyQuestion)
     entry = models.CharField(max_length=255)
     
+    def number(self):
+        return self.qid.number
+    
     def clean(self):
         try:
             self.entry = self.qid.clean_response(self.entry)

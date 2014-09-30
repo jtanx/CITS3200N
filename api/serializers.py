@@ -71,14 +71,28 @@ class QuestionResponseSerializer(serializers.Serializer):
 '''
     
 class QuestionResponseSerializer(serializers.ModelSerializer):
+    class QuestionNumberField(serializers.WritableField):
+        def from_native(self, value):
+            try:
+                number = int(value)
+            except ValueError:
+                raise serializers.ValidationError("Invalid question number")
+                
+            question = SurveyQuestion.objects.filter(parent=self.context['survey'], number=number)
+            if not question.exists():
+                raise serializers.ValidationError("Non-existant question")
+            return question[0]
+        
     def restore_object(self, attrs, instance=None):
         if instance is None:
-            return QuestionResponse(qid=attrs['qid'], entry=attrs['entry'])
+            return QuestionResponse(qid=attrs['number'], entry=attrs['entry'])
         return instance
     
+    number = QuestionNumberField()
+
     class Meta:
         model = QuestionResponse
-        fields = ('qid', 'entry')
+        fields = ('number', 'entry')
         
 class SurveyResponseSerializer(serializers.ModelSerializer):
     class ResponseField(serializers.WritableField):
@@ -88,13 +102,27 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
             return serializer.data
             
         def from_native(self, value):
+            if 'survey' in self.context['request'].DATA:
+                try:
+                    spk = int(self.context['request'].DATA['survey'])
+                except ValueError:
+                    raise serializers.ValidationError("Invalid Survey ID")
+                survey = Survey.objects.filter(pk=spk)
+                if not survey.exists():
+                    raise serializers.ValidationError("That survey does not exist.")
+                survey = survey[0]
+            else:
+                raise serializers.ValidationError("No survey ID supplied.")
+            
             stream = StringIO(value)
             try:
                 data = JSONParser().parse(stream)
             except ParseError, e:
                 print(e)
                 raise serializers.ValidationError("Invalid JSON format for responses")
-            responses = QuestionResponseSerializer(data=data, many=True, partial=True)
+            
+            responses = QuestionResponseSerializer(data=data, many=True, partial=True,
+                                                   context={'survey' : survey})
             
             if responses.is_valid():
                 return responses.object
@@ -104,8 +132,11 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
                     if "__all__" in entry:
                         raise ValidationError(entry["__all__"])
                 #...
+                raise ValidationError(list(responses.errors[0].values())[0])
                 raise ValidationError("Invalid question response")
-            
+    
+    responses = ResponseField()
+    
     class Meta:
         model = SurveyResponse
         fields = ('id', 'survey', 'created', 'submitted', 'responses')
@@ -120,9 +151,7 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
         seen = set()
         for response in responses:
             q = response.qid
-            if q.pk is None or not questions.filter(pk=q.pk).exists():
-                raise ValidationError("Response to question not from this survey")     
-            elif q.pk in seen:
+            if q.pk in seen:
                 raise ValidationError("Multiple responses to question %d" % q.number)
             seen.add(q.pk)
         
@@ -151,5 +180,5 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
             qr.save()
         return ret
       
-    responses = ResponseField()
+    
         
