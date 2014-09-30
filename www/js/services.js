@@ -42,7 +42,7 @@ angular.module('starter.services', [])
   }
 }])
 
-.factory('api', function($rootScope, $http, $localStore, authService) {
+.factory('api', function($rootScope, $http, $localStore, $ionicLoading, authService) {
   //var url = 'http://ftracker-jtanx.rhcloud.com/api';
   var url = 'http://localhost:8000/api';
   var initted = false;
@@ -58,12 +58,30 @@ angular.module('starter.services', [])
       return initted;
     },
     
+    havePendingSubmissions: function () {
+      return toSubmit.length > 0;
+    },
+    
     initialise: function() {
+      //$ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
+      
       var token = $localStore.get("AuthToken", "");
       if (token.length > 0) {
         $http.defaults.headers.common.Authorization = "Token " + token;
       }
+      
+      /*
+      $http.get(url + '/surveys/').success(function (data) {
+        initted = true;
+        $ionicLoading.hide();
+      }).error(function(data, status, headers, config) {
+        console.log(status, headers);
+        $ionicLoading.show({template : 'Failed to contact the server.'});
+        $ionicLoading.hide();
+      });
+      */
       initted = true;
+      //$ionicLoading.hide();
     },
     
     login: function(credentials) {
@@ -98,24 +116,42 @@ angular.module('starter.services', [])
     },
     
     storeSurvey: function(surveyId, created, responses) {
-      //Deep copy of the response
       entry = {survey : surveyId, created : created, responses : JSON.stringify(responses)}
       
+      /*
       $http.post(url + '/survey/', entry).success(function (data, status, headers, config) {
         console.log("YAY");
       }).error(function() {
         toSubmit.push(entry);
         console.log("OH NO");
-      });
-      //toSubmit.push(entry);
+      });*/
+      toSubmit.push(entry);
       $localStore.setObject('api_toSubmit', toSubmit);
       console.log(toSubmit);
     },
     
-    submitSleep: function(details) {
-    
-    },
-    
+    /**
+     * Submits ALL pending surveys to the server, if they haven't been sent yet.
+     */
+    submitPending: (function submitter() {
+      $ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
+      if (toSubmit.length > 0) {
+        elem = toSubmit[toSubmit.length - 1];
+        $http.post(url + '/survey/', elem).success(function(data, status, headers, config) {
+          toSubmit.pop();
+          submitter();
+        }).error(function(data, status, headers, config) {
+          if (status == 0) {
+            $ionicLoading.show({template : "The server is offline. Please try syncing again later.", duration: 1000});
+          } else {
+            $ionicLoading.hide();
+          }
+          
+        });
+      } else {
+        $ionicLoading.hide();
+      }
+    }),
     
     getStats: function() {
       $http.get(url + "/surveys/");
@@ -407,6 +443,7 @@ angular.module('starter.services', [])
     }
     
     api.storeSurvey(1, moment(), responses);
+    api.submitPending();
     
     //The entry for today
     var entry = {
