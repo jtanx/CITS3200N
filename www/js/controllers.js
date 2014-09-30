@@ -170,6 +170,9 @@ angular.module('starter.controllers', [])
   $scope.helpme = function() {
 		$scope.help = true;
   };
+  $scope.restore = function() {
+		Settings.restore();
+  };
 })
 
 .controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises, Save) {
