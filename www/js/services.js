@@ -33,6 +33,7 @@ angular.module('starter.services', [])
 }])
 
 .factory('api', function($rootScope, $http, authService) {
+  //var url = 'http://ftracker-jtanx.rhcloud.com/api';
   var url = 'http://localhost:8000/api';
   var initted = false;
   var token;
@@ -279,7 +280,7 @@ angular.module('starter.services', [])
     var today = moment();
 		for(var i = 0; i<entries.length;i++){
 			if(entries[i].date.isSame(today, 'day')){
-        return entries[i].end.diff(entries[i].start, 'hours')
+        return Math.round(entries[i].end.diff(entries[i].start, 'seconds') / 360) / 10
 			}
 		}
 		return 0;
