@@ -44,7 +44,9 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
   $httpProvider.interceptors.push('myCSRF');
 })
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, api) {
+  api.initialise();
+
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)

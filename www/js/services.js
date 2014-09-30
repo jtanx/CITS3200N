@@ -57,9 +57,19 @@ angular.module('starter.services', [])
     isInitted: function() {
       return initted;
     },
+    
+    initialise: function() {
+      var token = $localStore.get("AuthToken", "");
+      if (token.length > 0) {
+        $http.defaults.headers.common.Authorization = "Token " + token;
+      }
+      initted = true;
+    },
+    
     login: function(credentials) {
       $http.post(url + '-token-auth/', credentials).success(function (data, status, headers, config) {
         $http.defaults.headers.common.Authorization = "Token " + data.token;
+        $localStore.set("AuthToken", data.token);
         loggedIn = true;
         //http://www.kdmooreconsulting.com/blogs/authentication-with-ionic-and-angular-js-in-a-cordovaphonegap-mobile-web-application/
         // Need to inform the http-auth-interceptor that
