@@ -6,44 +6,6 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'starter.controllers', 'starter.services'])
-
-.config(['$httpProvider', function($httpProvider) {
-  $httpProvider.defaults.withCredentials = true;
-  $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-  $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-}])
-
-//http://ionicframework.com/blog/angularjs-authentication/
-.provider('myCSRF',[function(){
-  var headerName = 'X-CSRFToken';
-  var cookieName = 'csrftoken';
-  var allowedMethods = ['GET'];
-
-  this.setHeaderName = function(n) {
-    headerName = n;
-  }
-  this.setCookieName = function(n) {
-    cookieName = n;
-  }
-  this.setAllowedMethods = function(n) {
-    allowedMethods = n;
-  }
-  this.$get = ['$cookies', function($cookies){
-    return {
-      'request': function(config) {
-        if(allowedMethods.indexOf(config.method) === -1) {
-          // do something on success
-          config.headers[headerName] = $cookies[cookieName];
-          //console.log("Help", config.headers[headerName]);
-        }
-        return config;
-      }
-    }
-  }];
-}]).config(function($httpProvider) {
-  $httpProvider.interceptors.push('myCSRF');
-})
-
 .run(function($ionicPlatform, api) {
   api.initialise();
 
