@@ -114,12 +114,11 @@ angular.module('starter.services', [])
   ];
   
   var types = [ 
-	{name:'Run'} , {name:'Cycle'} , {name:'Swim'}
+	'Run', 'Cycle', 'Swim'
   ];
   
   var entries = $localStore.getObject('schedEntries', '[]');
-  var idcount = -1;
-
+	var idcount = $localStore.getObject('schedId', -1);
   return {
 	types: function() {
       return types;
@@ -133,12 +132,12 @@ angular.module('starter.services', [])
     },
 	getex: function(entryId) {
       return entries[this.indexOf(entryId)];
-	 },
+	},
 	indexOf: function(entryindex) {
 		for(var i = 0; i < entries.length; i++){
 		if(entries[i].id == entryindex)
 			return i;
-	  }
+		}
 	  return -1;
 	},
 	edit: function (id, type, time) {
@@ -152,9 +151,11 @@ angular.module('starter.services', [])
     },
 	add: function(text, newday, time) {
 		idcount++;
+		$localStore.setObject('schedId', idcount);
       entries.push({id: idcount, name: text, day: newday, 
 						time: time});
 		$localStore.setObject('schedEntries', entries);
+		//console.log(entries);
     },
 	remove: function(id) {
 		entries.splice(this.indexOf(id), 1);
@@ -163,16 +164,14 @@ angular.module('starter.services', [])
   }
 })
 
-.factory('Exercises', function() {
+.factory('Exercises', function($localStore) {
 
-  var exercises = [];
-  
+  var exercises = $localStore.getObject('exercises', '[]');
   var types = [ 
 	'Run', 'Cycle', 'Swim'
   ];
+  var idcount = $localStore.getObject('exId', -1);
   
-  var idcount = -1;
-
   return {
 	types: function() {
       return types;
@@ -186,12 +185,15 @@ angular.module('starter.services', [])
     },
 	add: function(type, start, end, distance, exertion) {
 		idcount++;
+		$localStore.setObject('exId', idcount);
       exercises.push({id: idcount, date: moment(), type: type, 
 			start : start, end : end, distance : distance, exertion : exertion});
+		$localStore.setObject('exercises', exercises);
     },
 	edit: function(id, type, start, end, distance, exertion) {
       exercises[this.indexOf(id)] = ({id: id, date: exercises[this.indexOf(id)].date, type: type, 
 			start : start, end : end, distance : distance, exertion : exertion});
+		$localStore.setObject('exercises', exercises);
     },
 	indexOf: function(exerciseId) {
 		for(var i = 0; i < exercises.length; i++){
@@ -201,6 +203,7 @@ angular.module('starter.services', [])
 	},
 	remove: function(id) {
 		exercises.splice(this.indexOf(id), 1);
+		$localStore.setObject('exercises', exercises);
     },
   }
 })
@@ -222,27 +225,25 @@ angular.module('starter.services', [])
   }
 })
 
-.factory('Save', function() {
-  
-	var saved = true;
-  
+.factory('Save', function($localStore) {
+
+
   return {
 	save: function() {
-		saved = true;
+		$localStore.setObject('saved', true);
 	},
 	unsave: function() {
-		saved = false;
+		$localStore.setObject('saved', false);
 	},
 	status: function() {
-		return saved;
+		return $localStore.getObject('saved', true);
 	}
   }
 })
 
-.factory('Meals', function() {
+.factory('Meals', function($localStore) {
   
-	var meals = [];
-  
+  var meals = $localStore.getObject('meals', '[]');
   var types = [
 	{name: 'Breakfast'}, {name: 'Lunch'}, {name: 'Dinner'}, {name: 'Other'}
   ];
@@ -250,6 +251,7 @@ angular.module('starter.services', [])
   return {
 	add: function(type, text) {
 		meals.push({date: moment(), type: type, text: text});
+		$localStore.setObject('meals', meals);
 	},
 	types: function() {
 		return types;
@@ -261,6 +263,7 @@ angular.module('starter.services', [])
 	},
 	edit: function(type, text){
 		this.get(type).text = text;
+		$localStore.setObject('meals', meals);
 	},
 	today: function() {
 		var todaymeals = [];
@@ -276,20 +279,21 @@ angular.module('starter.services', [])
 		for(var i = meals.length-1;i>-1;i--){
 			if(meals[i].type == type){meals.splice(i,1)}
 		}
+		$localStore.setObject('meals', meals);
 	}
   }
 })
 
-.factory('SleepEntries', function() {
+.factory('SleepEntries', function($localStore) {
   //Some fake data
-  var entries = [];
-  
+  var entries = $localStore.getObject('sleepEntries', '[]');
   return {
     all: function() {
       return entries;
     },
     add: function(startdate, enddate, quality){
 		entries.push({date:moment(), start:startdate, end:enddate, quality:quality});
+		$localStore.setObject('sleepEntries', entries);
 	},
 	added: function(){
 		for(var i = 0; i<entries.length;i++){
@@ -311,9 +315,11 @@ angular.module('starter.services', [])
 	},
 	edit: function(startdate, enddate, quality){
 	entries[entries.length-1] = {date:entries[entries.length-1].date, start:startdate, end:enddate, quality:quality};
+	$localStore.setObject('sleepEntries', entries);
 	},
 	remove: function(){
-		entries.splice(entries.length-1,1)
+		entries.splice(entries.length-1,1);
+		$localStore.setObject('sleepEntries', entries);
 	}
   }
 })
@@ -397,7 +403,7 @@ angular.module('starter.services', [])
 	},
 	completed: function () {
 		var d = moment();
-    console.log(entries);
+    //console.log(entries);
 		for(var i = 0; i < entries.length; i++){
 			if(d.isSame(entries[i].created, 'day')) {
 				return true;
@@ -408,8 +414,9 @@ angular.module('starter.services', [])
   }
 })
 
-.factory('Settings', function() {
+.factory('Settings', function($localStore, $window) {
     
+	$window.localStorage.clear();
 	var firstname = '';
 	var lastname = '';
 	

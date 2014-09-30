@@ -9,7 +9,7 @@
  <form name="edit">
    <label class="item item-input">
 	<span class="input-label">Type</span>
-   <select required name="type" ng-model="newtype" ng-options="type.name for type in types"></select><br>
+   <select required ng-model="newtype" ng-options="type for type in types"></select><br>
    </label>
    <label class="item item-input">
 	<span class="input-label">Duration</span>
