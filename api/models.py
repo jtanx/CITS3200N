@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.utils import timezone
+import re
 
 class DiaryType(models.Model):
     name = models.CharField(max_length=40, unique=True)
@@ -56,6 +57,18 @@ class SurveyQuestion(models.Model):
     #Only required for multi-choice/radio type
     choices = models.TextField(blank=True, null=True)
     
+    def clean(self):
+        if self.qtype == self.CHOICE or self.qtype == self.MULTICHOICE:
+            vals = self.choicelist()
+            if not vals:
+                raise ValidationError("A choice based question must have at least one choice")
+            for i in range(len(vals)): 
+                #Drop anything that does not match this regex.
+                vals[i] = re.sub(r"[^a-zA-Z0-9,.\-\?!]", " ", vals[i]).strip()
+                if not vals[i]:
+                    raise ValidationError("Choice must be alphanumeric.")
+            self.choices = "|".join(vals)
+    
     def clean_response(self, entry):
         entry = entry.strip()
         if not entry and self.required:
@@ -71,12 +84,12 @@ class SurveyQuestion(models.Model):
             return int(entry)
         elif self.qtype == self.CHOICE:
             #Fixme somewhat inefficient
-            if entry not in self.choices():
+            if entry not in self.choicelist():
                 raise ValueError("Not a valid choice.") #hurrr
         return entry
 
     def choicelist(self):
-        if self.qtype != self.CHOICE or self.qtype != self.MULTICHOICE:
+        if self.qtype != self.CHOICE and self.qtype != self.MULTICHOICE:
            raise ValueError("Cannot get choices for non-choice type question.")
         
         return [x.strip() for x in self.choices.split("|")]
