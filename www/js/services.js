@@ -251,6 +251,11 @@ angular.module('starter.services', [])
 			};
 		}
 		return todaymeals;
+	},
+	remove: function(type) {
+		for(var i = meals.length-1;i>-1;i--){
+			if(meals[i].type == type){meals.splice(i,1)}
+		}
 	}
   }
 })
@@ -287,6 +292,9 @@ angular.module('starter.services', [])
 	edit: function(startdate, enddate, quality){
 	entries[entries.length-1] = {date:entries[entries.length-1].date, start:startdate, end:enddate, quality:quality};
 	},
+	remove: function(){
+		entries.splice(entries.length-1,1)
+	}
   }
 })
 

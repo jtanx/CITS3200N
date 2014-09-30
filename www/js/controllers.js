@@ -208,13 +208,17 @@ angular.module('starter.controllers', [])
 		Save.unsave();
 		$state.go('tab.diary');
   };
+  $scope.remove = function(){
+		Meals.remove($stateParams.type);
+		Save.unsave();
+		$state.go('tab.diary');
+  };
 })
 
 .controller('SleepDetailCtrl', function($scope, $state, $stateParams, SleepEntries, Save) {
 	$scope.submit = function(start,end,quality){
     if (end.isBefore(start)) {
       end.add(1, 'd');
-	$state.go('tab.diary');
     }
     SleepEntries.add(start, end, quality);
     
@@ -222,6 +226,7 @@ angular.module('starter.controllers', [])
 		//		SleepEntries.add(startdate, enddate, quality);
 		//} else {$scope.timeerror = true;}
 		Save.unsave();
+		$state.go('tab.diary');
 	};
 })
 
@@ -233,16 +238,21 @@ angular.module('starter.controllers', [])
 	
 	$scope.quality = $scope.entry.quality;
 	$scope.submit = function(start,end,quality){
-    if (end.isBefore(start)) {
-      end.add(1, 'd');
-    }
-    SleepEntries.edit(start, end, quality);
+		if (end.isBefore(start)) {
+			end.add(1, 'd');
+		}
+		SleepEntries.edit(start, end, quality);
 		//if(startdate < enddate){
 		//		SleepEntries.edit(startdate, enddate, quality);
 		//} else {$scope.timeerror = true;}
 		Save.unsave();
-	$state.go('tab.diary');
+		$state.go('tab.diary');
 	};
+	$scope.remove = function(){
+		SleepEntries.remove();
+		Save.unsave();
+		$state.go('tab.diary');
+    };
 })
 
 
