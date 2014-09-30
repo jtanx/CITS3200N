@@ -30,13 +30,12 @@
 		</label>
 		
 		<ion-nav-buttons side="right">
-			<a href="#/tab/diary">
 				<button class="button button-icon" ng-disabled="edit.start.$error.required || 
 				edit.end.$error.required || edit.quality.$error.required" 
 				ng-click="submit(start,end,quality)" />Done</button>
-			</a>
 		</ion-nav-buttons>
 		
     </form>
+	<button class="button button-full button-assertive" ng-click="remove()"/>Delete</button>
   </ion-content>
 </ion-view>

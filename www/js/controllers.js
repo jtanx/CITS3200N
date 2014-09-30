@@ -69,22 +69,25 @@ angular.module('starter.controllers', [])
 	
 })
 
-.controller('DayAddCtrl', function($scope, $stateParams, Days) {
+.controller('DayAddCtrl', function($scope, $state, $stateParams, Days) {
   $scope.day = Days.get($stateParams.dayId);
   $scope.submit = function(text, newday, time) {
 		Days.add(text, newday, time);
+		$state.go('tab.schedule');
 	};
 	$scope.types = Days.types();
 })
 
-.controller('ExAddCtrl', function($scope, $stateParams, Exercises, Save) {
+.controller('ExAddCtrl', function($scope, $state, $stateParams, Exercises, Save) {
   $scope.submit = function(type, start, end, distance, exertion) {
     var start = moment(start, "HH:mm");
     var end = moment(end, "HH:mm");
 		Exercises.add(type, start, end, distance, exertion);
 		$scope.unsave = Save.unsave();
+		$state.go('tab.diary');
 	};
 	$scope.types = Exercises.types();
+	
 })
 
 .controller('ExerciseCtrl', function($scope, $state, $stateParams, Exercises, Save) {
@@ -97,11 +100,12 @@ angular.module('starter.controllers', [])
   $scope.distance = $scope.exercise.distance;
   $scope.exertion = $scope.exercise.exertion;
   $scope.submit = function(type, start, end, distance, exertion) {
-    console.log('submit', start, end);
+    //console.log('submit', start, end);
     var start = moment(start, 'HH:mm');
     var end = moment(end, 'HH:mm');
 		Exercises.edit($stateParams.exId, type, start, end, distance, exertion);
 		Save.unsave();
+	$state.go('tab.diary');
 	};
   $scope.remove = function(id) {
 		Exercises.remove(id);
@@ -150,21 +154,23 @@ angular.module('starter.controllers', [])
 })
 
 .controller('statsCtrl', function($scope, api) {
-  api.getStats();
+	$scope.press = function() {
+		api.getStats();
+  };
+	
 })
 
 .controller('settingsCtrl', function($scope, Settings) {
+  $scope.help = false;
   $scope.signedin = false;
-  $scope.firstname = Settings.firstname();
-  $scope.lastname = Settings.lastname();
-  $scope.signin = function(first, last) {
-		Settings.edit(first, last);
-		$scope.firstname = Settings.firstname();
-		$scope.lastname = Settings.lastname();
+  $scope.signin = function() {
 		$scope.signedin = true;
   };
   $scope.signout = function() {
 		$scope.signedin = false;
+  };
+  $scope.helpme = function() {
+		$scope.help = true;
   };
 })
 
@@ -188,11 +194,12 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('MealDetailCtrl', function($scope, $stateParams, Meals, Save) {
+.controller('MealDetailCtrl', function($scope, $state, $stateParams, Meals, Save) {
   $scope.type = $stateParams.type;
   $scope.submit = function(text){
 		Meals.add($stateParams.type, text);
 		Save.unsave();
+		$state.go('tab.diary');
   };
 })
 
@@ -203,11 +210,15 @@ angular.module('starter.controllers', [])
 		Meals.edit($stateParams.type, text);
 		Save.unsave();
 		$state.go('tab.diary');
-		$location.path('#/tab/diary');
+  };
+  $scope.remove = function(){
+		Meals.remove($stateParams.type);
+		Save.unsave();
+		$state.go('tab.diary');
   };
 })
 
-.controller('SleepDetailCtrl', function($scope, $stateParams, SleepEntries, Save) {
+.controller('SleepDetailCtrl', function($scope, $state, $stateParams, SleepEntries, Save) {
 	$scope.submit = function(start,end,quality){
     if (end.isBefore(start)) {
       end.add(1, 'd');
@@ -218,10 +229,11 @@ angular.module('starter.controllers', [])
 		//		SleepEntries.add(startdate, enddate, quality);
 		//} else {$scope.timeerror = true;}
 		Save.unsave();
+		$state.go('tab.diary');
 	};
 })
 
-.controller('SleepEditCtrl', function($scope, $rootScope, $stateParams, SleepEntries, Save) {
+.controller('SleepEditCtrl', function($scope, $state, $stateParams, SleepEntries, Save) {
 	$scope.entry = SleepEntries.get();
 	
   $scope.start = $scope.entry.start;
@@ -229,15 +241,21 @@ angular.module('starter.controllers', [])
 	
 	$scope.quality = $scope.entry.quality;
 	$scope.submit = function(start,end,quality){
-    if (end.isBefore(start)) {
-      end.add(1, 'd');
-    }
-    SleepEntries.edit(start, end, quality);
+		if (end.isBefore(start)) {
+			end.add(1, 'd');
+		}
+		SleepEntries.edit(start, end, quality);
 		//if(startdate < enddate){
 		//		SleepEntries.edit(startdate, enddate, quality);
 		//} else {$scope.timeerror = true;}
 		Save.unsave();
+		$state.go('tab.diary');
 	};
+	$scope.remove = function(){
+		SleepEntries.remove();
+		Save.unsave();
+		$state.go('tab.diary');
+    };
 })
 
 

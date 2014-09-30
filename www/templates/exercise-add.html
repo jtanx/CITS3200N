@@ -35,11 +35,9 @@
 		</label>
 		
    <ion-nav-buttons side="right">
-   <a href="#/tab/diary">
    <button class="button button-icon" ng-disabled="add.typechosen.$error.required || 
 			add.start.$error.required || add.end.$error.required || add.exertion.$error.required
 			|| !end.isValid() || !start.isValid() || end < start" ng-click="submit(typechosen, start, end, distance, exertion)"/>Add</button>
-	</a>
 	</ion-nav-buttons>
 	</form>
   </ion-content>

@@ -37,15 +37,19 @@ angular.module('starter.services', [])
   var url = 'http://localhost:8000/api';
   var initted = false;
   var token;
+  var loggedin = false;
   
   return {
+	loggedin: function() {
+      return loggedin;
+    },
     isInitted: function() {
       return initted;
     },
     login: function(credentials) {
       $http.post(url + '-token-auth/', credentials).success(function (data, status, headers, config) {
         $http.defaults.headers.common.Authorization = "Token " + data.token;
-        
+        loggedin = true;
         //http://www.kdmooreconsulting.com/blogs/authentication-with-ionic-and-angular-js-in-a-cordovaphonegap-mobile-web-application/
         // Need to inform the http-auth-interceptor that
         // the user has logged in successfully.  To do this, we pass in a function that
@@ -65,6 +69,7 @@ angular.module('starter.services', [])
     logout: function() {
       delete $http.defaults.headers.common.Authorization;
       $rootScope.$broadcast('event:auth-logout-complete');
+	  loggedin = false;
     },
     
     loginCancelled: function() {
@@ -252,6 +257,11 @@ angular.module('starter.services', [])
 			};
 		}
 		return todaymeals;
+	},
+	remove: function(type) {
+		for(var i = meals.length-1;i>-1;i--){
+			if(meals[i].type == type){meals.splice(i,1)}
+		}
 	}
   }
 })
@@ -288,6 +298,9 @@ angular.module('starter.services', [])
 	edit: function(startdate, enddate, quality){
 	entries[entries.length-1] = {date:entries[entries.length-1].date, start:startdate, end:enddate, quality:quality};
 	},
+	remove: function(){
+		entries.splice(entries.length-1,1)
+	}
   }
 })
 
