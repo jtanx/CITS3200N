@@ -32,16 +32,17 @@ angular.module('starter.services', [])
   }
 }])
 
-.factory('api', function($rootScope, $http, authService) {
+.factory('api', function($rootScope, $http, $localStore, authService) {
   //var url = 'http://ftracker-jtanx.rhcloud.com/api';
   var url = 'http://localhost:8000/api';
   var initted = false;
   var token;
-  var loggedin = false;
+  var loggedIn = false;
+  var toSubmit = $localStore.getObject('api_toSubmit', '[]');
   
   return {
-	loggedin: function() {
-      return loggedin;
+    loggedIn: function() {
+      return loggedIn;
     },
     isInitted: function() {
       return initted;
@@ -49,7 +50,7 @@ angular.module('starter.services', [])
     login: function(credentials) {
       $http.post(url + '-token-auth/', credentials).success(function (data, status, headers, config) {
         $http.defaults.headers.common.Authorization = "Token " + data.token;
-        loggedin = true;
+        loggedIn = true;
         //http://www.kdmooreconsulting.com/blogs/authentication-with-ionic-and-angular-js-in-a-cordovaphonegap-mobile-web-application/
         // Need to inform the http-auth-interceptor that
         // the user has logged in successfully.  To do this, we pass in a function that
@@ -69,15 +70,26 @@ angular.module('starter.services', [])
     logout: function() {
       delete $http.defaults.headers.common.Authorization;
       $rootScope.$broadcast('event:auth-logout-complete');
-	  loggedin = false;
+      loggedIn = false;
     },
     
     loginCancelled: function() {
       authService.loginCancelled();
     },
     
-    submitSurvey: function(surveyId, responses) {
+    storeSurvey: function(surveyId, created, responses) {
+      //Deep copy of the response
+      entry = {survey : surveyId, created : created, responses : JSON.stringify(responses)}
       
+      $http.post(url + '/survey/', entry).success(function (data, status, headers, config) {
+        console.log("YAY");
+      }).error(function() {
+        toSubmit.push(entry);
+        console.log("OH NO");
+      });
+      //toSubmit.push(entry);
+      $localStore.setObject('api_toSubmit', toSubmit);
+      console.log(toSubmit);
     },
     
     submitSleep: function(details) {
@@ -330,14 +342,14 @@ angular.module('starter.services', [])
   }
 })
 
-.factory('Answers', function($localStore) {
+.factory('Answers', function($localStore, api) {
   var options = [
     { id: 1, name: 'Not at all'}, { id: 2, name: 'A little'}, 
 	{ id: 3, name: 'Moderately'}, { id: 4, name: 'Quite a lot'}, 
 	{ id: 5, name: 'Extremely'}
   ];
 
-  var entries = $localStore.getObject('mentalResponses', '[]');
+  var entries = [];//$localStore.getObject('mentalResponses', '[]');
   
   var answers = [];
   
@@ -365,6 +377,8 @@ angular.module('starter.services', [])
     for (var i = 0; i < answers.length; i++) {
       responses.push({number : i + 1, entry : answers[i].toString()})
     }
+    
+    api.storeSurvey(1, moment(), responses);
     
     //The entry for today
     var entry = {
