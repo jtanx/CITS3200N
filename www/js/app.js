@@ -28,14 +28,12 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
     require: 'ngModel',
     link: function (scope, elem, attrs, ngModel) {      
       var toView = function (val) {
-        console.log(val);
         if (typeof val !== "undefined")
           return val.format("HH:mm");
         return val;
       };
       
       var toModel = function (val) {
-        console.log("tm", val);
         return moment(val, "HH:mm");
       };
       

@@ -79,10 +79,14 @@ angular.module('starter.controllers', [])
 })
 
 .controller('ExAddCtrl', function($scope, $state, $stateParams, Exercises, Save) {
-  $scope.submit = function(type, start, end, distance, exertion) {
-    var start = moment(start, "HH:mm");
-    var end = moment(end, "HH:mm");
-		Exercises.add(type, start, end, distance, exertion);
+  $scope.exercise = {};
+  $scope.isTimeValid = function() {
+    var ex = $scope.exercise;
+    return ex.start.isValid() && ex.end.isValid() && ex.end.isAfter(ex.start);
+  };
+  
+  $scope.submit = function() {
+		Exercises.add($scope.exercise);
 		$scope.unsave = Save.unsave();
 		$state.go('tab.diary');
 	};
@@ -91,19 +95,16 @@ angular.module('starter.controllers', [])
 })
 
 .controller('ExerciseCtrl', function($scope, $state, $stateParams, Exercises, Save) {
-  $scope.exercise = Exercises.get($stateParams.exId);
-  $scope.typechosen = $scope.exercise.type;
+  $scope.exercise = angular.copy(Exercises.get($stateParams.exId));
+
   
-  $scope.start = $scope.exercise.start;
-  $scope.end = $scope.exercise.end;
+  $scope.isTimeValid = function() {
+    var ex = $scope.exercise;
+    return ex.start.isValid() && ex.end.isValid() && ex.end.isAfter(ex.start);
+  };
   
-  $scope.distance = $scope.exercise.distance;
-  $scope.exertion = $scope.exercise.exertion;
-  $scope.submit = function(type, start, end, distance, exertion) {
-    //console.log('submit', start, end);
-    var start = moment(start, 'HH:mm');
-    var end = moment(end, 'HH:mm');
-		Exercises.edit($stateParams.exId, type, start, end, distance, exertion);
+  $scope.submit = function() {
+		Exercises.edit($stateParams.exId, $scope.exercise);
 		Save.unsave();
 	$state.go('tab.diary');
 	};

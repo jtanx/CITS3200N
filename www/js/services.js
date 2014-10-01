@@ -21,7 +21,8 @@ angular.module('starter.services', [])
       return $window.localStorage[key] || defaultValue;
     },
     setObject: function(key, value) {
-      $window.localStorage[key] = JSON.stringify(value);
+      //Used instead of JSON.stringify to remove angular-internal values.
+      $window.localStorage[key] = angular.toJson(value);
     },
     getObject: function(key, defaultStrValue, customReviver) {
       var rev = reviver;
@@ -44,11 +45,23 @@ angular.module('starter.services', [])
 
 .factory('api', function($rootScope, $http, $localStore, $ionicLoading, authService) {
   //var url = 'http://ftracker-jtanx.rhcloud.com/api';
-  var url = 'http://localhost:8000/api';
+  var url = 'http://192.168.0.145:8000/api';
   var initted = false;
   var token;
   var loggedIn = false;
   var toSubmit = $localStore.getObject('api_toSubmit', '[]');
+  
+  var serviceIds = {
+    EXERCISE_SERVICE_ID : 1001,
+  };
+  //This is set in the .run function 
+  var serviceCallbacks = {};
+  
+  var submittedDispatch = function(serviceID, cbParams) {
+    if (serviceID in serviceCallbacks) {
+      serviceCallbacks[serviceID](cbParams);
+    }
+  }
   
   return {
     loggedIn: function() {
@@ -56,6 +69,14 @@ angular.module('starter.services', [])
     },
     isInitted: function() {
       return initted;
+    },
+    
+    getServiceIDs : function () {
+      return serviceIds;
+    },
+    
+    addServiceCallback: function(serviceID, callback) {
+      serviceCallbacks[serviceID] = callback;
     },
     
     havePendingSubmissions: function () {
@@ -115,17 +136,19 @@ angular.module('starter.services', [])
       authService.loginCancelled();
     },
     
-    storeSurvey: function(surveyId, created, responses) {
-      entry = {survey : surveyId, created : created, responses : JSON.stringify(responses)}
+    /** 
+     * Submission to the server is asynchronous.
+     * When it actually gets submitted, a return notification to the service is
+     * needed.
+     */
+    storeSurvey: function(surveyId, serviceID, cbParams, created, responses) {
+      var entry = {
+        survey : surveyId,
+        created : created, 
+        responses : JSON.stringify(responses)
+      };
       
-      /*
-      $http.post(url + '/survey/', entry).success(function (data, status, headers, config) {
-        console.log("YAY");
-      }).error(function() {
-        toSubmit.push(entry);
-        console.log("OH NO");
-      });*/
-      toSubmit.push(entry);
+      toSubmit.push({action : "add", serviceID : serviceID, cbParams : (cbParams || {}), entry : entry});
       $localStore.setObject('api_toSubmit', toSubmit);
       console.log(toSubmit);
     },
@@ -133,30 +156,68 @@ angular.module('starter.services', [])
     /**
      * Submits ALL pending surveys to the server, if they haven't been sent yet.
      */
-    submitPending: (function submitter() {
+    submitPending: function() {
       $ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
-      if (toSubmit.length > 0) {
-        elem = toSubmit[toSubmit.length - 1];
-        $http.post(url + '/survey/', elem).success(function(data, status, headers, config) {
-          toSubmit.pop();
-          submitter();
-        }).error(function(data, status, headers, config) {
-          if (status == 0) {
-            $ionicLoading.show({template : "The server is offline. Please try syncing again later.", duration: 1000});
-          } else {
-            $ionicLoading.hide();
+      
+      var f = function submitter() {
+        if (toSubmit.length > 0) {
+          var elem = toSubmit[0];
+          var entry = elem.entry;
+          var method = $http.post;
+          if (elem.action === 'update') {
+            method = $http.put;
+          } else if (elem.action === 'delete') {
+            method = $http.delete;
           }
           
-        });
-      } else {
-        $ionicLoading.hide();
-      }
-    }),
+          
+          method(url + '/survey/', entry).success(function(data, status, headers, config) {
+            toSubmit.shift();
+            //console.log('succ', elem);
+            //console.log(data.id);
+            //Add the action taken
+            elem.cbParams.action = elem.action;
+            elem.cbParams.remoteId = data.id;
+            
+            //Call the callback now that we have a response from the server
+            submittedDispatch(elem.serviceID, elem.cbParams);
+            submitter();
+          }).error(function(data, status, headers, config) {
+            alert(url, status);
+            if (status == 0) {
+              $ionicLoading.show({template : "The server is offline. Please try syncing again later.", duration: 1000});
+            } else if (status == 400) {
+              $ionicLoading.show({template : "An error occurred.", duration: 1000});
+              
+              toSubmit.shift(); //Drop the crap data?
+              console.log("Error", data);
+            } else {
+              $ionicLoading.hide();
+            }
+            
+            $localStore.setObject('api_toSubmit', toSubmit);
+          });
+        } else {
+          $localStore.setObject('api_toSubmit', toSubmit);
+          $ionicLoading.hide();
+        }
+      };
+      
+      f();
+    },
     
     getStats: function() {
       $http.get(url + "/surveys/");
     }
   };
+})
+
+/**
+ * This sets the callbacks needed for each control that requires it.
+ */
+.run(function(api, Exercises) {
+  var ids = api.getServiceIDs();
+  api.addServiceCallback(ids.EXERCISE_SERVICE_ID, Exercises.submitCallback);
 })
 
 /**
@@ -220,13 +281,23 @@ angular.module('starter.services', [])
   }
 })
 
-.factory('Exercises', function($localStore) {
-
+.factory('Exercises', function($localStore, api) {
+  var EXERCISE_SURVEY_ID = 3; //The server ID for this survey
+  var EXERCISE_SERVICE_ID = 1001; //The local ID
   var exercises = $localStore.getObject('exercises', '[]');
   var types = [ 
 	'Run', 'Cycle', 'Swim'
   ];
   var idcount = $localStore.getObject('exId', -1);
+  
+  //This is defined here, as this.indexOf may not work if the function is called from a callback.
+  var indexOf = function(exerciseId) {
+		for(var i = 0; i < exercises.length; i++){
+		if(exercises[i].id == exerciseId)
+			return i;
+	  }
+    return -1;
+	};
   
   return {
 	types: function() {
@@ -237,28 +308,49 @@ angular.module('starter.services', [])
     },
 	get: function(exId) {
       // Simple index lookup
-      return exercises[this.indexOf(exId)];
+      return exercises[indexOf(exId)];
     },
-	add: function(type, start, end, distance, exertion) {
-		idcount++;
-		$localStore.setObject('exId', idcount);
-      exercises.push({id: idcount, date: moment(), type: type, 
-			start : start, end : end, distance : distance, exertion : exertion});
+    
+    submitCallback : function(cbParams) {
+      console.log('SUBMITCALLBACK');
+      console.log(cbParams);
+      if (cbParams.action == 'add') {
+        console.log(this);
+        var cEnt = indexOf(cbParams.localId);
+        if (cEnt >= 0) {
+          exercises[cEnt].remoteId = cbParams.remoteId;
+          console.log(exercises[cEnt].remoteId);
+          console.log(exercises[cEnt])
+          $localStore.setObject('exercises', exercises);
+        }
+      }
+    },
+	add: function(ex) {
+		$localStore.setObject('exId', ++idcount);
+    ex.id = idcount;
+    ex.date = moment();
+    exercises.push(ex);
+    
+    //surveyId, cbParams, created, responses
+    api.storeSurvey(
+      EXERCISE_SURVEY_ID, EXERCISE_SERVICE_ID, {localId : idcount}, 
+      ex.date, [
+      {number : 1, entry : ex.type},
+      {number : 2, entry : ex.end.diff(ex.start, 'h')}, 
+      {number : 3, entry : ex.distance},
+      {number : 4, entry : ex.exertion}
+    ]);
+    api.submitPending();
 		$localStore.setObject('exercises', exercises);
     },
-	edit: function(id, type, start, end, distance, exertion) {
-      exercises[this.indexOf(id)] = ({id: id, date: exercises[this.indexOf(id)].date, type: type, 
-			start : start, end : end, distance : distance, exertion : exertion});
+	edit: function(id, ex) {
+    ex.id = id;
+    exercises[indexOf(id)] = ex;
 		$localStore.setObject('exercises', exercises);
     },
-	indexOf: function(exerciseId) {
-		for(var i = 0; i < exercises.length; i++){
-		if(exercises[i].id == exerciseId)
-			return i;
-	  }
-	},
+	indexOf: indexOf,
 	remove: function(id) {
-		exercises.splice(this.indexOf(id), 1);
+		exercises.splice(indexOf(id), 1);
 		$localStore.setObject('exercises', exercises);
     },
   }
@@ -442,7 +534,8 @@ angular.module('starter.services', [])
       responses.push({number : i + 1, entry : answers[i].toString()})
     }
     
-    api.storeSurvey(1, moment(), responses);
+    //surveyId, serviceID, cbParams, created, responses
+    api.storeSurvey(1, -1, null, moment(), responses);
     api.submitPending();
     
     //The entry for today

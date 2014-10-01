@@ -2,42 +2,38 @@
 <ion-view title="Edit {{exercise.type}}">
   <ion-content has-header="true" pediting="true">
   <form name="edit">
-		<label class="item item-input">
+		<label class="item item-input item-select">
 		<span class="input-label">Type</span>
-        <select required ng-model="typechosen" ng-options="type for type in types" name="typechosen"></select><br>
-		<div ng-if="edit.typechosen.$error.required" style="color:red;">enter field</div>
+        <select required ng-model="exercise.type" ng-options="type for type in types" name="typechosen"></select><br>
 		</label>
 		
 		<label class="item item-input">
 		<span class="input-label">Start</span>
-        <input required time-field type="time" name="start" ng-model="start" />
-		<div ng-if="edit.start.$error.required" style="color:red;">enter field</div>
+        <input required time-field type="time" name="start" ng-model="exercise.start" />
+        <div ng-if="exercise.start && !exercise.start.isValid()" style="color:red;">invalid time</div>
 		</label>
 		
 		<label class="item item-input">
 		<span class="input-label">End</span>
-        <input required time-field type="time" name="end" ng-model="end" />
-		<div ng-if="edit.end.$error.required" style="color:red;">enter field</div>
-		<div ng-if="!end.isValid() || !start.isValid() || end < start" style="color:red;">invalid time</div>
+        <input required time-field type="time" name="end" ng-model="exercise.end" />
+		<div ng-if="exercise.end && ((!exercise.end.isValid() || !exercise.start.isValid()) || exercise.end < exercise.start)" style="color:red;">invalid time</div>
 		</label>
 		
 		<label class="item item-input">
 		<span class="input-label">Distance</span>
-		<input required type="number" min="0" min="50" ng-model="distance" name="distance" />
-		<div ng-if="edit.distance.$error.required" style="color:red;">enter field</div>
+		<input required type="number" min="0" min="50" ng-model="exercise.distance" name="distance" />
 		</label>
 		
 		<label class="item item-input">
 		<span class="input-label">Exertion</span>
-        <input required type="number" min="0" min="5" ng-model="exertion" name="exertion" />
-		<div ng-if="edit.exertion.$error.required" style="color:red;">enter field</div>
+        <input required type="number" min="0" min="5" ng-model="exercise.exertion" name="exertion" />
 		</label>
    
    <ion-nav-buttons side="right">
    <button ng-disabled="edit.typechosen.$error.required || 
 		edit.start.$error.required || edit.end.$error.required || edit.exertion.$error.required 
-		|| edit.distance.$error.required ||end < start" class="button button-icon"  
-		ng-click="submit(typechosen, start, end, distance, exertion)"/>Done</button>
+		|| edit.distance.$error.required || !isTimeValid()" class="button button-icon"  
+		ng-click="submit()"/>Done</button>
    </ion-nav-buttons>
    </form>
    
