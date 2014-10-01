@@ -28,7 +28,6 @@ def export_survey(responses, format='csv'):
         ent = [q.number, q.description]
         data.append(ent)
         expmap[q.number] = ent 
-        
     
     for response in responses:
         qrs = response.responses()

@@ -118,6 +118,7 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
             try:
                 data = JSONParser().parse(stream)
             except ParseError, e:
+                print(value)
                 print(e)
                 raise serializers.ValidationError("Invalid JSON format for responses")
             

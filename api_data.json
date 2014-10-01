@@ -357,7 +357,7 @@
         "parent": 3,
         "required": true,
         "number": 1,
-        "choices": "Cycle|Running|Swimming",
+        "choices": "Cycle|Run|Swim",
         "qtype": "CHC"
     },
     "model": "api.surveyquestion",
@@ -377,15 +377,27 @@
 },
 {
     "fields": {
-        "description": "Perceived training intensity",
+        "description": "Training distance",
         "parent": 3,
         "required": true,
         "number": 3,
         "choices": "",
-        "qtype": "INS"
+        "qtype": "INT"
     },
     "model": "api.surveyquestion",
     "pk": 27
+},
+{
+    "fields": {
+        "description": "Perceived training intensity",
+        "parent": 3,
+        "required": true,
+        "number": 4,
+        "choices": "",
+        "qtype": "INS"
+    },
+    "model": "api.surveyquestion",
+    "pk": 28
 },
 {
     "fields": {
@@ -397,7 +409,7 @@
         "qtype": "CHC"
     },
     "model": "api.surveyquestion",
-    "pk": 28
+    "pk": 29
 },
 {
     "fields": {
@@ -409,6 +421,6 @@
         "qtype": "TXT"
     },
     "model": "api.surveyquestion",
-    "pk": 29
+    "pk": 30
 }
 ]

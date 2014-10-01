@@ -79,7 +79,7 @@ class SurveyQuestion(models.Model):
             except ValueError:
                 raise ValueError("Non-integer value given for an integer field")
             
-            if self.qtype == self.INTSCALE and ret < 1 or ret > 5:
+            if self.qtype == self.INTSCALE and (ret < 1 or ret > 5):
                 raise ValueError("Invalid integer scale value %d" % ret)
             return int(entry)
         elif self.qtype == self.CHOICE:
