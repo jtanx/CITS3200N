@@ -2,7 +2,7 @@ angular.module('starter.api', ['starter.localStore'])
 
 .factory('api', function($rootScope, $http, $localStore, $ionicLoading, authService) {
   //var url = 'http://ftracker-jtanx.rhcloud.com/api';
-  //var url = 'http://cits3200n.csse.uwa.edu.au:8001';
+  //var url = 'http://cits3200n.csse.uwa.edu.au:8001/api';
   var url = 'http://localhost:8000/api';
   var initted = false;
   var loggedIn = false;
