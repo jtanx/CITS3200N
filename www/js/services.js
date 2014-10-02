@@ -10,7 +10,7 @@ var serviceIDs = {
   MTDS : 1001,
   SLEEP : 1002,
   EXERCISE : 1003,
-  MEAL : 4
+  MEAL : 1004
 };
 
 /**
