@@ -154,6 +154,7 @@ angular.module('starter.controllers', [])
 .controller('settingsCtrl', function($scope, Settings, api) {
   $scope.help = false;
   $scope.signedin = api.loggedIn();
+  $scope.sync = api.submitPending;
   
   $scope.$on('event:auth-loginConfirmed', function() {
     $scope.signedin = api.loggedIn();

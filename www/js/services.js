@@ -97,58 +97,96 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
 	};
   
   return {
-	types: function() {
+    types: function() {
       return types;
     },
     all: function() {
       return exercises;
     },
-	get: function(exId) {
+    get: function(exId) {
       // Simple index lookup
       return exercises[indexOf(exId)];
     },
+    indexOf: indexOf,
     
     submitCallback : function(cbParams) {
       console.log('SUBMITCALLBACK');
       console.log(cbParams);
       if (cbParams.action == 'add') {
         console.log(this);
-        var cEnt = indexOf(cbParams.localId);
+        var cEnt = indexOf(cbParams.object_id);
+        console.log(cbParams.object_id, cEnt);
         if (cEnt >= 0) {
-          exercises[cEnt].remoteId = cbParams.remoteId;
-          console.log(exercises[cEnt].remoteId);
+          exercises[cEnt].remote_id = cbParams.remote_id;
+          console.log(exercises[cEnt].remote_id);
           console.log(exercises[cEnt])
           $localStore.setObject('exercises', exercises);
         }
       }
     },
-	add: function(ex) {
-		$localStore.setObject('exId', ++idcount);
-    ex.id = idcount;
-    ex.date = moment();
-    exercises.push(ex);
-    
-    //surveyId, cbParams, created, responses
-    api.storeSurvey(
-      surveyIDs.EXERCISE, serviceIDs.EXERCISE, {localId : idcount}, 
-      ex.date, [
-      {number : 1, entry : ex.type},
-      {number : 2, entry : ex.end.diff(ex.start, 'h')}, 
-      {number : 3, entry : ex.distance},
-      {number : 4, entry : ex.exertion}
-    ]);
-    api.submitPending();
-		$localStore.setObject('exercises', exercises);
+    add: function(ex) {
+      $localStore.setObject('exId', ++idcount);
+      ex.id = idcount;
+      ex.date = moment();
+      exercises.push(ex);
+      $localStore.setObject('exercises', exercises);
+      
+      var sub = {
+        survey_id : surveyIDs.EXERCISE,
+        service_id : serviceIDs.EXERCISE,
+        object_id : ex.id,
+        created : ex.date,
+        responses : [
+          {number : 1, entry : ex.type},
+          {number : 2, entry : ex.end.diff(ex.start, 'h')}, 
+          {number : 3, entry : ex.distance},
+          {number : 4, entry : ex.exertion}
+        ]      
+      };
+      
+      api.storeSurvey(sub);
+      api.submitPending();
     },
-	edit: function(id, ex) {
-    ex.id = id;
-    exercises[indexOf(id)] = ex;
-		$localStore.setObject('exercises', exercises);
+    edit: function(id, ex) {
+      ex.id = parseInt(id, 10); //May be a string
+      exercises[indexOf(id)] = ex;
+      $localStore.setObject('exercises', exercises);
+      
+      var sub = {
+        survey_id : surveyIDs.EXERCISE,
+        service_id : serviceIDs.EXERCISE,
+        object_id : ex.id,
+        created : ex.date,
+        responses : [
+          {number : 1, entry : ex.type},
+          {number : 2, entry : ex.end.diff(ex.start, 'h')}, 
+          {number : 3, entry : ex.distance},
+          {number : 4, entry : ex.exertion}
+        ]      
+      };
+      
+      if ('remote_id' in ex) {
+        sub.remote_id = ex.remote_id;
+      }
+      
+      api.editSurvey(sub);
+      api.submitPending();
     },
-	indexOf: indexOf,
-	remove: function(id) {
-		exercises.splice(indexOf(id), 1);
-		$localStore.setObject('exercises', exercises);
+    remove: function(id) {
+      var ent = exercises.splice(indexOf(id), 1);
+      $localStore.setObject('exercises', exercises);
+      
+      var sub = {
+        survey_id : surveyIDs.EXERCISE,
+        service_id : serviceIDs.EXERCISE,
+        object_id : parseInt(id, 10)
+      };
+      
+      if ('remote_id' in ent) {
+        sub.remote_id = ent.remote_id;
+      }
+      api.deleteSurvey(sub);
+      api.submitPending();
     },
   }
 })
@@ -168,7 +206,6 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
 })
 
 .factory('Meals', function($localStore) {
-  
   var meals = $localStore.getObject('meals', '[]');
   var types = [
 	{name: 'Breakfast'}, {name: 'Lunch'}, {name: 'Dinner'}, {name: 'Other'}

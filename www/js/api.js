@@ -8,9 +8,8 @@ angular.module('starter.api', ['starter.localStore'])
   var loggedIn = false;
   var toSubmit = $localStore.getObject('api_toSubmit', '[]');
   
-  //This is set in the .run function 
+  //Callbacks are set in a services.js .run function 
   var serviceCallbacks = {};
-  
   var submittedDispatch = function(serviceID, cbParams) {
     if (serviceID in serviceCallbacks) {
       serviceCallbacks[serviceID](cbParams);
@@ -35,7 +34,6 @@ angular.module('starter.api', ['starter.localStore'])
     
     initialise: function() {
       //$ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
-      
       var token = $localStore.get("AuthToken", "");
       if (token.length > 0) {
         $http.defaults.headers.common.Authorization = "Token " + token;
@@ -56,20 +54,23 @@ angular.module('starter.api', ['starter.localStore'])
       //$ionicLoading.hide();
     },
     
+    //Basis:
+    //http://www.kdmooreconsulting.com/blogs/authentication-with-ionic-and-angular-js-in-a-cordovaphonegap-mobile-web-application/
     login: function(credentials) {
-      $http.post(url + '-token-auth/', credentials).success(function (data, status, headers, config) {
-        $http.defaults.headers.common.Authorization = "Token " + data.token;
-        $localStore.set("AuthToken", data.token);
-        loggedIn = true;
-        //http://www.kdmooreconsulting.com/blogs/authentication-with-ionic-and-angular-js-in-a-cordovaphonegap-mobile-web-application/
-        // Need to inform the http-auth-interceptor that
-        // the user has logged in successfully.  To do this, we pass in a function that
-        // will configure the request headers with the authorization token so
-        // previously failed requests(aka with status == 401) will be resent with the
-        // authorization token placed in the header
-        authService.loginConfirmed(data, function(config) {  // Step 2 & 3
-          config.headers.Authorization = "Token " + data.token;
-          return config;
+      //Clear any stale token, if present
+      delete $http.defaults.headers.common.Authorization;
+      $localStore.set("AuthToken", "");
+      loggedIn = false;
+      
+      $http.post(url + '-token-auth/', credentials).success(
+        function (data, status, headers, config) {
+          $http.defaults.headers.common.Authorization = "Token " + data.token;
+          $localStore.set("AuthToken", data.token);
+          loggedIn = true;
+          //Inform auth service that we have succeeded
+          authService.loginConfirmed(data, function(config) {
+            config.headers.Authorization = "Token " + data.token;
+            return config;
         });
       })
       .error(function (data, status, headers, config) {
@@ -80,74 +81,140 @@ angular.module('starter.api', ['starter.localStore'])
     logout: function() {
       delete $http.defaults.headers.common.Authorization;
       $localStore.set("AuthToken", "");
-      $rootScope.$broadcast('event:auth-logout-complete');
       loggedIn = false;
+      $rootScope.$broadcast('event:auth-logout-complete');
     },
     
     loginCancelled: function() {
       authService.loginCancelled();
     },
     
-    /** 
+    /**
      * Submission to the server is asynchronous.
      * When it actually gets submitted, a return notification to the service is
      * needed.
-     */
-    storeSurvey: function(surveyId, serviceID, cbParams, created, responses) {
-      var entry = {
-        survey : surveyId,
-        created : created, 
-        responses : JSON.stringify(responses)
-      };
-      
-      toSubmit.push({action : "add", serviceID : serviceID, cbParams : (cbParams || {}), entry : entry});
+      params = {
+        survey_id : The server side ID of the survey to be submitted,
+        service_id : The local ID of the submitting service,
+        object_id : The unique local ID of the submitted response 
+        created : When the response was created.
+        responses : A list of responses, in [{number : q, entry : "d"}, ...]
+                    format, where q is the question number, and entry is the
+                    response to that question (must be a string).
+        cb_params : Any custom callback paramters to be passed to the registered
+                    callback function when a response to a submission is received
+                    from the server.
+      }
+    */
+    storeSurvey: function(params) {
+      params.action = 'add';
+      toSubmit.push(params);
       $localStore.setObject('api_toSubmit', toSubmit);
-      console.log(toSubmit);
+    },
+    
+    editSurvey : function (params) {
+      params.action = 'update';
+      var updated = false;
+      for (var i = 0; i < toSubmit.length; i++) {
+        var ent = toSubmit[i];
+        if (ent.survey_id === params.survey_id && ent.object_id === params.object_id) {
+          console.log("Replacing entry", i, "in submission queue", ent, params);
+          ent.created = params.created;
+          ent.responses = params.responses;
+          ent.service_id = params.service_id;
+          ent.cb_params = params.cb_params;
+          updated = true;
+        }
+      }
+      
+      if (!updated && ('remote_id' in params)) {
+        toSubmit.push(params);
+      }
+      $localStore.setObject('api_toSubmit', toSubmit);
     },
     
     /**
-     * Submits ALL pending surveys to the server, if they haven't been sent yet.
+     * Mostly the same as for storeSurvey, where applicable. Also has remote_id,
+     * if it is already known that it exists on the server.
      */
-    submitPending: function() {
+    deleteSurvey : function (params) {
+      params.action = 'delete';
+      for (var i = 0; i < toSubmit.length; i++) {
+        var ent = toSubmit[i];
+        if (ent.survey_id === params.survey_id && ent.object_id === params.object_id) {
+          toSubmit.splice(i--, 1);
+        }
+      }
+      
+      if ('remote_id' in params) {
+        toSubmit.push(params);
+      }
+      
+      $localStore.setObject('api_toSubmit', toSubmit);
+    },
+    
+    submitPending : function() {
       $ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
       
-      var f = function submitter() {
+      var subber = function submitter() {
         if (toSubmit.length > 0) {
-          var elem = toSubmit[0];
-          var entry = elem.entry;
-          var method = $http.post;
-          if (elem.action === 'update') {
+          var ent = toSubmit[0];
+          var method, sub, iurl;
+          
+          if (ent.action == 'add') {
+            iurl = "/survey/";
+            method = $http.post;
+            sub = {
+              survey : ent.survey_id,
+              created : ent.created,
+              responses : angular.toJson(ent.responses)
+            };
+          } else if (ent.action == 'update') {
+            iurl = "/survey/" + ent.remote_id.toString() + "/";
             method = $http.put;
-          } else if (elem.action === 'delete') {
+            sub = {
+              survey : ent.survey_id,
+              created : ent.created,
+              responses : angular.toJson(ent.responses)
+            };
+          } else if (ent.action == 'delete') {
+            iurl = "/survey/" + ent.remote_id.toString() + "/";
             method = $http.delete;
+            sub = {};
           }
           
-          
-          method(url + '/survey/', entry).success(function(data, status, headers, config) {
-            toSubmit.shift();
-            //console.log('succ', elem);
-            //console.log(data.id);
-            //Add the action taken
-            elem.cbParams.action = elem.action;
-            elem.cbParams.remoteId = data.id;
-            
-            //Call the callback now that we have a response from the server
-            submittedDispatch(elem.serviceID, elem.cbParams);
-            submitter();
-          }).error(function(data, status, headers, config) {
-            alert(url, status);
-            if (status == 0) {
-              $ionicLoading.show({template : "The server is offline. Please try syncing again later.", duration: 1000});
-            } else if (status == 400) {
-              $ionicLoading.show({template : "An error occurred.", duration: 1000});
+          method(url + iurl, sub).success(
+            function(data, status, headers, config) {
+              //Remove from the submission queue.
+              toSubmit.shift();
+              //Add in the action taken and the remote id of the object, if applicable.
+              if (typeof ent.cb_params === "undefined") {
+                ent.cb_params = {};
+              }
+              ent.cb_params.action = ent.action;
+              ent.cb_params.object_id = ent.object_id;
+              if (ent.action === 'add' || ent.action === 'update') {
+                ent.cb_params.remote_id = data.id;
+              }
               
-              toSubmit.shift(); //Drop the crap data?
-              console.log("Error", data);
-            } else {
-              $ionicLoading.hide();
-            }
-            
-            $localStore.setObject('api_toSubmit', toSubmit);
+              //Call the callback now that we have a response from the server
+              submittedDispatch(ent.service_id, ent.cb_params);
+              //Recursively call until the queue is empty.
+              submitter();
+          }).error(
+            function(data, status, headers, config) {
+              if (status == 0) { //Likely offline
+                $ionicLoading.show({template : "The server is offline. Please try syncing again later.", duration: 1000});
+              } else if (status == 400) { //Invalid submission to server.
+                $ionicLoading.show({template : "An error occurred.", duration: 1000});
+                
+                toSubmit.shift(); //Drop the crap data?
+                console.log("Error", data);
+              } else { //Likely they need to login
+                $ionicLoading.hide();
+              }
+              
+              $localStore.setObject('api_toSubmit', toSubmit);
           });
         } else {
           $localStore.setObject('api_toSubmit', toSubmit);
@@ -155,7 +222,7 @@ angular.module('starter.api', ['starter.localStore'])
         }
       };
       
-      f();
+      subber();
     },
     
     getStats: function() {
