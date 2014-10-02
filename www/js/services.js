@@ -1,227 +1,26 @@
-angular.module('starter.services', [])
+var surveyIDs = {
+  EXERCISE : 3
+};
 
-/** Local storage (persistent). For storing anything necessary.
- *  Basis: http://learn.ionicframework.com/formulas/localstorage/
- *  With modification to parse ISO8601 dates.
+//Service IDS
+var serviceIDs = {
+  EXERCISE : 1001,
+};
+
+/**
+ * All services that interact directly with the controllers.
  */
-.factory('$localStore', ['$window', function($window) {
-  //Reviver, currently for ISO8601 dates in Zulu time
-  var reviver = function(k, v) {
-    if (typeof v === "string" && v.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.?\d*Z$/g)) {
-      return moment(v);
-    }
-    return v;
-  };
-  
-  return {
-    set: function(key, value) {
-      $window.localStorage[key] = value;
-    },
-    get: function(key, defaultValue) {
-      return $window.localStorage[key] || defaultValue;
-    },
-    setObject: function(key, value) {
-      //Used instead of JSON.stringify to remove angular-internal values.
-      $window.localStorage[key] = angular.toJson(value);
-    },
-    getObject: function(key, defaultStrValue, customReviver) {
-      var rev = reviver;
-      
-      //Hook in a custom reviver, if provided.
-      if (typeof customReviver === "function") {
-        rev = function(k, v) {
-          ret = reviver(k, v);
-          return customReviver(k, ret);
-        }
-      }
-      
-      if (typeof defaultStrValue !== "undefined") {
-        return JSON.parse($window.localStorage[key] || defaultStrValue, rev);
-      }
-      return JSON.parse($window.localStorage[key] || '{}', rev);
-    }
-  }
-}])
-
-.factory('api', function($rootScope, $http, $localStore, $ionicLoading, authService) {
-  //var url = 'http://ftracker-jtanx.rhcloud.com/api';
-  var url = 'http://192.168.0.145:8000/api';
-  var initted = false;
-  var token;
-  var loggedIn = false;
-  var toSubmit = $localStore.getObject('api_toSubmit', '[]');
-  
-  var serviceIds = {
-    EXERCISE_SERVICE_ID : 1001,
-  };
-  //This is set in the .run function 
-  var serviceCallbacks = {};
-  
-  var submittedDispatch = function(serviceID, cbParams) {
-    if (serviceID in serviceCallbacks) {
-      serviceCallbacks[serviceID](cbParams);
-    }
-  }
-  
-  return {
-    loggedIn: function() {
-      return loggedIn;
-    },
-    isInitted: function() {
-      return initted;
-    },
-    
-    getServiceIDs : function () {
-      return serviceIds;
-    },
-    
-    addServiceCallback: function(serviceID, callback) {
-      serviceCallbacks[serviceID] = callback;
-    },
-    
-    havePendingSubmissions: function () {
-      return toSubmit.length > 0;
-    },
-    
-    initialise: function() {
-      //$ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
-      
-      var token = $localStore.get("AuthToken", "");
-      if (token.length > 0) {
-        $http.defaults.headers.common.Authorization = "Token " + token;
-      }
-      
-      /*
-      $http.get(url + '/surveys/').success(function (data) {
-        initted = true;
-        $ionicLoading.hide();
-      }).error(function(data, status, headers, config) {
-        console.log(status, headers);
-        $ionicLoading.show({template : 'Failed to contact the server.'});
-        $ionicLoading.hide();
-      });
-      */
-      initted = true;
-      //$ionicLoading.hide();
-    },
-    
-    login: function(credentials) {
-      $http.post(url + '-token-auth/', credentials).success(function (data, status, headers, config) {
-        $http.defaults.headers.common.Authorization = "Token " + data.token;
-        $localStore.set("AuthToken", data.token);
-        loggedIn = true;
-        //http://www.kdmooreconsulting.com/blogs/authentication-with-ionic-and-angular-js-in-a-cordovaphonegap-mobile-web-application/
-        // Need to inform the http-auth-interceptor that
-        // the user has logged in successfully.  To do this, we pass in a function that
-        // will configure the request headers with the authorization token so
-        // previously failed requests(aka with status == 401) will be resent with the
-        // authorization token placed in the header
-        authService.loginConfirmed(data, function(config) {  // Step 2 & 3
-          config.headers.Authorization = "Token " + data.token;
-          return config;
-        });
-      })
-      .error(function (data, status, headers, config) {
-        $rootScope.$broadcast('event:auth-login-failed', status);
-      });
-    },
-    
-    logout: function() {
-      delete $http.defaults.headers.common.Authorization;
-      $rootScope.$broadcast('event:auth-logout-complete');
-      loggedIn = false;
-    },
-    
-    loginCancelled: function() {
-      authService.loginCancelled();
-    },
-    
-    /** 
-     * Submission to the server is asynchronous.
-     * When it actually gets submitted, a return notification to the service is
-     * needed.
-     */
-    storeSurvey: function(surveyId, serviceID, cbParams, created, responses) {
-      var entry = {
-        survey : surveyId,
-        created : created, 
-        responses : JSON.stringify(responses)
-      };
-      
-      toSubmit.push({action : "add", serviceID : serviceID, cbParams : (cbParams || {}), entry : entry});
-      $localStore.setObject('api_toSubmit', toSubmit);
-      console.log(toSubmit);
-    },
-    
-    /**
-     * Submits ALL pending surveys to the server, if they haven't been sent yet.
-     */
-    submitPending: function() {
-      $ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
-      
-      var f = function submitter() {
-        if (toSubmit.length > 0) {
-          var elem = toSubmit[0];
-          var entry = elem.entry;
-          var method = $http.post;
-          if (elem.action === 'update') {
-            method = $http.put;
-          } else if (elem.action === 'delete') {
-            method = $http.delete;
-          }
-          
-          
-          method(url + '/survey/', entry).success(function(data, status, headers, config) {
-            toSubmit.shift();
-            //console.log('succ', elem);
-            //console.log(data.id);
-            //Add the action taken
-            elem.cbParams.action = elem.action;
-            elem.cbParams.remoteId = data.id;
-            
-            //Call the callback now that we have a response from the server
-            submittedDispatch(elem.serviceID, elem.cbParams);
-            submitter();
-          }).error(function(data, status, headers, config) {
-            alert(url, status);
-            if (status == 0) {
-              $ionicLoading.show({template : "The server is offline. Please try syncing again later.", duration: 1000});
-            } else if (status == 400) {
-              $ionicLoading.show({template : "An error occurred.", duration: 1000});
-              
-              toSubmit.shift(); //Drop the crap data?
-              console.log("Error", data);
-            } else {
-              $ionicLoading.hide();
-            }
-            
-            $localStore.setObject('api_toSubmit', toSubmit);
-          });
-        } else {
-          $localStore.setObject('api_toSubmit', toSubmit);
-          $ionicLoading.hide();
-        }
-      };
-      
-      f();
-    },
-    
-    getStats: function() {
-      $http.get(url + "/surveys/");
-    }
-  };
-})
-
+angular.module('starter.services', ['starter.localStore', 'starter.api'])
 /**
  * This sets the callbacks needed for each control that requires it.
+ * This callback is called for when a result is received from the server.
  */
 .run(function(api, Exercises) {
-  var ids = api.getServiceIDs();
-  api.addServiceCallback(ids.EXERCISE_SERVICE_ID, Exercises.submitCallback);
+  api.addServiceCallback(serviceIDs.EXERCISE, Exercises.submitCallback);
 })
 
 /**
- * A simple example service that returns some data.
+ * A service for the scheduler.
  */
 .factory('Days', function($localStore) {
 
@@ -282,8 +81,6 @@ angular.module('starter.services', [])
 })
 
 .factory('Exercises', function($localStore, api) {
-  var EXERCISE_SURVEY_ID = 3; //The server ID for this survey
-  var EXERCISE_SERVICE_ID = 1001; //The local ID
   var exercises = $localStore.getObject('exercises', '[]');
   var types = [ 
 	'Run', 'Cycle', 'Swim'
@@ -333,7 +130,7 @@ angular.module('starter.services', [])
     
     //surveyId, cbParams, created, responses
     api.storeSurvey(
-      EXERCISE_SURVEY_ID, EXERCISE_SERVICE_ID, {localId : idcount}, 
+      surveyIDs.EXERCISE, serviceIDs.EXERCISE, {localId : idcount}, 
       ex.date, [
       {number : 1, entry : ex.type},
       {number : 2, entry : ex.end.diff(ex.start, 'h')}, 
