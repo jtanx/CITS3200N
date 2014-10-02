@@ -1,10 +1,16 @@
 var surveyIDs = {
-  EXERCISE : 3
+  MTDS : 1,
+  SLEEP : 2,
+  EXERCISE : 3,
+  MEAL : 4
 };
 
 //Service IDS
 var serviceIDs = {
-  EXERCISE : 1001,
+  MTDS : 1001,
+  SLEEP : 1002,
+  EXERCISE : 1003,
+  MEAL : 4
 };
 
 /**
@@ -15,7 +21,8 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
  * This sets the api callbacks needed for each control that requires it.
  * This callback is called for when a result is received from the server.
  */
-.run(function(api, Exercises) {
+.run(function(api, SleepEntries, Exercises) {
+  api.addServiceCallback(serviceIDs.SLEEP, SleepEntries.submitCallback);
   api.addServiceCallback(serviceIDs.EXERCISE, Exercises.submitCallback);
 })
 
@@ -173,7 +180,7 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
       api.submitPending();
     },
     remove: function(id) {
-      var ent = exercises.splice(indexOf(id), 1);
+      var ent = exercises.splice(indexOf(id), 1)[0];
       $localStore.setObject('exercises', exercises);
       
       var sub = {
@@ -247,42 +254,110 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   }
 })
 
-.factory('SleepEntries', function($localStore) {
-  //Some fake data
-  var entries = $localStore.getObject('sleepEntries', '[]');
+.factory('SleepEntries', function($localStore, api) {
+  var entries = $localStore.getObject('sleepEntries', '{}');
+  var id = function(date) {
+    return date.format("DD-MM-YYYY");
+  };
   return {
     all: function() {
       return entries;
     },
+    id : id,
+    
+    submitCallback : function (cbParams) {
+      console.log('SLEEPCALLBACK');
+      console.log(cbParams);
+      if (cbParams.action == 'add') {
+        if (cbParams.object_id in entries) {
+          entries[cbParams.object_id].remote_id = cbParams.remote_id;
+          $localStore.setObject('sleepEntries', entries);
+        }
+      }
+    },
     add: function(startdate, enddate, quality){
-		entries.push({date:moment(), start:startdate, end:enddate, quality:quality});
-		$localStore.setObject('sleepEntries', entries);
-	},
+      var ent = {
+        date : moment(),
+        start : startdate,
+        end : enddate,
+        quality : quality
+      };
+      entries[id(ent.date)] = ent;
+      $localStore.setObject('sleepEntries', entries);
+      
+      var sub = {
+        survey_id : surveyIDs.SLEEP,
+        service_id : serviceIDs.SLEEP,
+        object_id : id(ent.date), //Unique by day
+        created : ent.date,
+        responses : [
+          {number : 1, entry : ent.end.diff(ent.start, 'h')}, //Fixme this rounds down always
+          {number : 2, entry : ent.quality}, 
+        ]      
+      };
+      
+      api.storeSurvey(sub);
+      api.submitPending();
+    },
 	added: function(){
-		for(var i = 0; i<entries.length;i++){
-			if(entries[i].date.isSame(moment(), 'day')){return true;}
-		}
-		return false;
+    return id(moment()) in entries;
 	},
 	get: function(){
-		return entries[entries.length-1];
+		return entries[id(moment())];
 	},
 	diff: function(){
-    var today = moment();
-		for(var i = 0; i<entries.length;i++){
-			if(entries[i].date.isSame(today, 'day')){
-        return Math.round(entries[i].end.diff(entries[i].start, 'seconds') / 360) / 10
-			}
-		}
+    var today = id(moment());
+    
+    if (today in entries) {
+      var ent = entries[today];
+      //Get the time period in hours, rounded to 1 decimal place.
+      return Math.round(ent.end.diff(ent.start, 'seconds') / 360) / 10;
+    }
 		return 0;
 	},
-	edit: function(startdate, enddate, quality){
-	entries[entries.length-1] = {date:entries[entries.length-1].date, start:startdate, end:enddate, quality:quality};
-	$localStore.setObject('sleepEntries', entries);
-	},
+  edit: function(startdate, enddate, quality){
+    var today = id(moment());
+    var ent = entries[today];
+    ent.start   = startdate;
+    ent.end     = enddate;
+    ent.quality = quality;
+    $localStore.setObject('sleepEntries', entries);
+    
+    var sub = {
+        survey_id : surveyIDs.SLEEP,
+        service_id : serviceIDs.SLEEP,
+        object_id : id(ent.date), //Unique by day
+        created : ent.date,
+        responses : [
+          {number : 1, entry : ent.end.diff(ent.start, 'h')}, //Fixme this rounds down always
+          {number : 2, entry : ent.quality}, 
+        ]      
+    };
+    
+    if ('remote_id' in ent) {
+      sub.remote_id = ent.remote_id;
+    }
+    
+    api.editSurvey(sub);
+    api.submitPending();
+  },
 	remove: function(){
-		entries.splice(entries.length-1,1);
+    var today = id(moment());
+		var ent = entries[today];
+    delete entries[today];
 		$localStore.setObject('sleepEntries', entries);
+    
+    var sub = {
+        survey_id : surveyIDs.SLEEP,
+        service_id : serviceIDs.SLEEP,
+        object_id : today
+    };
+      
+    if ('remote_id' in ent) {
+      sub.remote_id = ent.remote_id;
+    }
+    api.deleteSurvey(sub);
+    api.submitPending();
 	}
   }
 })
