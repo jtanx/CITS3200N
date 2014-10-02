@@ -52,7 +52,7 @@ class SurveyViewSet(viewsets.ReadOnlyModelViewSet):
     query_set = Survey.objects.all()
     
 class SurveySubmissionViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsRecent)
     serializer_class = SurveyResponseSerializer
     model = SurveyResponse
     

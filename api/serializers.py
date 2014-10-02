@@ -164,21 +164,33 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
         
     def restore_object(self, attrs, instance=None):
         if instance is not None:
-            return instance
-        user = self.context['request'].user
-        v = SurveyResponse(survey=attrs['survey'], creator=user, \
-                           created=attrs['created'])
+            #raise Exception(attrs['created'])
+            if instance.survey != attrs['survey']:
+                raise ValidationError("Cannot change the survey type")
+              
+            self.responses_todelete = instance.responses()
+        else:
+            user = self.context['request'].user
+            instance = SurveyResponse(survey=attrs['survey'], creator=user, \
+                               created=attrs['created'])
             
         self.responses_tosave = attrs['responses']
-        return v
+        return instance
         
     def save(self, **kwargs):
         ret = super(self.__class__, self).save(**kwargs)
+        
+        #Nonatomic...
+        if hasattr(self, 'responses_todelete'):
+            self.responses_todelete.delete()
+        
         #print(ret)
         for qr in self.responses_tosave:
             qr.rid = ret
             qr.full_clean()
             qr.save()
+            
+
         return ret
       
     
