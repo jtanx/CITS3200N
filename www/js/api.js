@@ -1,10 +1,10 @@
-angular.module('starter.api', [])
+angular.module('starter.api', ['starter.localStore'])
 
 .factory('api', function($rootScope, $http, $localStore, $ionicLoading, authService) {
   //var url = 'http://ftracker-jtanx.rhcloud.com/api';
+  //var url = 'http://cits3200n.csse.uwa.edu.au:8001';
   var url = 'http://localhost:8000/api';
   var initted = false;
-  var token;
   var loggedIn = false;
   var toSubmit = $localStore.getObject('api_toSubmit', '[]');
   
@@ -39,6 +39,7 @@ angular.module('starter.api', [])
       var token = $localStore.get("AuthToken", "");
       if (token.length > 0) {
         $http.defaults.headers.common.Authorization = "Token " + token;
+        loggedIn = true;
       }
       
       /*

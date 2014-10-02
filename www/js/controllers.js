@@ -43,7 +43,7 @@ angular.module('starter.controllers', [])
   });
  
   $scope.$on('event:auth-logout-complete', function() {
-    $state.go('app.home', {}, {reload: true, inherit: false});
+    $state.go('tab.settings', {}, {reload: true, inherit: false});
   });
   
   $scope.login = function () {
@@ -151,14 +151,20 @@ angular.module('starter.controllers', [])
 	
 })
 
-.controller('settingsCtrl', function($scope, Settings) {
+.controller('settingsCtrl', function($scope, Settings, api) {
   $scope.help = false;
-  $scope.signedin = false;
+  $scope.signedin = api.loggedIn();
+  
+  $scope.$on('event:auth-loginConfirmed', function() {
+    $scope.signedin = api.loggedIn();
+  });
+  
   $scope.signin = function() {
-		$scope.signedin = true;
+		$scope.loginModal.show();
   };
   $scope.signout = function() {
-		$scope.signedin = false;
+    api.logout();
+		$scope.signedin = api.loggedIn();
   };
   $scope.helpme = function() {
 		$scope.help = true;
