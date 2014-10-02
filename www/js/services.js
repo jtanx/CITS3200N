@@ -21,9 +21,10 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
  * This sets the api callbacks needed for each control that requires it.
  * This callback is called for when a result is received from the server.
  */
-.run(function(api, SleepEntries, Exercises) {
+.run(function(api, SleepEntries, Exercises, Meals) {
   api.addServiceCallback(serviceIDs.SLEEP, SleepEntries.submitCallback);
   api.addServiceCallback(serviceIDs.EXERCISE, Exercises.submitCallback);
+  api.addServiceCallback(serviceIDs.MEAL, Meals.submitCallback);
 })
 
 /**
@@ -212,44 +213,114 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   }
 })
 
-.factory('Meals', function($localStore) {
-  var meals = $localStore.getObject('meals', '[]');
+.factory('Meals', function($localStore, api) {
+  var meals = $localStore.getObject('meals', '{}');
   var types = [
-	{name: 'Breakfast'}, {name: 'Lunch'}, {name: 'Dinner'}, {name: 'Other'}
+    'Breakfast', 'Lunch', 'Dinner', 'Other'
   ];
+  
+  var id = function(date, type) {
+    return date.format("DD-MM-YYYY") + "-" + type;
+  };
 
   return {
-	add: function(type, text) {
-		meals.push({date: moment(), type: type, text: text});
-		$localStore.setObject('meals', meals);
-	},
+  submitCallback : function(cbParams) {
+    console.log('MEALCALLBACK');
+      console.log(cbParams);
+      if (cbParams.action == 'add') {
+        if (cbParams.object_id in meals) {
+          meals[cbParams.object_id].remote_id = cbParams.remote_id;
+          $localStore.setObject('meals', meals);
+        }
+      }
+  },
+  add: function(type, text) {
+    var ent = {
+      date : moment(),
+      type : type,
+      text : text
+    };
+    
+    var entId = id(ent.date, ent.type);
+    meals[entId] = ent;
+    $localStore.setObject('meals', meals);
+    
+    var sub = {
+      survey_id : surveyIDs.MEAL,
+      service_id : serviceIDs.MEAL,
+      object_id : entId, //Unique by day and type
+      created : ent.date,
+      responses : [
+        {number : 1, entry : ent.type}, 
+        {number : 2, entry : ent.text}
+      ]     
+    };
+    
+    api.storeSurvey(sub);
+    api.submitPending();
+  },
 	types: function() {
 		return types;
 	},
 	get: function(type) {
-		for(var i = meals.length-1;i>-1;i--){
-			if(meals[i].type == type){return meals[i];}
-		}
+    var entId = id(moment(), type);
+    if (entId in meals) {
+      return meals[entId];
+    }
 	},
 	edit: function(type, text){
-		this.get(type).text = text;
+    var ent = this.get(type);
+		ent.text = text;
 		$localStore.setObject('meals', meals);
+    
+    var sub = {
+      survey_id : surveyIDs.MEAL,
+      service_id : serviceIDs.MEAL,
+      object_id : id(moment(), ent.type), //Unique by day and type
+      created : ent.date,
+      responses : [
+        {number : 1, entry : ent.type},
+        {number : 2, entry : ent.text}, 
+      ]     
+    };
+    
+    if ('remote_id' in ent) {
+      sub.remote_id = ent.remote_id;
+    }
+    
+    api.editSurvey(sub);
+    api.submitPending();
 	},
 	today: function() {
 		var todaymeals = [];
 		var today = moment();
-		for(var i = 0; i<meals.length;i++){
-			if(meals[i].date.isSame(today, 'day')){
-				todaymeals.push(meals[i]);
-			};
-		}
+    for (var i = 0; i < types.length; i++) {
+      var entId = id(today, types[i]);
+      if (entId in meals) {
+        todaymeals.push(meals[entId]);
+      }
+    }
 		return todaymeals;
 	},
 	remove: function(type) {
-		for(var i = meals.length-1;i>-1;i--){
-			if(meals[i].type == type){meals.splice(i,1)}
-		}
-		$localStore.setObject('meals', meals);
+    var entId = id(moment(), type);
+    if (entId in meals) {
+      var ent = meals[entId];
+      delete meals[entId];
+      $localStore.setObject('meals', meals);
+      
+      var sub = {
+        survey_id : surveyIDs.MEAL,
+        service_id : serviceIDs.MEAL,
+        object_id : entId
+      };
+      
+      if ('remote_id' in ent) {
+        sub.remote_id = ent.remote_id;
+      }
+      api.deleteSurvey(sub);
+      api.submitPending();
+    }
 	}
   }
 })
@@ -260,8 +331,12 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
     return date.format("DD-MM-YYYY");
   };
   return {
-    all: function() {
-      return entries;
+    all: function() { //Currently unused
+      var entlist = []
+      for (var k in entries) {
+        entlist.push(entries[k]);
+      }
+      return entlist;
     },
     id : id,
     
