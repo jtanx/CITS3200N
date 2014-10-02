@@ -79,6 +79,7 @@ angular.module('starter.api', ['starter.localStore'])
     
     logout: function() {
       delete $http.defaults.headers.common.Authorization;
+      $localStore.set("AuthToken", "");
       $rootScope.$broadcast('event:auth-logout-complete');
       loggedIn = false;
     },
