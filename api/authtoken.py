@@ -21,7 +21,7 @@ def db_changed(sender, instance=None, created=False, **kwargs):
             user = instance.rid.creator
             
         if user is not None and User.objects.filter(id=user.id).exists():
-            cs = Changeset.objects.get(user)
+            cs = Changeset.objects.get(user=user)
             cs.revision += 1
             cs.save()
         
