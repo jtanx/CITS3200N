@@ -12,7 +12,7 @@ var serviceIDs = {
  */
 angular.module('starter.services', ['starter.localStore', 'starter.api'])
 /**
- * This sets the callbacks needed for each control that requires it.
+ * This sets the api callbacks needed for each control that requires it.
  * This callback is called for when a result is received from the server.
  */
 .run(function(api, Exercises) {
@@ -153,26 +153,7 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   }
 })
 
-.factory('List', function() {
-
-  var things = [
-    { name: 'Sunday' , day: 'Sunday'}, {name: 'Monday' , day: 'Tuesday'}
-  ];
-
-  return {
-    all: function() {
-      return things;
-    },
-	add: function(text) {
-      things.push({name: text, day: 'Sunday'});
-    }
-	
-  }
-})
-
 .factory('Save', function($localStore) {
-
-
   return {
 	save: function() {
 		$localStore.setObject('saved', true);

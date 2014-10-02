@@ -55,14 +55,6 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('goalsCtrl', function($scope, List) {
-	$scope.things = List.all();
-	$scope.addTo = function(text) {
-		List.add(text);
-	};
-	
-})
-
 .controller('scheduleCtrl', function($scope, Days) {
   $scope.days = Days.all();
   $scope.entries = Days.allentries();
