@@ -499,20 +499,28 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
       responses.push({number : i + 1, entry : answers[i].toString()})
     }
     
-    //surveyId, serviceID, cbParams, created, responses
-    api.storeSurvey(1, -1, null, moment(), responses);
-    api.submitPending();
-    
     //The entry for today
-    var entry = {
+    var ent = {
       created : moment(),
       responses : responses
     }
-    //Add to the entry list
-		entries.push(entry);
     
-    //Todo: Push to the server...
+    //Add to the entry list
+		entries.push(ent);
     $localStore.setObject('mentalResponses', entries);
+    
+    //Push to server when available
+    var sub = {
+        survey_id : surveyIDs.MTDS,
+        service_id : serviceIDs.MTDS,
+        created : ent.created,
+        responses : ent.responses
+    };
+    
+    //surveyId, serviceID, cbParams, created, responses
+    api.storeSurvey(sub);
+    api.submitPending();
+    
     //Clear the responses for the next survey
     answers = []; 
 	},
