@@ -11,6 +11,14 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'is_staff')
+        
+class InfoSerializer(serializers.ModelSerializer):
+    first_name = serializers.Field(source='user.first_name')
+    last_name = serializers.Field(source='user.last_name')
+    
+    class Meta:
+        model = Changeset
+        fields = ('first_name', 'last_name', 'revision',)
 
 class DiaryTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,8 +27,8 @@ class DiaryTypeSerializer(serializers.ModelSerializer):
 class DiarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Diary
-	fields = ('id', 'created', 'entry', 'dtype')
-	read_only_fields = ('id',)
+        fields = ('id', 'created', 'entry', 'dtype')
+        read_only_fields = ('id',)
 	
 	
     def restore_object(self, attrs, instance=None):

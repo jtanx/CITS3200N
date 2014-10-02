@@ -22,12 +22,21 @@ class IsRecent(permissions.BasePermission):
                 delta = timezone.now() - obj.submitted
                 return delta.days < 7
         return True
-
+        
 # ViewSets define the view behavior.
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdminUser)
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    
+class InfoView(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = InfoSerializer
+    model = Changeset
+    
+    def get(self, request, **kwargs):
+        req = InfoSerializer(Changeset.objects.get(user=request.user))
+        return Response(data=req.data)
 
 
 class DiaryTypeViewSet(viewsets.ReadOnlyModelViewSet):
