@@ -21,10 +21,15 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
  * This sets the api callbacks needed for each control that requires it.
  * This callback is called for when a result is received from the server.
  */
-.run(function(api, SleepEntries, Exercises, Meals) {
+.run(function(api, MentalSurvey, SleepEntries, Exercises, Meals) {
   api.addServiceCallback(serviceIDs.SLEEP, SleepEntries.submitCallback);
   api.addServiceCallback(serviceIDs.EXERCISE, Exercises.submitCallback);
   api.addServiceCallback(serviceIDs.MEAL, Meals.submitCallback);
+  
+  api.addSyncCallback(surveyIDs.MTDS, MentalSurvey.syncCallback);
+  api.addSyncCallback(surveyIDs.SLEEP, SleepEntries.syncCallback);
+  api.addSyncCallback(surveyIDs.EXERCISE, Exercises.syncCallback);
+  api.addSyncCallback(surveyIDs.MEAL, Meals.syncCallback);
 })
 
 /**
@@ -132,6 +137,33 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
         }
       }
     },
+    
+    syncCallback : function (remoteList) {
+      var nEnts = [];
+      for (var i = 0; i < remoteList.length; i++) {
+        var rEnt = remoteList[i];
+        if (rEnt.responses && rEnt.responses.length == 5) {
+          //NB This assumes that responses are ordered by number.
+          var ent = {
+            remote_id : rEnt.id,
+            id : ++idcount,
+            date : moment(rEnt.created),
+            type : rEnt.responses[0].entry,
+            start : moment(rEnt.responses[1].entry),
+            end : moment(rEnt.responses[2].entry),
+            distance : parseInt(rEnt.responses[3].entry),
+            exertion : parseInt(rEnt.responses[4].entry),
+          };
+          
+          nEnts.push(ent);
+        }
+      }
+
+      exercises = nEnts;
+      $localStore.setObject('exId', idcount);
+      $localStore.setObject('exercises', nEnts);
+    },
+    
     add: function(ex) {
       $localStore.setObject('exId', ++idcount);
       ex.id = idcount;
@@ -146,9 +178,10 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
         created : ex.date,
         responses : [
           {number : 1, entry : ex.type},
-          {number : 2, entry : ex.end.diff(ex.start, 'h')}, 
-          {number : 3, entry : ex.distance},
-          {number : 4, entry : ex.exertion}
+          {number : 2, entry : ex.start},
+          {number : 3, entry : ex.end}, 
+          {number : 4, entry : ex.distance},
+          {number : 5, entry : ex.exertion}
         ]      
       };
       
@@ -167,9 +200,10 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
         created : ex.date,
         responses : [
           {number : 1, entry : ex.type},
-          {number : 2, entry : ex.end.diff(ex.start, 'h')}, 
-          {number : 3, entry : ex.distance},
-          {number : 4, entry : ex.exertion}
+          {number : 2, entry : ex.start},
+          {number : 3, entry : ex.end}, 
+          {number : 4, entry : ex.distance},
+          {number : 5, entry : ex.exertion}
         ]      
       };
       
@@ -234,6 +268,27 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
         }
       }
   },
+  syncCallback : function (remoteList) {
+    var nEnts = {};
+    for (var i = 0; i < remoteList.length; i++) {
+      var rEnt = remoteList[i];
+      if (rEnt.responses && rEnt.responses.length == 2) {
+        //NB This assumes that responses are ordered by number.
+        var ent = {
+          remote_id : rEnt.id,
+          date : moment(rEnt.created),
+          type : rEnt.responses[0].entry,
+          text : rEnt.responses[1].entry
+        };
+        
+        nEnts[id(ent.date, ent.type)] = ent;
+      }
+    }
+    
+    meals = nEnts;
+    $localStore.setObject('meals', meals);
+  },
+  
   add: function(type, text) {
     var ent = {
       date : moment(),
@@ -330,6 +385,12 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   var id = function(date) {
     return date.format("DD-MM-YYYY");
   };
+  
+  var setEntries = function(nEnts) {
+    console.log(entries);
+    entries = nEnts;
+  };
+  
   return {
     all: function() { //Currently unused
       var entlist = []
@@ -350,6 +411,30 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
         }
       }
     },
+    
+    syncCallback : function (remoteList) {
+      var nEnts = {};
+      for (var i = 0; i < remoteList.length; i++) {
+        var rEnt = remoteList[i];
+        if (rEnt.responses && rEnt.responses.length == 3) {
+          //NB This assumes that responses are ordered by number.
+          var ent = {
+            remote_id : rEnt.id,
+            date : moment(rEnt.created),
+            start : moment(rEnt.responses[0].entry),
+            end : moment(rEnt.responses[1].entry),
+            quality : rEnt.responses[2].entry
+          };
+          
+          nEnts[id(ent.date)] = ent;
+        }
+      }
+      
+      setEntries(nEnts);
+      $localStore.setObject('sleepEntries', nEnts);
+      console.log(nEnts);
+    },
+    
     add: function(startdate, enddate, quality){
       var ent = {
         date : moment(),
@@ -366,8 +451,9 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
         object_id : id(ent.date), //Unique by day
         created : ent.date,
         responses : [
-          {number : 1, entry : ent.end.diff(ent.start, 'h')}, //Fixme this rounds down always
-          {number : 2, entry : ent.quality}, 
+          {number : 1, entry : ent.start},
+          {number : 2, entry : ent.end},
+          {number : 3, entry : ent.quality}, 
         ]      
       };
       
@@ -404,8 +490,9 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
         object_id : id(ent.date), //Unique by day
         created : ent.date,
         responses : [
-          {number : 1, entry : ent.end.diff(ent.start, 'h')}, //Fixme this rounds down always
-          {number : 2, entry : ent.quality}, 
+          {number : 1, entry : ent.start},
+          {number : 2, entry : ent.end},
+          {number : 3, entry : ent.quality}, 
         ]      
     };
     
@@ -463,14 +550,14 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   }
 })
 
-.factory('Answers', function($localStore, api) {
+.factory('MentalSurvey', function($localStore, api) {
   var options = [
     { id: 1, name: 'Not at all'}, { id: 2, name: 'A little'}, 
 	{ id: 3, name: 'Moderately'}, { id: 4, name: 'Quite a lot'}, 
 	{ id: 5, name: 'Extremely'}
   ];
 
-  var entries = [];//$localStore.getObject('mentalResponses', '[]');
+  var entries = $localStore.getObject('mentalResponses', '[]');
   
   var answers = [];
   
@@ -491,30 +578,36 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
 		};
 		return count
 	},
+  
+  syncCallback : function (remoteList) {
+    var nEnts = [];
+      for (var i = 0; i < remoteList.length; i++) { 
+        nEnts.push(moment(remoteList[i].created));
+      }
+
+      entries = nEnts;
+      $localStore.setObject('mentalResponses', nEnts);
+    },
+  
 	submit: function () {
-    var responses = []
+    var date = moment();
+    var responses = [];
     
     //Build the response list
     for (var i = 0; i < answers.length; i++) {
       responses.push({number : i + 1, entry : answers[i].toString()})
     }
     
-    //The entry for today
-    var ent = {
-      created : moment(),
-      responses : responses
-    }
-    
     //Add to the entry list
-		entries.push(ent);
+		entries.push(date);
     $localStore.setObject('mentalResponses', entries);
     
     //Push to server when available
     var sub = {
         survey_id : surveyIDs.MTDS,
         service_id : serviceIDs.MTDS,
-        created : ent.created,
-        responses : ent.responses
+        created : date,
+        responses : responses
     };
     
     //surveyId, serviceID, cbParams, created, responses
@@ -528,7 +621,7 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
 		var d = moment();
     //console.log(entries);
 		for(var i = 0; i < entries.length; i++){
-			if(d.isSame(entries[i].created, 'day')) {
+			if(d.isSame(entries[i], 'day')) {
 				return true;
 			}
 		}

@@ -125,20 +125,29 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('mentaltestCtrl', function($scope, $ionicSlideBoxDelegate, Questions, Answers) {
-	$scope.completed = Answers.completed();
+.controller('mentaltestCtrl', function($scope, $ionicSlideBoxDelegate, Questions, MentalSurvey) {
+  var setParameters = function () {
+    $scope.completed = MentalSurvey.completed();
+  };
+  
+  setParameters();
+  //Re-set the parameters when we sync
+  $scope.$on('event:api-synced', function() {
+    setParameters();
+  });
+	
 	$scope.questions = Questions.all();
-	$scope.options = Answers.options();
+	$scope.options = MentalSurvey.options();
 	$scope.answer = function(question, option) {
-		Answers.answer(question, option);
+		MentalSurvey.answer(question, option);
 		$ionicSlideBoxDelegate.update();
 		$ionicSlideBoxDelegate.next();
 	};
-  $scope.testanswers = Answers.all();
+  $scope.testanswers = MentalSurvey.all();
   $scope.submit = function() {
-	if(Answers.answered() == Questions.all().length){
-	Answers.submit();
-	$scope.completed = Answers.completed();
+	if(MentalSurvey.answered() == Questions.all().length){
+	MentalSurvey.submit();
+	$scope.completed = MentalSurvey.completed();
 	}
   };
   
@@ -154,7 +163,10 @@ angular.module('starter.controllers', [])
 .controller('settingsCtrl', function($scope, Settings, api) {
   $scope.help = false;
   $scope.signedin = api.loggedIn();
-  $scope.sync = api.submitPending;
+  $scope.sync = function () {
+    api.submitPending();
+    api.syncFromServer();
+  };
   
   $scope.$on('event:auth-loginConfirmed', function() {
     $scope.signedin = api.loggedIn();
@@ -175,18 +187,30 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises, Save) {
-  $scope.todaytext = moment().format('ll');
-  $scope.diff = SleepEntries.diff();
-  $scope.types = Meals.types();
-  $scope.meals = Meals.today();
-  $scope.exercises = Exercises.all();
-  $scope.saved = Save.status();
+.controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises, Save, api) {
+  var setParameters = function() {
+    $scope.todaytext = moment().format('ll');
+    $scope.diff = SleepEntries.diff();
+    $scope.types = Meals.types();
+    $scope.meals = Meals.today();
+    $scope.exercises = Exercises.all();
+    $scope.saved = Save.status();
+    $scope.sleepadded = SleepEntries.added();
+  }
+  
+  setParameters();
+  //Re-set the parameters when we sync
+  $scope.$on('event:api-synced', function() {
+    setParameters();
+  });
+  
   $scope.save = function() {
 		Save.save();
+    api.submitPending();
+    api.syncFromServer();
 		$scope.saved = Save.status();
   };
-  $scope.sleepadded = SleepEntries.added();
+  
   $scope.added = function(type){
 		for(var i = 0; i<$scope.meals.length;i++){
 			if ($scope.meals[i].type == type){return true;}
@@ -224,7 +248,7 @@ angular.module('starter.controllers', [])
     if (end.isBefore(start)) {
       end.add(1, 'd');
     }
-    SleepEntries.add(start, end, quality);
+    SleepEntries.add(start.subtract(1, 'd'), end.subtract(1, 'd'), quality);
     
 		//if(startdate < enddate){
 		//		SleepEntries.add(startdate, enddate, quality);
@@ -242,10 +266,16 @@ angular.module('starter.controllers', [])
 	
 	$scope.quality = $scope.entry.quality;
 	$scope.submit = function(start,end,quality){
+    start = moment($scope.entry.date).startOf('day')
+              .set('hour', start.hour())
+              .set('minute', start.minute());
+    end = moment($scope.entry.date).startOf('day')
+            .set('hour', end.hour())
+            .set('minute', end.minute());
 		if (end.isBefore(start)) {
 			end.add(1, 'd');
 		}
-		SleepEntries.edit(start, end, quality);
+		SleepEntries.edit(start.subtract(1, 'd'), end.subtract(1, 'd'), quality);
 		//if(startdate < enddate){
 		//		SleepEntries.edit(startdate, enddate, quality);
 		//} else {$scope.timeerror = true;}

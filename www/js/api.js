@@ -1,6 +1,6 @@
 angular.module('starter.api', ['starter.localStore'])
 
-.factory('api', function($rootScope, $http, $localStore, $ionicLoading, authService) {
+.factory('api', function($rootScope, $http, $localStore, $ionicLoading, $filter, authService) {
   //var url = 'http://ftracker-jtanx.rhcloud.com/api';
   //var url = 'http://cits3200n.csse.uwa.edu.au:8001/api';
   var url = 'http://localhost:8000/api';
@@ -16,6 +16,9 @@ angular.module('starter.api', ['starter.localStore'])
     }
   }
   
+  //For each survey, there can be one callback function registered.
+  var syncCallbacks = {};
+  
   return {
     loggedIn: function() {
       return loggedIn;
@@ -28,8 +31,37 @@ angular.module('starter.api', ['starter.localStore'])
       serviceCallbacks[serviceID] = callback;
     },
     
+    addSyncCallback: function(surveyID, callback) {
+      syncCallbacks[surveyID] = callback;
+    },
+    
     havePendingSubmissions: function () {
       return toSubmit.length > 0;
+    },
+    
+    syncFromServer: function () {
+      $ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
+      
+      return $http.get(url + '/survey/').success(
+        function (data, status, headers, config) {
+          console.log(data);
+          for (var surveyID in syncCallbacks) {
+            var filtered = $filter('filter')(data, {survey : surveyID});
+            if (filtered) {
+              syncCallbacks[surveyID](filtered);
+            }
+          }
+          
+          $rootScope.$broadcast('event:api-synced', status);
+          $ionicLoading.hide();
+        }
+      ).error(
+        function (data, status, headers, config) {
+          
+          //WHAT NOW?
+          $ionicLoading.hide();
+        }
+      );
     },
     
     initialise: function() {
@@ -50,7 +82,9 @@ angular.module('starter.api', ['starter.localStore'])
         $ionicLoading.hide();
       });
       */
-      initted = true;
+      this.syncFromServer().then(function () {
+        initted = true;
+      });
       //$ionicLoading.hide();
     },
     
