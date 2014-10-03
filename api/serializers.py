@@ -4,6 +4,7 @@ from StringIO import StringIO
 from rest_framework.parsers import JSONParser
 from rest_framework.exceptions import ParseError
 from django.contrib.auth.models import User
+from django.db import transaction
 from api.models import *
 
 # Serializers define the API representation.
@@ -188,15 +189,14 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         ret = super(self.__class__, self).save(**kwargs)
         
-        #Nonatomic...
-        if hasattr(self, 'responses_todelete'):
-            self.responses_todelete.delete()
-        
-        #print(ret)
-        for qr in self.responses_tosave:
-            qr.rid = ret
-            qr.full_clean()
-            qr.save()
+        #Atomicity needed because invalid input could cause old response to be lost.
+        with transaction.atomic():
+            if hasattr(self, 'responses_todelete'):
+                self.responses_todelete.delete()
+            for qr in self.responses_tosave:
+                qr.rid = ret
+                qr.full_clean()
+                qr.save()
             
 
         return ret
