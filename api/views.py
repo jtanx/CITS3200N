@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from api.models import *
 from api.serializers import *
 from django.utils import timezone
+import datetime
 
 UPDATE_METHODS = ['PUT', 'PATCH', 'DELETE']
 
@@ -65,14 +66,10 @@ class SurveySubmissionViewSet(viewsets.ModelViewSet):
     serializer_class = SurveyResponseSerializer
     model = SurveyResponse
     
-    '''
-    def create(self, request, *args, **kwargs):
-        stream = StringIO(request.DATA.get('responses', ''))
-        try:
-            data = JSONParser().parse(stream)
-        except ParseError:
-            raise serializers.ValidationError("Invalid JSON format for responses")
-        print(data)
-    '''
     def get_queryset(self):
-        return SurveyResponse.objects.filter(creator=self.request.user)
+        '''Restrict the query set to those created by the user and submitted in
+           the past week.'''
+        thisweek = timezone.now() - datetime.timedelta(days = 7)
+        qs = SurveyResponse.objects.filter(creator=self.request.user)
+        qs = qs.filter(submitted__gt = thisweek)
+        return qs
