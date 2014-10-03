@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime 
 import re
 
 class DiaryType(models.Model):
@@ -37,16 +38,18 @@ class Survey(models.Model):
 class SurveyQuestion(models.Model):
     INTEGER = "INT"
     INTSCALE = "INS"
+    DATETIME = "DTM"
     TEXT = "TXT"
     CHOICE = "CHC"
-    MULTICHOICE = "MCH"
+    #MULTICHOICE = "MCH"
     
     QTYPES = (
         (INTEGER, "Integer"),
         (INTSCALE, "Integer scale"),
+        (DATETIME, "Date-Time"),
         (TEXT, "Text"),
         (CHOICE, "Single choice"),
-        (MULTICHOICE, "Multi choice")
+        #(MULTICHOICE, "Multi choice")
     )
     
     parent = models.ForeignKey(Survey)
@@ -82,6 +85,21 @@ class SurveyQuestion(models.Model):
             if self.qtype == self.INTSCALE and (ret < 1 or ret > 5):
                 raise ValueError("Invalid integer scale value %d" % ret)
             return int(entry)
+        elif self.qtype == self.DATETIME:
+            try:
+                ret = parse_datetime(entry)
+            except (ValueError, TypeError):
+                raise ValueError("Datetime is not in ISO-8601 UTC format.")
+            
+            if ret is None:
+                raise ValueError("Invalid datetime specified.")
+            
+            #Pulled from DRF DateTimeField serializer code
+            ret = ret.isoformat()
+            if ret.endswith('+00:00'):
+                ret = ret[:-6] + 'Z'   
+            
+            return ret
         elif self.qtype == self.CHOICE:
             #Fixme somewhat inefficient
             if entry not in self.choicelist():

@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('number', models.IntegerField()),
                 ('description', models.CharField(max_length=255)),
-                ('qtype', models.CharField(default=b'TXT', max_length=3, choices=[(b'INT', b'Integer'), (b'INS', b'Integer scale'), (b'TXT', b'Text'), (b'CHC', b'Single choice'), (b'MCH', b'Multi choice')])),
+                ('qtype', models.CharField(default=b'TXT', max_length=3, choices=[(b'INT', b'Integer'), (b'INS', b'Integer scale'), (b'DTM', b'Date-Time'), (b'TXT', b'Text'), (b'CHC', b'Single choice')])),
                 ('required', models.BooleanField(default=True)),
                 ('choices', models.TextField(null=True, blank=True)),
                 ('parent', models.ForeignKey(to='api.Survey')),
