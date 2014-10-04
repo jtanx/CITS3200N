@@ -21,29 +21,6 @@ class InfoSerializer(serializers.ModelSerializer):
         model = Changeset
         fields = ('first_name', 'last_name', 'revision',)
 
-class DiaryTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DiaryType
-
-class DiarySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Diary
-        fields = ('id', 'created', 'entry', 'dtype')
-        read_only_fields = ('id',)
-	
-	
-    def restore_object(self, attrs, instance=None):
-        if instance is None:
-            request = self.context.get('request', None)
-            entry = Diary(user=request.user,
-                          dtype=attrs['dtype'],
-                          created=attrs['created'],
-                          entry=attrs['entry'])
-            return entry
-        instance.entry = attrs['entry']
-        instance.created = attrs['created']
-        return instance
-
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = SurveyQuestion

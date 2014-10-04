@@ -14,23 +14,11 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Diary',
+            name='Changeset',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('created', models.DateTimeField()),
-                ('submitted', models.DateTimeField(default=django.utils.timezone.now)),
-                ('entry', models.CharField(max_length=255)),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='DiaryType',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=40)),
-                ('description', models.CharField(max_length=255, blank=True)),
+                ('revision', models.IntegerField(default=0)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, unique=True)),
             ],
             options={
             },
@@ -104,17 +92,5 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='questionresponse',
             unique_together=set([('rid', 'qid')]),
-        ),
-        migrations.AddField(
-            model_name='diary',
-            name='dtype',
-            field=models.ForeignKey(to='api.DiaryType'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='diary',
-            name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
-            preserve_default=True,
         ),
     ]

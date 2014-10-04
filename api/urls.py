@@ -6,8 +6,6 @@ from api.views import *
 router = routers.DefaultRouter()
 #router.register(r'info', ChangesetView)
 router.register(r'users', UserViewSet)
-router.register(r'diary', DiaryViewSet)
-router.register(r'dtype', DiaryTypeViewSet)
 router.register(r'surveys', SurveyViewSet)
 router.register(r'survey', SurveySubmissionViewSet)
 

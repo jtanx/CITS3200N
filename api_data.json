@@ -1,38 +1,6 @@
 [
 {
     "fields": {
-        "name": "Breakfast",
-        "description": "What did you have for breakfast?"
-    },
-    "model": "api.diarytype",
-    "pk": 1
-},
-{
-    "fields": {
-        "name": "Lunch",
-        "description": "What did you have for lunch?"
-    },
-    "model": "api.diarytype",
-    "pk": 2
-},
-{
-    "fields": {
-        "name": "Dinner",
-        "description": "What did you have for dinner?"
-    },
-    "model": "api.diarytype",
-    "pk": 3
-},
-{
-    "fields": {
-        "name": "Midnight snack",
-        "description": "What were you snacking on?"
-    },
-    "model": "api.diarytype",
-    "pk": 4
-},
-{
-    "fields": {
         "name": "MTDS Survey",
         "description": "In the past 24 hours, how often have you felt..."
     },

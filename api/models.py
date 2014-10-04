@@ -4,24 +4,6 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime 
 import re
-
-class DiaryType(models.Model):
-    name = models.CharField(max_length=40, unique=True)
-    description = models.CharField(max_length=255, blank=True)
-
-    def __unicode__(self):
-        return '%s' % self.name
-
-class Diary(models.Model):
-    user = models.ForeignKey(User)
-    dtype = models.ForeignKey(DiaryType)
-    created = models.DateTimeField()
-    submitted = models.DateTimeField(default=timezone.now)
-    entry = models.CharField(max_length=255)
-
-    def __unicode__(self):
-        return '%s:%s:[%s] %s' % (self.user, self.dtype, \
-                                  self.created, self.entry)
     
 class Survey(models.Model):
     name = models.CharField(max_length=255, unique=True)

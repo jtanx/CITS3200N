@@ -39,22 +39,6 @@ class InfoView(APIView):
         req = InfoSerializer(Changeset.objects.get(user=request.user))
         return Response(data=req.data)
 
-
-class DiaryTypeViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (IsAuthenticated,)
-    query_set = DiaryType.objects.all()
-    serializer_class = DiaryTypeSerializer
-    model = DiaryType
-
-class DiaryViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, IsRecent)
-    serializer_class = DiarySerializer
-    model = Diary
-
-    def get_queryset(self):
-        return Diary.objects.filter(user=self.request.user)
-
-
 class SurveyViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = SurveySerializer
