@@ -159,5 +159,5 @@ class Changeset(models.Model):
     user = models.ForeignKey(User, unique=True)
     revision = models.IntegerField(default=0)
 
-#Needed for auth token hook
-import api.authtoken
+#For all signals
+import api.signals
