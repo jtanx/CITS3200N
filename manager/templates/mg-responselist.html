@@ -9,7 +9,7 @@
 <h4 class="pull-right right-group">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</h4>
 </div>
 </div>
-{% if responses %}
+{% if users %}
 
 <div class="table-responsive">
   {% include 'mg-paginate.html' %}
@@ -17,27 +17,26 @@
     <thead>
       <tr>
         <th>User ID</th>
-        <th>Response ID</th>
         <th>First name</th>
         <th>Last name</th>
-        <th>Survey date</th>
+        <th>Responses</th>
+        <th>Last response</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
-      {% for response in responses %}
+      {% for user in users %}
       <tr>
         <td>
-          <a href="{# url 'manager:user_detail' pk=user.id #}">
-          {{response.creator.id}}
+          <a href="{% url 'manager:user_detail' pk=user.id %}">
+          {{user.id}}
           </a>
         </td>
-        <td>
-          {{response.id}}
-        </td>
-        <td>{{response.creator.username}}</td>
-        <td>{{response.creator.first_name}}</td>
-        <td>{{response.creator.last_name}}</td>
-        <td>{{response.created}}</a></td>
+        <td>{{user.first_name}}</td>
+        <td>{{user.last_name}}</td>
+        <td>{{user.survey_count}}</td>
+        <td>{{user.last_survey}}</td>
+        <td><a href="#"><span class="glyphicon glyphicon-search"></span></a></td>
       </tr>
       {% endfor %}
     </tbody>

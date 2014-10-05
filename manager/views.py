@@ -223,24 +223,41 @@ class PersonalDetailsView(SuperMixin, UpdateView):
         
     
 class SurveyListView(SuperMixin, ListView):
-    model = SurveyResponse
+    model = User
     template_name = 'mg-responselist.html'
-    context_object_name = 'responses'
+    context_object_name = 'users'
     paginate_by = 15 #15 members per page
     error_message = "That survey doesn't exist"
     error_url = reverse_lazy('manager:index')
 
     def get_queryset(self):
-        return SurveyResponse.objects.filter(survey__id = self.kwargs['pk']).\
-                              order_by('created')
+        #List of users with number of surveys completed and last date of completion
+        #Ordered by last name then first name, case insensitive.
+        return User.objects.all().\
+                    extra(select={
+                        'lower_firstname' : 'lower(first_name)',
+                        'lower_lastname' : 'lower(last_name)',
+                        'survey_count' : 
+                        """ SELECT COUNT(*) FROM api_surveyresponse
+                            WHERE api_surveyresponse.creator_id = auth_user.id
+                            AND api_surveyresponse.survey_id = %d
+                        """ % (int(self.kwargs['pk'])),
+                        'last_survey' : 
+                        """ SELECT created FROM api_surveyresponse
+                            WHERE api_surveyresponse.creator_id = auth_user.id
+                            AND api_surveyresponse.survey_id = %d
+                            ORDER BY created DESC
+                            LIMIT 1
+                        """ % (int(self.kwargs['pk']))
+                    }).\
+                    order_by('lower_lastname', 'lower_firstname')
         
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(self.__class__, self).get_context_data(**kwargs)
-        print(self.kwargs['pk'])
         try:
             survey = Survey.objects.get(pk=self.kwargs['pk'])
-        except AttributeError:
+        except (AttributeError, Survey.DoesNotExist):
             raise Http404
         
         context['survey'] = survey

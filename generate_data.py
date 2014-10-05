@@ -1,9 +1,4 @@
 import sys,os,re,random,json
-try:
-    import enchant
-    d = enchant.Dict("en-AU")
-except ImportError:
-    d = None
 
 def generate_mtds(number=1):
     for i in range(number):
@@ -36,4 +31,8 @@ def generate_meals(number=1):
         types = ['Breakfast', 'Lunch', 'Dinner', 'Other']
         resp = []
         resp.append({'number' : 1, 'entry' : types[random.randint(0, 3)]})
-        #resp.append({'number' : 2, 'entry' : alt
+        resp.append({'number' : 2, 'entry' : alt[random.randint(0, len(alt))]})
+        print(json.dumps(resp))
+        
+if __name__ == "__main__":
+    generate_mtds()

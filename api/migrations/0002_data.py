@@ -9,6 +9,8 @@ import os
 
 def add_users(apps, schema_editor):
     su = User.objects.create_superuser('admin', 'admin@no.no', 'admin')
+    su.first_name = "The"
+    su.last_name = "Admin"
     su.save()
     test = User.objects.create_user('test', 'test@no.no', 'test')
     test.first_name = "Test"
