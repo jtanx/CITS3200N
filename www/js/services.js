@@ -140,13 +140,15 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
     
     syncCallback : function (remoteList) {
       var nEnts = [];
+      var nId = 0;
+      
       for (var i = 0; i < remoteList.length; i++) {
         var rEnt = remoteList[i];
         if (rEnt.responses && rEnt.responses.length == 5) {
           //NB This assumes that responses are ordered by number.
           var ent = {
             remote_id : rEnt.id,
-            id : ++idcount,
+            id : nId++,
             date : moment(rEnt.created),
             type : rEnt.responses[0].entry,
             start : moment(rEnt.responses[1].entry),
@@ -160,7 +162,8 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
       }
 
       exercises = nEnts;
-      $localStore.setObject('exId', idcount);
+      idcount = nId;
+      $localStore.setObject('exId', nId);
       $localStore.setObject('exercises', nEnts);
     },
     
@@ -386,11 +389,6 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
     return date.format("DD-MM-YYYY");
   };
   
-  var setEntries = function(nEnts) {
-    console.log(entries);
-    entries = nEnts;
-  };
-  
   return {
     all: function() { //Currently unused
       var entlist = []
@@ -430,9 +428,9 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
         }
       }
       
-      setEntries(nEnts);
-      $localStore.setObject('sleepEntries', nEnts);
-      console.log(nEnts);
+      entries = nEnts;
+      $localStore.setObject('sleepEntries', entries);
+      console.log(entries);
     },
     
     add: function(startdate, enddate, quality){
@@ -648,7 +646,7 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
         firstname = first;
 		lastname = last;
 	},
-	restore: function(){
+	reset: function(){
 		$window.localStorage.clear();
 	}
     };

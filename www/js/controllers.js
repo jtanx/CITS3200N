@@ -20,6 +20,8 @@ angular.module('starter.controllers', [])
   $scope.password = "";
   $scope.message = "";
   
+  api.initialise();
+  
   $scope.$on('event:auth-forbidden', function(e, rejection) {
     $scope.loginModal.show();
   });
@@ -86,9 +88,21 @@ angular.module('starter.controllers', [])
 	
 })
 
-.controller('ExerciseCtrl', function($scope, $state, $stateParams, Exercises, Save) {
-  $scope.exercise = angular.copy(Exercises.get($stateParams.exId));
-
+.controller('ExerciseCtrl', function($scope, $state, $stateParams, Exercises, Save, api) {
+  var setParameters = function() {
+    $scope.exercise = angular.copy(Exercises.get($stateParams.exId));
+    console.log($scope.exercise);
+    if (!$scope.exercise) { //Invalid exercise/exercise no longer exists
+      $state.go('tab.diary');
+    }
+  }
+  
+  setParameters();
+  $scope.$on('event:api-synced', function() {
+    setParameters();
+  });
+  
+  $scope.sync = api.syncAll;
   
   $scope.isTimeValid = function() {
     var ex = $scope.exercise;
@@ -160,30 +174,32 @@ angular.module('starter.controllers', [])
 	
 })
 
-.controller('settingsCtrl', function($scope, Settings, api) {
-  $scope.help = false;
-  $scope.signedin = api.loggedIn();
-  $scope.sync = function () {
-    api.submitPending();
-    api.syncFromServer();
+.controller('settingsCtrl', function($scope, $window, Settings, api) {
+  var setParameters = function() {
+    $scope.signedin = api.loggedIn();
   };
   
-  $scope.$on('event:auth-loginConfirmed', function() {
-    $scope.signedin = api.loggedIn();
-  });
+  setParameters();
+  $scope.$on('event:api-initialised', setParameters);
+  $scope.$on('event:auth-logout-complete', setParameters);
+  $scope.$on('event:auth-loginConfirmed', setParameters);
+  
+  
+  $scope.help = false;
+  $scope.sync = api.syncAll;
   
   $scope.signin = function() {
 		$scope.loginModal.show();
   };
   $scope.signout = function() {
     api.logout();
-		$scope.signedin = api.loggedIn();
   };
   $scope.helpme = function() {
 		$scope.help = true;
   };
-  $scope.restore = function() {
-		Settings.restore();
+  $scope.reset = function() {
+		Settings.reset();
+    $window.location.reload(true)
   };
 })
 
@@ -198,6 +214,8 @@ angular.module('starter.controllers', [])
     $scope.sleepadded = SleepEntries.added();
   }
   
+  $scope.sync = api.syncAll;
+  
   setParameters();
   //Re-set the parameters when we sync
   $scope.$on('event:api-synced', function() {
@@ -206,8 +224,7 @@ angular.module('starter.controllers', [])
   
   $scope.save = function() {
 		Save.save();
-    api.submitPending();
-    api.syncFromServer();
+    api.syncAll();
 		$scope.saved = Save.status();
   };
   
@@ -260,7 +277,6 @@ angular.module('starter.controllers', [])
 
 .controller('SleepEditCtrl', function($scope, $state, $stateParams, SleepEntries, Save) {
 	$scope.entry = SleepEntries.get();
-	
   $scope.start = $scope.entry.start;
   $scope.end = $scope.entry.end;
 	

@@ -1,6 +1,6 @@
 angular.module('starter.api', ['starter.localStore'])
 
-.factory('api', function($rootScope, $http, $localStore, $ionicLoading, $filter, authService) {
+.factory('api', function($rootScope, $http, $localStore, $ionicLoading, $filter, $q, authService) {
   //var url = 'http://ftracker-jtanx.rhcloud.com/api';
   //var url = 'http://cits3200n.csse.uwa.edu.au:8001/api';
   var url = 'http://localhost:8000/api';
@@ -15,9 +15,130 @@ angular.module('starter.api', ['starter.localStore'])
       serviceCallbacks[serviceID](cbParams);
     }
   }
-  
   //For each survey, there can be one callback function registered.
   var syncCallbacks = {};
+  
+  /**
+   * Retrieves all data stored on the server and calls the registered
+   * sync functions for all services to update the locally stored data.
+   */
+  var syncFromServer = function () {
+      $ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
+      
+      return $http.get(url + '/survey/').success(
+        function (data, status, headers, config) {
+          console.log(data);
+          for (var surveyID in syncCallbacks) {
+            var filtered = $filter('filter')(data, {survey : surveyID});
+            if (filtered) {
+              syncCallbacks[surveyID](filtered);
+            }
+          }
+          
+          $rootScope.$broadcast('event:api-synced', status);
+          $ionicLoading.hide();
+        }
+      ).error(
+        function (data, status, headers, config) {
+          //WHAT NOW?
+          console.log("Sync failed");
+          $ionicLoading.hide();
+        }
+      ).finally(function() {
+          // Stop any ion-refresher from spinning
+          $rootScope.$broadcast('scroll.refreshComplete');
+        }
+      );
+    };
+    
+    /**
+     * Submits all pending surveys to the server.
+     * @return A promise. On success, all pending surveys will have been
+     *         submitted, otherwise on error, there may still be some surveys
+     *         that are pending submission.
+     */
+    var submitPending = function() {
+      var deferred = $q.defer();
+      $ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
+      
+      var subber = function submitter() {
+        if (toSubmit.length > 0) {
+          var ent = toSubmit[0];
+          var method, sub, iurl;
+          
+          if (ent.action == 'add') {
+            iurl = "/survey/";
+            method = $http.post;
+            sub = {
+              survey : ent.survey_id,
+              created : ent.created,
+              responses : angular.toJson(ent.responses)
+            };
+          } else if (ent.action == 'update') {
+            iurl = "/survey/" + ent.remote_id.toString() + "/";
+            method = $http.put;
+            sub = {
+              survey : ent.survey_id,
+              created : ent.created,
+              responses : angular.toJson(ent.responses)
+            };
+          } else if (ent.action == 'delete') {
+            iurl = "/survey/" + ent.remote_id.toString() + "/";
+            method = $http.delete;
+            sub = {};
+          }
+          
+          method(url + iurl, sub).success(
+            function(data, status, headers, config) {
+              //Remove from the submission queue.
+              toSubmit.shift();
+              //Add in the action taken and the remote id of the object, if applicable.
+              if (typeof ent.cb_params === "undefined") {
+                ent.cb_params = {};
+              }
+              ent.cb_params.action = ent.action;
+              ent.cb_params.object_id = ent.object_id;
+              if (ent.action === 'add' || ent.action === 'update') {
+                ent.cb_params.remote_id = data.id;
+              }
+              
+              //Call the callback now that we have a response from the server
+              submittedDispatch(ent.service_id, ent.cb_params);
+              //Recursively call until the queue is empty.
+              submitter();
+          }).error(
+            function(data, status, headers, config) {
+              if (status == 0) { //Likely offline
+                $ionicLoading.show({template : "The server is offline. Please try syncing again later.", duration: 1000});
+                deferred.reject("The server is offline.");
+              } else if (status == 400) { //Invalid submission to server.
+                $ionicLoading.show({template : "An error occurred.", duration: 1000});
+                
+                console.log("Error", data);
+                toSubmit.shift(); //Drop the crap data?
+                submitter(); //Soldier on?
+                //deferred.reject("An error occurred (the submission was rejected");
+              } else { //Likely they need to login
+                deferred.reject();
+                $ionicLoading.hide();
+              }
+              
+              $localStore.setObject('api_toSubmit', toSubmit);
+          });
+        } else {
+          $localStore.setObject('api_toSubmit', toSubmit);
+          $ionicLoading.hide();
+          deferred.resolve("Submission completed.")
+        }
+      };
+      
+      subber();
+      return deferred.promise;
+    };
+    
+    var syncAll = function() {
+      submitPending().then(syncFromServer);
+    };
   
   return {
     loggedIn: function() {
@@ -39,53 +160,23 @@ angular.module('starter.api', ['starter.localStore'])
       return toSubmit.length > 0;
     },
     
-    syncFromServer: function () {
-      $ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
-      
-      return $http.get(url + '/survey/').success(
-        function (data, status, headers, config) {
-          console.log(data);
-          for (var surveyID in syncCallbacks) {
-            var filtered = $filter('filter')(data, {survey : surveyID});
-            if (filtered) {
-              syncCallbacks[surveyID](filtered);
-            }
-          }
-          
-          $rootScope.$broadcast('event:api-synced', status);
-          $ionicLoading.hide();
-        }
-      ).error(
-        function (data, status, headers, config) {
-          
-          //WHAT NOW?
-          $ionicLoading.hide();
-        }
-      );
-    },
+    submitPending : submitPending,
+    syncFromServer: syncFromServer,
+    syncAll: syncAll,
     
     initialise: function() {
-      //$ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
-      var token = $localStore.get("AuthToken", "");
-      if (token.length > 0) {
-        $http.defaults.headers.common.Authorization = "Token " + token;
-        loggedIn = true;
+      if (!initted) {
+        var token = $localStore.get("AuthToken", "");
+        if (token.length > 0) {
+          $http.defaults.headers.common.Authorization = "Token " + token;
+          loggedIn = true;
+        }
+        
+        initted = true;
+        submitPending().then(syncFromServer().then(function () {
+          $rootScope.$broadcast('event:api-initialised');
+        }));
       }
-      
-      /*
-      $http.get(url + '/surveys/').success(function (data) {
-        initted = true;
-        $ionicLoading.hide();
-      }).error(function(data, status, headers, config) {
-        console.log(status, headers);
-        $ionicLoading.show({template : 'Failed to contact the server.'});
-        $ionicLoading.hide();
-      });
-      */
-      this.syncFromServer().then(function () {
-        initted = true;
-      });
-      //$ionicLoading.hide();
     },
     
     //Basis:
@@ -96,16 +187,20 @@ angular.module('starter.api', ['starter.localStore'])
       $localStore.set("AuthToken", "");
       loggedIn = false;
       
+      var syncAll = this.syncAll;
       $http.post(url + '-token-auth/', credentials).success(
         function (data, status, headers, config) {
           $http.defaults.headers.common.Authorization = "Token " + data.token;
           $localStore.set("AuthToken", data.token);
           loggedIn = true;
+          
           //Inform auth service that we have succeeded
           authService.loginConfirmed(data, function(config) {
             config.headers.Authorization = "Token " + data.token;
             return config;
-        });
+          });
+
+          syncAll();
       })
       .error(function (data, status, headers, config) {
         $rootScope.$broadcast('event:auth-login-failed', status);
@@ -185,78 +280,6 @@ angular.module('starter.api', ['starter.localStore'])
       }
       
       $localStore.setObject('api_toSubmit', toSubmit);
-    },
-    
-    submitPending : function() {
-      $ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
-      
-      var subber = function submitter() {
-        if (toSubmit.length > 0) {
-          var ent = toSubmit[0];
-          var method, sub, iurl;
-          
-          if (ent.action == 'add') {
-            iurl = "/survey/";
-            method = $http.post;
-            sub = {
-              survey : ent.survey_id,
-              created : ent.created,
-              responses : angular.toJson(ent.responses)
-            };
-          } else if (ent.action == 'update') {
-            iurl = "/survey/" + ent.remote_id.toString() + "/";
-            method = $http.put;
-            sub = {
-              survey : ent.survey_id,
-              created : ent.created,
-              responses : angular.toJson(ent.responses)
-            };
-          } else if (ent.action == 'delete') {
-            iurl = "/survey/" + ent.remote_id.toString() + "/";
-            method = $http.delete;
-            sub = {};
-          }
-          
-          method(url + iurl, sub).success(
-            function(data, status, headers, config) {
-              //Remove from the submission queue.
-              toSubmit.shift();
-              //Add in the action taken and the remote id of the object, if applicable.
-              if (typeof ent.cb_params === "undefined") {
-                ent.cb_params = {};
-              }
-              ent.cb_params.action = ent.action;
-              ent.cb_params.object_id = ent.object_id;
-              if (ent.action === 'add' || ent.action === 'update') {
-                ent.cb_params.remote_id = data.id;
-              }
-              
-              //Call the callback now that we have a response from the server
-              submittedDispatch(ent.service_id, ent.cb_params);
-              //Recursively call until the queue is empty.
-              submitter();
-          }).error(
-            function(data, status, headers, config) {
-              if (status == 0) { //Likely offline
-                $ionicLoading.show({template : "The server is offline. Please try syncing again later.", duration: 1000});
-              } else if (status == 400) { //Invalid submission to server.
-                $ionicLoading.show({template : "An error occurred.", duration: 1000});
-                
-                toSubmit.shift(); //Drop the crap data?
-                console.log("Error", data);
-              } else { //Likely they need to login
-                $ionicLoading.hide();
-              }
-              
-              $localStore.setObject('api_toSubmit', toSubmit);
-          });
-        } else {
-          $localStore.setObject('api_toSubmit', toSubmit);
-          $ionicLoading.hide();
-        }
-      };
-      
-      subber();
     },
     
     getStats: function() {

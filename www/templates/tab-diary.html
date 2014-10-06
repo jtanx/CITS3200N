@@ -15,6 +15,11 @@ link to the font-awesome style sheet, which is needed to use the floppy disc ico
   </ion-header-bar>
   
   <ion-content class="has-subheader" ng-controller="diaryCtrl">
+    <ion-refresher
+      pulling-text="Pull to refresh..."
+      on-refresh="sync()">
+    </ion-refresher>
+  
     <div class="list padding-top">
       <div class="item item-divider item-positive list-positive">
         Exercise
