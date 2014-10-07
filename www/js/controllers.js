@@ -166,15 +166,9 @@ angular.module('starter.controllers', [])
   };
   
   setParameters();
-<<<<<<< HEAD
-  //the parameters are reset after syncing
-  $scope.$on('event:api-synced', function() {
-    setParameters();
-  });
-=======
   //Re-set the parameters when we sync
   $scope.$on('event:api-synced', setParameters);
->>>>>>> origin/master
+
 	
 	//fetches the mtds questions from the mental survey service
 	$scope.questions = Questions.all();
