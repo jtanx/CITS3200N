@@ -160,7 +160,7 @@ angular.module('starter.controllers', [])
 })
 
 //the mental survey controller
-.controller('mentaltestCtrl', function($scope, $ionicSlideBoxDelegate, Questions, MentalSurvey) {
+.controller('mentaltestCtrl', function($scope, $ionicSlideBoxDelegate, $ionicScrollDelegate, Questions, MentalSurvey) {
   var setParameters = function () {
     $scope.completed = MentalSurvey.completed();
   };
@@ -169,24 +169,24 @@ angular.module('starter.controllers', [])
   //Re-set the parameters when we sync
   $scope.$on('event:api-synced', setParameters);
 
-	
-	//fetches the mtds questions from the mental survey service
-	$scope.questions = Questions.all();
-	$scope.options = MentalSurvey.options();
-	$scope.answer = function(question, option) {
-		MentalSurvey.answer(question, option);
-		$ionicSlideBoxDelegate.update();
-		$ionicSlideBoxDelegate.next();
-	};
+  
+  //fetches the mtds questions from the mental survey service
+  $scope.questions = Questions.all();
+  $scope.options = MentalSurvey.options();
+  $scope.answer = function(question, option) {
+    MentalSurvey.answer(question, option);
+    $ionicSlideBoxDelegate.update();
+    $ionicSlideBoxDelegate.next();
+  };
   $scope.testanswers = MentalSurvey.all();
   //the mental survey can only be submitted after all the questions have been answered
   $scope.submit = function() {
-	if(MentalSurvey.answered() == Questions.all().length){
-	MentalSurvey.submit();
-	$scope.completed = MentalSurvey.completed();
-	}
+    if(MentalSurvey.answered() == Questions.all().length){
+      MentalSurvey.submit();
+      $ionicScrollDelegate.scrollTop();
+      $scope.completed = MentalSurvey.completed();
+    }
   };
-  
 })
 
 //statistics controller
@@ -197,7 +197,7 @@ angular.module('starter.controllers', [])
 	
 })
 
-.controller('settingsCtrl', function($scope, $window, Settings, api) {
+.controller('settingsCtrl', function($scope, $window, $ionicPopup, Settings, api) {
   var setParameters = function() {
     $scope.signedin = api.loggedIn();
   };
@@ -224,8 +224,15 @@ angular.module('starter.controllers', [])
   };
   
   $scope.reset = function() {
-		Settings.reset();
-    $window.location.reload(true)
+    $ionicPopup.confirm({
+      title: 'Confirm full reset',
+      template: 'Are you sure you want to perform a full reset?'
+    }).then(function(res) {
+      if (res) {
+        Settings.reset();
+        $window.location.reload(true)
+      }
+    });
   };
 })
 

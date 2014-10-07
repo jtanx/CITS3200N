@@ -23,7 +23,7 @@ angular.module('starter.api', ['starter.localStore'])
    * sync functions for all services to update the locally stored data.
    */
   var syncFromServer = function () {
-      $ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
+      //$ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
       
       return $http.get(url + '/survey/').success(
         function (data, status, headers, config) {
@@ -36,13 +36,18 @@ angular.module('starter.api', ['starter.localStore'])
           }
           
           $rootScope.$broadcast('event:api-synced', status);
-          $ionicLoading.hide();
+          //$ionicLoading.hide();
         }
       ).error(
         function (data, status, headers, config) {
           //WHAT NOW?
           console.log("Sync failed");
-          $ionicLoading.hide();
+          if (status == 0) {
+            $ionicLoading.show({template : "The server is offline. Please try syncing again later.", duration: 1000});
+          } else {
+            $ionicLoading.show({template : "Could not sync with the server. Please try again later.", duration: 1000});
+          }
+          //$ionicLoading.hide();
         }
       ).finally(function() {
           // Stop any ion-refresher from spinning
@@ -59,7 +64,7 @@ angular.module('starter.api', ['starter.localStore'])
      */
     var submitPending = function() {
       var deferred = $q.defer();
-      $ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
+      //$ionicLoading.show({template : '<i class="icon ion-loading-c" style="font-size: 40px;"></i>'});
       
       var subber = function submitter() {
         if (toSubmit.length > 0) {
@@ -127,7 +132,7 @@ angular.module('starter.api', ['starter.localStore'])
           });
         } else {
           $localStore.setObject('api_toSubmit', toSubmit);
-          $ionicLoading.hide();
+          //$ionicLoading.hide();
           deferred.resolve("Submission completed.")
         }
       };
