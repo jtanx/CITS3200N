@@ -156,7 +156,7 @@ angular.module('starter.api', ['starter.localStore'])
       syncCallbacks[surveyID] = callback;
     },
     
-    havePendingSubmissions: function () {
+    hasPendingSubmissions: function () {
       return toSubmit.length > 0;
     },
     
