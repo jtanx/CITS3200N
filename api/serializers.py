@@ -164,18 +164,19 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
         return instance
         
     def save(self, **kwargs):
-        ret = super(self.__class__, self).save(**kwargs)
-        
         #Atomicity needed because invalid input could cause old response to be lost.
+        #Order of operations here is important.
         with transaction.atomic():
             if hasattr(self, 'responses_todelete'):
                 self.responses_todelete.delete()
+            ret = super(self.__class__, self).save(**kwargs)
             for qr in self.responses_tosave:
                 qr.rid = ret
                 qr.full_clean()
                 qr.save()
             
-
+        #Call here to trigger the signal again after questions have been populated
+        ret.save()
         return ret
       
     

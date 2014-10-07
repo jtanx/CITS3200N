@@ -24,6 +24,23 @@ def db_changed(sender, instance=None, created=False, **kwargs):
             cs = Changeset.objects.get(user=user)
             cs.revision += 1
             cs.save()
+            
+@receiver(post_save, sender=SurveyResponse)
+def survey_updated(sender, instance=None, created=False, **kwargs):
+    if instance is not None:
+        survey = instance.survey 
+        responses = instance.responses(parsed=True) #Get actual format
+        if not responses: #Responses to questions have not been saved yet
+            return
+            
+        if survey.id == 1: #MTDS
+            print("MTDS")
+        elif survey.id == 2: #Sleep quality
+            print(responses)
+        elif survey.id == 3: #Training volume
+            print("TRAINING VOLUME")
+        elif survey.id == 4: #Meal diary
+            pass
         
 post_save.connect(db_changed)
 post_delete.connect(db_changed)

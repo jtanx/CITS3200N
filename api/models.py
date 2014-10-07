@@ -54,7 +54,7 @@ class SurveyQuestion(models.Model):
                     raise ValidationError("Choice must be alphanumeric.")
             self.choices = "|".join(vals)
     
-    def clean_response(self, entry):
+    def clean_response(self, entry, stringify_dates=True):
         entry = entry.strip()
         if not entry and self.required:
             raise ValueError("An entry is required for this question.")
@@ -76,10 +76,11 @@ class SurveyQuestion(models.Model):
             if ret is None:
                 raise ValueError("Invalid datetime specified.")
             
-            #Pulled from DRF DateTimeField serializer code
-            ret = ret.isoformat()
-            if ret.endswith('+00:00'):
-                ret = ret[:-6] + 'Z'   
+            if stringify_dates:
+                #Pulled from DRF DateTimeField serializer code
+                ret = ret.isoformat()
+                if ret.endswith('+00:00'):
+                    ret = ret[:-6] + 'Z'   
             
             return ret
         elif self.qtype == self.CHOICE:
@@ -108,9 +109,21 @@ class SurveyResponse(models.Model):
     created = models.DateTimeField()
     submitted = models.DateTimeField(default=timezone.now)
     
-    def responses(self):
+    def responses(self, parsed=False):
+        '''Returns the list of responses. If parsed=True, the responses are
+           parsed into their actual representation (as a number:entry dictionary)
+        '''
         if self.id:
-            return QuestionResponse.objects.filter(rid=self)
+            raw = QuestionResponse.objects.filter(rid=self)
+            if not parsed:
+                return raw
+                
+            ret = {}
+            for r in raw:
+                number = r.qid.number
+                entry = r.qid.clean_response(r.entry, stringify_dates=False)
+                ret[number] = entry
+            return ret   
         return None
 
     def __unicode__(self):
