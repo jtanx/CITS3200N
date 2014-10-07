@@ -146,9 +146,7 @@ angular.module('starter.controllers', [])
   
   setParameters();
   //Re-set the parameters when we sync
-  $scope.$on('event:api-synced', function() {
-    setParameters();
-  });
+  $scope.$on('event:api-synced', setParameters);
 	
 	$scope.questions = Questions.all();
 	$scope.options = MentalSurvey.options();
