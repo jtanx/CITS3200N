@@ -183,6 +183,7 @@ angular.module('starter.controllers', [])
   $scope.submit = function() {
     if(MentalSurvey.answered() == Questions.all().length){
       MentalSurvey.submit();
+      //Scroll to the top. Otherwise sometimes the notice is missed.
       $ionicScrollDelegate.scrollTop();
       $scope.completed = MentalSurvey.completed();
     }
