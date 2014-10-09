@@ -4,6 +4,22 @@
 {% block main %}
 <div class="page-header clearfix">
 <h1 class="pull-left">{{survey.name}} responses
+<div class="btn-group">
+  <button type="button" class="btn btn-default" data-toggle="dropdown">
+    Data
+  </button>
+  <!--<a class="btn btn-default" href="#">Data</a>-->
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    <span class="caret"></span>
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <ul class="dropdown-menu" role="menu">
+    <li><a href="{% url 'manager:export_all' pk=survey.pk %}">Export all</a></li>
+    <li><a href="#">Export selected</a></li>
+    <li class="divider"></li>
+    <li><a href="#">Delete all</a></li>
+  </ul>
+</div>
 </h1>
 <div class="pull-right right-group">
 <h4 class="pull-right right-group">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</h4>
