@@ -37,6 +37,7 @@
             <li class="{{ nav_home }}"><a href="{% url 'manager:index' %}">Home</a></li>
             
             {% block main-nav %}
+            {% if user.is_authenticated and user.is_staff %}
             <li class="{{ nav_users }}"><a href="{% url 'manager:user_list' %}">Users</a></li>
             <li class="dropdown {{ nav_backup }}">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Backup<span class="caret"></span></a>
@@ -66,6 +67,7 @@
               </ul>
             </li>
             <li class="{{ nav_help }}"><a href="#help">Help</a></li>
+            {% endif %}
             {% endblock %}
           </ul>
           
@@ -83,7 +85,9 @@
               <span class="caret"></span>
               </a>
               <ul class="dropdown-menu" role="menu">
+                {% if user.is_staff %}
                 <li><a href="{% url 'manager:account_details' %}">Account</a></li>
+                {% endif %}
                 <li><a href="{% url 'manager:logout' %}">Logout</a></li>
               </ul>
             </li>
