@@ -3,8 +3,9 @@ from manager import views, export
 
 # Routers provide an easy way of automatically determining the URL conf.
 
-urlpatterns = patterns('manager.views',
+urlpatterns = patterns('',
     url(r'^$', views.Index.as_view(), name='index'),
+    url(r'^help$', views.Help.as_view(), name='help'),
     url(r'^login/?$', views.login_user, name='login'),
     url(r'^logout$', views.logout_user, name='logout'),
     url(r'^backup$', views.backup_database, name='backup_database'),

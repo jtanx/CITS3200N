@@ -66,11 +66,11 @@
                 -->
               </ul>
             </li>
-            <li class="{{ nav_help }}"><a href="#help">Help</a></li>
+            <li class="{{ nav_help }}"><a href="{% url 'manager:help' %}">Help</a></li>
             {% endif %}
             {% endblock %}
           </ul>
-          
+         
           
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}

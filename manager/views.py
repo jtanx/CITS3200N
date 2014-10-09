@@ -200,6 +200,18 @@ class Index(TemplateView):
         # Set the active nav tab to the home button
         context['nav_home'] = 'active'
         return context
+        
+class Help(SuperMixin, TemplateView):
+    '''The main help view.'''
+    template_name='mg-help.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(self.__class__, self).get_context_data(**kwargs)
+        # Set the active nav tab to the home button
+        context['nav_help'] = 'active'
+        return context
+
 
         
 class UserListView(SuperMixin, ListView):
