@@ -12,12 +12,12 @@
    <select required ng-model="newtype" ng-options="type for type in types"></select><br>
    </label>
    <label class="item item-input">
-	<span class="input-label">Duration</span>
+	<span class="input-label">Duration (hours)</span>
    <input required type="number" min="0" max="24" ng-model="newtime" name="time" />
 	</label>
    
    <ion-nav-buttons side="right">
-   <button class="button button-icon" ng-disabled="edit.time.$error.required" 
+   <button class="button button-icon" ng-disabled="!edit.$valid" 
    ng-click="submit(newtype, newtime)"/>Done</button>
    </ion-nav-buttons>
    </form>

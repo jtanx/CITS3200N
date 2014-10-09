@@ -31,8 +31,7 @@
 		</label>
 		
 		<ion-nav-buttons side="right">
-				<button class="button button-icon" ng-disabled="add.start.$error.required || 
-				add.end.$error.required || add.quality.$error.required" 
+				<button class="button button-icon" ng-disabled="!add.$valid" 
 				ng-click="submit(start,end,quality)" />Add</button>
 		</ion-nav-buttons>
 		

@@ -21,14 +21,13 @@
 	</label>
 	
    <label class="item item-input">
-	<span class="input-label">Duration</span>
-   <input type="number" ng-model="time" min="0.5" max="24" name="time" required />
+	<span class="input-label">Duration (hours)</span>
+   <input type="number" ng-model="time" min="0" max="24" name="time" required />
 	<div ng-if="add.time.$error.min || add.time.$error.max" style="color:red;">invalid</div>
 
    
    <ion-nav-buttons side="right">
-    <button class="button button-icon" ng-disabled="add.time.$error.required || add.type.$error.required || 
-					add.time.$error.min || add.time.$error.max" ng-click="submit(text, day.name, time)" />Add</button>
+    <button class="button button-icon" ng-disabled="!add.$valid" ng-click="submit(text, day.name, time)" />Add</button>
   </ion-nav-buttons>
    
    </form>

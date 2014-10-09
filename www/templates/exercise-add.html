@@ -31,12 +31,11 @@
 		
 		<label class="item item-input">
 		<span class="input-label">Exertion</span>
-        <input required type="number" min="0" max="5" ng-model="exercise.exertion" name="exertion" />
+        <input required type="number" min="1" max="5" ng-model="exercise.exertion" name="exertion" />
 		</label>
 		
    <ion-nav-buttons side="right">
-   <button class="button button-icon" ng-disabled="add.typechosen.$error.required || 
-			add.start.$error.required || add.end.$error.required || add.exertion.$error.required
+   <button class="button button-icon" ng-disabled="!add.$valid
 			|| !isTimeValid()" ng-click="submit()"/>Add</button>
 	</ion-nav-buttons>
 	</form>

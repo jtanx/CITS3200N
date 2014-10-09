@@ -30,8 +30,7 @@
 		</label>
 		
 		<ion-nav-buttons side="right">
-				<button class="button button-icon" ng-disabled="edit.start.$error.required || 
-				edit.end.$error.required || edit.quality.$error.required" 
+				<button class="button button-icon" ng-disabled="!edit.$valid" 
 				ng-click="submit(start,end,quality)" />Done</button>
 		</ion-nav-buttons>
 		

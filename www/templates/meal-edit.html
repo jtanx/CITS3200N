@@ -10,7 +10,7 @@
 	
 	<ion-nav-buttons side="right">
 
-   <button class="button button-icon" ng-disabled="add.text.$error.required"
+   <button class="button button-icon" ng-disabled="!add.$valid"
    ng-click="submit(text)"/>Done</button>
 
 	</ion-nav-buttons>
