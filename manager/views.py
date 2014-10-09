@@ -1,7 +1,9 @@
+from __future__ import print_function
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import redirect,render
 from django.views.generic import *
 from django.http import *
@@ -10,6 +12,12 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from manager.forms import *
 from api.models import *
+from django.core.management import call_command
+from StringIO import StringIO 
+
+import gzip, os
+from datetime import datetime
+import tempfile
 
 '''Mixins'''
 class LoginRequiredMixin(object):
@@ -69,7 +77,7 @@ class MessageMixin(object):
      
     def form_valid(self, form):
         self.__mmi_success = True
-        return super(MessageMixin, self).form_valid(form)
+        ret = super(MessageMixin, self).form_valid(form)
         
 class SuperMixin(LoginRequiredMixin, AdminRequiredMixin, MessageMixin):
     '''yeah'''
@@ -119,6 +127,56 @@ def logout_user(request):
     '''Logs out the user'''
     logout(request)
     return redirect('manager:index')
+    
+@user_passes_test(lambda u:u.is_staff, login_url='manager:login')
+def backup_database(request):
+    content = StringIO()
+    call_command('dumpdata', 'auth.user', 'api', indent=4, stdout=content)
+    compressed = StringIO()
+    with gzip.GzipFile(fileobj=compressed, mode='wb') as fp:
+        fp.write(content.getvalue())
+        
+    now = datetime.now()
+    filename = now.strftime('backup-%d-%m-%Y.json.gz')
+    response = HttpResponse(compressed.getvalue(), content_type='application/x-gzip')
+    response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+    return response
+
+'''
+@user_passes_test(lambda u:u.is_staff, login_url='manager:login')
+def restore_database(request):
+    if request.method == 'POST':
+        print(request.FILES)
+        form = RestoreForm(request.POST, request.FILES)
+        if form.is_valid():
+            print(request.FILES['file'])
+            return redirect('manager:index')
+    else:
+        form = RestoreForm()
+    return render(request, 'mg-restore.html', {'form' : form})
+'''
+
+class RestoreDatabaseView(SuperMixin, FormView):
+    template_name = "mg-restore.html"
+    form_class = RestoreForm
+    success_url = reverse_lazy('manager:index')
+    success_message = "Successfully restored from backup!"
+    error_message = "Restore from backup failed."
+    error_url = reverse_lazy('manager:restore_database')
+    
+    def form_valid(self, form):
+        f = form.cleaned_data['restore']
+        with tempfile.NamedTemporaryFile(mode='w+b', suffix='.json.gz', delete=False) as fp:
+            fp.write(f)
+            fp.seek(0)
+            name = fp.name
+        call_command('migrate', 'api', 'zero')
+        call_command('migrate', 'api')
+        User.objects.all().delete()
+        call_command('loaddata', name)
+        os.unlink(name)
+        self.success('Backup successfully applied.')
+        return redirect(self.success_url)
     
 class Index(TemplateView):
     '''The main index view.'''

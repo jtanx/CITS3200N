@@ -33,10 +33,10 @@ class UserViewSet(viewsets.ModelViewSet):
 class InfoView(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = InfoSerializer
-    model = Changeset
+    model = User
     
     def get(self, request, **kwargs):
-        req = InfoSerializer(Changeset.objects.get(user=request.user))
+        req = InfoSerializer(request.user)
         return Response(data=req.data)
 
 class SurveyViewSet(viewsets.ReadOnlyModelViewSet):

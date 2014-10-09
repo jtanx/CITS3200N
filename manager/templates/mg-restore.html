@@ -1,0 +1,48 @@
+{% extends "mg-base.html" %}
+
+{% block main %}
+<div class="page-header-norule">
+  <h1>
+    Restore from a backup
+  </h1>
+</div>
+
+<form class="form-horizontal" role="form" method="post" action="{% url 'manager:restore_database' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+      {# Include the hidden fields #}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+      {# Include the visible fields #}
+      {% for field in form.visible_fields %}
+          <div class="form-group">
+              <label for="{{ field.auto_id }}">
+                {{ field.label }}
+              </label>
+                {{ field }}
+              {% for error in field.errors %}
+              
+              <div class="col-danger" role="alert">{{ error|escape }}</div>
+              {% endfor %}
+          </div>
+    {% endfor %}
+    
+    <div class="form-group">
+      <input class="col-sm-offset-2 btn btn-default" type="submit" value="Submit">
+    </div>
+    
+    <div id="result">
+      {% if form.non_field_errors %}
+      <div class="alert alert-warning" role="alert">
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
+      
+      {% if result %}
+      <div class="alert alert-danger" role="alert">
+        {{ result }}
+      </div>
+      {% endif %}
+    </div>
+</form>
+{% endblock %}

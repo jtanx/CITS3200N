@@ -38,7 +38,14 @@
             
             {% block main-nav %}
             <li class="{{ nav_users }}"><a href="{% url 'manager:user_list' %}">Users</a></li>
-            <li class="{{ nav_backup }}"><a href="#contact">Backup</a></li>
+            <li class="dropdown {{ nav_backup }}">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Backup<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'manager:backup_database' %}">Backup Database</a></li>
+                <li><a href="{% url 'manager:restore_database' %}">Restore Database</a></li>
+              </ul>
+            </li>
+            
             <li class="dropdown {{nav_data}}">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data management<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">

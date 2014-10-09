@@ -1,7 +1,13 @@
 from django.forms import Form, ModelForm, Textarea
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate
+from django.template.defaultfilters import filesizeformat
 from django import forms
+from ftracker import settings
+from StringIO import StringIO 
+import gzip
+from datetime import datetime
+import json
 
 class BootstrapMixin(object):
      def __init__(self, *args, **kwargs):
@@ -19,6 +25,52 @@ class AllRequiredMixin(object):
         super(AllRequiredMixin, self).__init__(*args, **kwargs)
         for name, field in self.fields.items():
             field.required = True
+            
+class RestoreForm(Form):
+    restore = forms.FileField()
+    
+    def invalid_format(self):
+        raise forms.ValidationError('Invalid backup format')
+    
+    def clean_restore(self):
+        #http://stackoverflow.com/questions/2472422/django-file-upload-size-limit
+        content = self.cleaned_data['restore']
+        if content._size > settings.MAX_UPLOAD_SIZE:
+            raise forms.ValidationError('Please keep filesize under %s. Current filesize %s' % \
+                  (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(content._size)))
+        
+        compressed = StringIO()
+        for c in content.chunks():
+            compressed.write(c)
+            
+        compressed.seek(0)
+        content = StringIO()
+        try:
+            with gzip.GzipFile(fileobj=compressed, mode='rb') as fp:
+                content.write(fp.read())
+        except IOError:
+            self.invalid_format()
+            
+        #A bunch of paranoid type checking
+        try:
+            data = json.loads(content.getvalue())
+        except ValueError, e:
+            self.invalid_format()
+        
+        if type(data) is not list:
+            self.invalid_format()
+        for ent in data:
+            if type(ent) is not dict:
+                self.invalid_format()
+            elif 'model' not in ent:
+                self.invalid_format()
+            elif type(ent['model']) not in [unicode, str]:
+                rself.invalid_format()
+            elif not ent['model'].startswith('api.') and ent['model'] != 'auth.user':
+                self.invalid_format()
+        
+        
+        return compressed.getvalue()
 
 class LoginForm(BootstrapMixin, Form):
     '''A login form'''
@@ -36,7 +88,7 @@ class PersonalDetailsForm(BootstrapMixin, AllRequiredMixin, ModelForm):
     
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
-        #ModelForm sigh
+        #Override AllRequired
         self.fields['new_password'].required = False
         self.fields['confirm_password'].required = False
     
@@ -79,7 +131,7 @@ class UserUpdateForm(BootstrapMixin, AllRequiredMixin, ModelForm):
         super(self.__class__, self).__init__(*args, **kwargs)
         #This field is not required (absence==not active), but everything else is
         self.fields['is_active'].required = False
-        #Why this needs to be set here...
+        #Override AllRequired
         self.fields['the_password'].required = False
         
     #Different name to 'password' as User model also has that field.

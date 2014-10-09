@@ -149,10 +149,6 @@ class QuestionResponse(models.Model):
         
     class Meta:
         unique_together = (("rid", "qid"),)
-        
-class Changeset(models.Model):
-    user = models.ForeignKey(User, unique=True)
-    revision = models.IntegerField(default=0)
 
 #For all signals
 import api.signals

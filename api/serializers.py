@@ -14,12 +14,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'username', 'email', 'is_staff')
         
 class InfoSerializer(serializers.ModelSerializer):
-    first_name = serializers.Field(source='user.first_name')
-    last_name = serializers.Field(source='user.last_name')
+    first_name = serializers.Field(source='first_name')
+    last_name = serializers.Field(source='last_name')
     
     class Meta:
-        model = Changeset
-        fields = ('first_name', 'last_name', 'revision',)
+        model = User
+        fields = ('first_name', 'last_name')
+        read_only_fields = ('first_name', 'last_name')
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:

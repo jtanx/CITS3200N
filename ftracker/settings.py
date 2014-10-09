@@ -31,6 +31,9 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#Max upload size in bytes
+MAX_UPLOAD_SIZE = 10485760 # 10MB - 10485760
+
 # CORS for the API
 CORS_ORIGIN_ALLOW_ALL = True
 # Must allow CSRF tokens to be passed
