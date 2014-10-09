@@ -5,7 +5,7 @@ import tablib.packages.xlwt as xl
 
 def export_all(request, pk):
     ret = export_survey(SurveyResponse.objects.filter(survey__id = pk))
-    return HttpResponse(ret.xlsx, content_type='application/octet-stream')
+    return HttpResponse(ret.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     
 def export_for_user(request, pk1, pk2):
     pass
@@ -20,25 +20,53 @@ def export_survey(responses, format='csv'):
     #Get the questions from the survey
     questions = survey.questions()
     
-    #Structure the output
-    headers = ["Number", "Description"]
+    #Initialise the output
     data = []
-    expmap = {}
+    book = []
+    questnumber = []
+    questdescription = []
+    cohortdataset = {}
+
+    #Append all the question details to list
     for q in questions:
-        ent = [q.number, q.description]
-        data.append(ent)
-        expmap[q.number] = ent 
+        questnumber.append(q.number)
+        questdescription.append(q.description)
     
     for response in responses:
         qrs = response.responses()
-        #Append the response to the table
-        # headers.append("=Date(%s, %s, %s)" % (dt.year, dt.month, dt.day))
-        headers.append(response.created.date())
         
-        #For each question responded to
-        for q in qrs:
-            if q.qid.number in expmap:
-                expmap[q.qid.number].append(q.entry)
+        #Create NEW Dataset when id is present else append to current existed dictionary
+        if response.creator.id not in cohortdataset:
+            cohortdataset[response.creator.id] = tablib.Dataset()
+            
+            
+            cohortdataset[response.creator.id].append_col(questnumber)
+            cohortdataset[response.creator.id].append_col(questdescription)
+            
+            #accomodate response data in to temporary list
+            tempres = []
+            for q in qrs:
+                if q.qid.number in questnumber:
+                    tempres.append(q.entry)
+            #Apend to the column
+            cohortdataset[response.creator.id].append_col(tempres)
+            
+            ########STRUCTURE OF THE HEADER########
+            cohortdataset[response.creator.id].headers = ["Number", "Description", response.created.date()]
+            ########NAME THE SHEET########
+            cohortdataset[response.creator.id].title = str(response.creator.first_name)
+
+        else:
+            #accomodate response data in to temporary list
+            tempres = []
+            for q in qrs:
+                if q.qid.number in questnumber:
+                    tempres.append(q.entry)
+            #Apend to the column
+            cohortdataset[response.creator.id].append_col(tempres, header=response.created.date())
     
-    data = tablib.Dataset(*data, headers=headers)
-    return data
+    #Initialize the Databook for export
+    book = tablib.Databook()
+    for k in cohortdataset:
+        book.add_sheet(cohortdataset[k])
+    return book
