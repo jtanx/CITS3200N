@@ -14,6 +14,7 @@ from manager.forms import *
 from api.models import *
 from django.core.management import call_command
 from StringIO import StringIO 
+from django.db import transaction
 
 import gzip, os
 from datetime import datetime
@@ -74,6 +75,9 @@ class MessageMixin(object):
     
     def success(self, message):
         messages.success(self.request, message, extra_tags="alert-success")
+        
+    def error(self, message):
+        messages.error(self.request, message, extra_tags="alert-warning")
      
     def form_valid(self, form):
         self.__mmi_success = True
@@ -170,12 +174,19 @@ class RestoreDatabaseView(SuperMixin, FormView):
             fp.write(f)
             fp.seek(0)
             name = fp.name
-        call_command('migrate', 'api', 'zero')
-        call_command('migrate', 'api')
-        User.objects.all().delete()
-        call_command('loaddata', name)
-        os.unlink(name)
-        self.success('Backup successfully applied.')
+            
+        try:
+            with transaction.atomic():
+                call_command('migrate', 'api', 'zero')
+                call_command('migrate', 'api')
+                User.objects.all().delete()
+                call_command('loaddata', name)
+                os.unlink(name)
+        except Exception:
+            self.error('Failed to apply backup')
+            return redirect(self.error_url)
+        else:
+            self.success('Backup successfully applied.')
         return redirect(self.success_url)
     
 class Index(TemplateView):
