@@ -1,23 +1,24 @@
 from __future__ import print_function
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import redirect,render
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import *
 from django.http import *
 from django.contrib.auth.models import User, Group
 from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
+from django.core.management import call_command
+from django.db import transaction
+from django.utils.text import slugify
+
 from manager.forms import *
 from api.models import *
-from django.core.management import call_command
-from StringIO import StringIO 
-from django.db import transaction
+from manager.export import *
 
-import gzip, os
+from StringIO import StringIO 
 from datetime import datetime
+import gzip, os
 import tempfile
 
 '''Mixins'''
@@ -93,7 +94,15 @@ class NoGetMixin(object):
         messages.error(self.request, self.error_message, 
                        extra_tags="alert-warning")
         return redirect(self.error_url)
-               
+        
+def success(request, message):
+    '''Success message (for function based views)'''
+    messages.success(request, message, extra_tags="alert-success")
+    
+def error(request, message):
+    '''Error message (for function based views)'''
+    messages.error(request, message, extra_tags="alert-warning")
+           
 def login_user(request):
     '''Logs in the user, based on provided credentials'''
     if request.user.is_authenticated():
@@ -145,6 +154,19 @@ def backup_database(request):
     response = HttpResponse(compressed.getvalue(), content_type='application/x-gzip')
     response['Content-Disposition'] = 'attachment; filename="%s"' % filename
     return response
+    
+@user_passes_test(lambda u:u.is_staff, login_url='manager:login')
+def export_all(request, pk):
+    surveys = SurveyResponse.objects.filter(survey__id = pk)
+    if not surveys:
+        error(request, "No surveys present to export.")
+        return redirect('manager:response_list', pk=pk)
+    ret = export_survey(surveys)
+    hret = HttpResponse(ret.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    
+    name = slugify(Survey.objects.get(pk=pk).name) + "-export.xlsx"
+    hret['Content-Disposition'] = 'attachment; filename="%s"' % name
+    return hret
 
 '''
 @user_passes_test(lambda u:u.is_staff, login_url='manager:login')
