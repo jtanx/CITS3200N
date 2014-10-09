@@ -77,7 +77,7 @@ class MessageMixin(object):
      
     def form_valid(self, form):
         self.__mmi_success = True
-        ret = super(MessageMixin, self).form_valid(form)
+        return super(MessageMixin, self).form_valid(form)
         
 class SuperMixin(LoginRequiredMixin, AdminRequiredMixin, MessageMixin):
     '''yeah'''
@@ -216,7 +216,7 @@ class UserDetailView(SuperMixin, UpdateView):
     success_message="User updated successfully."
     error_message="That user doesn't exist"
     error_url=reverse_lazy('manager:user_list')
-    #success_url = reverse_lazy('manager:user_list')
+    success_url = reverse_lazy('manager:user_list')
     
     def form_valid(self, form):
         instance = form.save(commit=False)
