@@ -44,6 +44,8 @@ angular.module('starter.api', ['starter.localStore'])
           console.log("Sync failed");
           if (status == 0) {
             $ionicLoading.show({template : "The server is offline. Please try syncing again later.", duration: 1000});
+          } else if (status == 403) {
+            //FORBIDDEN/NOT LOGGED IN
           } else {
             $ionicLoading.show({template : "Could not sync with the server. Please try again later.", duration: 1000});
           }
