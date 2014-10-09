@@ -1,7 +1,8 @@
 {% extends "mg-base.html" %}
+{% load field_tags %}
 
 {% block main %}
-<div class="page-header-norule">
+<div class="page-header">
   <h1>
     Restore from a backup
   </h1>
@@ -16,13 +17,31 @@
       {# Include the visible fields #}
       {% for field in form.visible_fields %}
           <div class="form-group">
-              <label for="{{ field.auto_id }}">
-                {{ field.label }}
-              </label>
-                {{ field }}
+            
+              {% if field|is_filefield %}
+                <label for="{{ field.auto_id }}" class="col-sm-2 control-label">
+                  {{ field.label }}
+                </label>
+                <div class="input-group col-sm-8">
+                  <span class="input-group-btn">
+                    <span class="btn btn-default btn-file">
+                      Browse
+                      <input id="{{ field.auto_id }}" type="file" name="{{field.name}}">
+                    </span>
+                  </span>
+                  <input class="form-control" type="text" readonly>
+                </div>
+              {% else %}
+                <label for="{{ field.auto_id }}" class="col-sm-2 control-label">
+                  {{ field.label }}
+                </label>
+                <div class="col-sm-8">
+                  {{ field }}
+                </div>
+              {% endif %}
               {% for error in field.errors %}
               
-              <div class="col-danger" role="alert">{{ error|escape }}</div>
+              <div class="col-danger col-sm-offset-2" role="alert">{{ error|escape }}</div>
               {% endfor %}
           </div>
     {% endfor %}

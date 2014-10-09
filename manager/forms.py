@@ -26,7 +26,7 @@ class AllRequiredMixin(object):
         for name, field in self.fields.items():
             field.required = True
             
-class RestoreForm(Form):
+class RestoreForm(BootstrapMixin, Form):
     restore = forms.FileField()
     
     def invalid_format(self):
