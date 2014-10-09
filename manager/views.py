@@ -229,6 +229,15 @@ class PersonalDetailsView(SuperMixin, UpdateView):
     def get_object(self):
         return self.request.user
         
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        new_password = form.cleaned_data.get('new_password')
+        if new_password:
+            print("'%s'" % form.cleaned_data['new_password'])
+            #raise Exception('"' + form.cleaned_data['new_password'] + '"')
+            instance.set_password(form.cleaned_data['new_password'])
+        return super(self.__class__, self).form_valid(form)
+        
     
 class SurveyListView(SuperMixin, ListView):
     model = User
