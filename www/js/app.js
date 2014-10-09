@@ -32,7 +32,9 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       };
       
       var toModel = function (val) {
-        return moment(val, "HH:mm");
+        var ret = moment(val, "HH:mm");
+        ngModel.$setValidity('timeField', ret.isValid());
+        return ret;
       };
       
       ngModel.$formatters.unshift(toView);
