@@ -160,6 +160,14 @@ class UserDetailView(SuperMixin, UpdateView):
     error_url=reverse_lazy('manager:user_list')
     #success_url = reverse_lazy('manager:user_list')
     
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        if 'the_password' in form.cleaned_data:
+            instance.set_password(form.cleaned_data['the_password'])
+            self.success("The password for '%s' has been changed to '%s'" % \
+                        (instance.username, form.cleaned_data['the_password']))
+        return super(self.__class__, self).form_valid(form)
+    
     def get_object(self):
         ret = User.objects.filter(pk=self.kwargs['pk'],
                                   is_superuser=False, is_staff=False)
@@ -189,7 +197,7 @@ class UserCreateView(SuperMixin, CreateView):
             if not User.objects.filter(username=username).exists():
                 break
             i += 1
-        password = User.objects.make_random_password(length=8) #:8
+        password = form.cleaned_data['password']#User.objects.make_random_password(length=8) #:8
         user.username = username
         user.set_password(password)
         user.save()
