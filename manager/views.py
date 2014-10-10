@@ -266,9 +266,10 @@ class UserDetailView(SuperMixin, UpdateView):
     def form_valid(self, form):
         instance = form.save(commit=False)
         if 'the_password' in form.cleaned_data:
-            instance.set_password(form.cleaned_data['the_password'])
-            self.success("The password for '%s' has been changed to '%s'" % \
-                        (instance.username, form.cleaned_data['the_password']))
+            if form.cleaned_data['the_password']:
+                instance.set_password(form.cleaned_data['the_password'])
+                self.success("The password for '%s' has been changed to '%s'" % \
+                            (instance.username, form.cleaned_data['the_password']))
         return super(self.__class__, self).form_valid(form)
     
     def get_object(self):
