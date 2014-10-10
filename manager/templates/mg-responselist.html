@@ -20,18 +20,17 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">
+      <a id="searcher-btn" class="navbar-brand" href="#">
         <span class="glyphicon glyphicon-search"></span>
       </a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="navbar-collapse-1">
-      <form class="navbar-form navbar-left" role="search">
+      <form id="searcher" class="navbar-form navbar-left" action="{% url 'manager:response_list' pk=survey.id %}" method="get" role="search">
         <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search">
+          <input type="text" class="form-control" name="query" placeholder="Search">
         </div>
-        <button type="submit" class="btn btn-default">Submit</button>
       </form>
       <ul class="nav navbar-nav">
         <li class="dropdown">
@@ -98,6 +97,10 @@
 {% block scripts %}
 <script>
   $(function(){
+    //CLICKITY CLICK WHY AM I WRITING IN CAPS
+    $("#searcher-btn").click(function () {
+      $("#searcher").submit();
+    });
     //MAKE IT SORTABLE BUT NOT THE LAST COLUMN
     $("#response-set").tablesorter({headers: {5: { sorter: false}}});
   });

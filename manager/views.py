@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from django.core.management import call_command
 from django.db import transaction
+from django.db.models import Q
 from django.utils.text import slugify
 
 from manager.forms import *
@@ -18,7 +19,7 @@ from manager.export import *
 
 from StringIO import StringIO 
 from datetime import datetime
-import gzip, os
+import gzip, os, re, operator
 import tempfile
 
 '''Mixins'''
@@ -352,9 +353,28 @@ class SurveyListView(SuperMixin, ListView):
     error_url = reverse_lazy('manager:index')
 
     def get_queryset(self):
+        ret = None
+        if 'query' in self.request.GET:
+            #Allow searching based on the user id, first name and last name.
+            parts = filter(None, re.split(r'\s', self.request.GET['query']))
+            if parts:
+                #http://stackoverflow.com/questions/4824759/django-query-using-contains-each-value-in-a-list
+                ret = User.objects.filter(
+                    reduce(operator.or_, (Q(first_name__icontains=x) for x in parts)) |
+                    reduce(operator.or_, (Q(last_name__icontains=x) for x in parts))
+                )
+                
+                #Prevent overflow error
+                maxid = User.objects.latest('id').id
+                ids = filter(lambda x: x <= maxid, [int(x) for x in parts if x.isdigit()])
+                if ids:
+                    ret |= User.objects.filter(reduce(operator.or_, (Q(id=x) for x in ids)))
+        if ret is None:
+            ret = User.objects.all()
+        
         #List of users with number of surveys completed and last date of completion
         #Ordered by last name then first name, case insensitive.
-        return User.objects.all().\
+        return ret.\
                     extra(select={
                         'lower_firstname' : 'lower(first_name)',
                         'lower_lastname' : 'lower(last_name)',
