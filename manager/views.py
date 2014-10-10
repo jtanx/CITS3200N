@@ -12,6 +12,7 @@ from django.core.management import call_command
 from django.db import transaction
 from django.db.models import Q
 from django.utils.text import slugify
+from django.views.decorators.csrf import csrf_protect
 
 from manager.forms import *
 from api.models import *
@@ -30,6 +31,12 @@ class LoginRequiredMixin(object):
         return super(LoginRequiredMixin, self).\
                dispatch(request, *args, **kwargs)
                
+class CSRFProtectMixin(object):
+    '''Forces CSRF protection'''
+    @method_decorator(csrf_protect)
+    def dispatch(self, *args, **kwargs):
+        return super(CSRFProtectMixin, self).dispatch(*args, **kwargs)
+               
 class AdminRequiredMixin(object):
     '''Views only for admins'''
     def dispatch(self, request, *args, **kwargs):
@@ -43,6 +50,11 @@ class MessageMixin(object):
     def delete(self, request, *args, **kwargs):
         self.__mmi_success = True
         return super(MessageMixin, self).delete(request, *args, **kwargs)
+        
+    def get_error_url(self):
+        if hasattr(self, 'error_url'):
+            return self.error_url
+        raise Http404
 
     def get(self, request, *args, **kwargs):
         try:
@@ -51,9 +63,7 @@ class MessageMixin(object):
             if self.error_message:
                 messages.error(self.request, self.error_message,
                                extra_tags="alert-warning")
-            if self.error_url:
-                return redirect(self.error_url)
-            raise Http404
+            return redirect(self.get_error_url())
             
     def post(self, request, *args, **kwargs):
         try:
@@ -71,9 +81,7 @@ class MessageMixin(object):
             if self.error_message:
                 messages.error(self.request, self.error_message, 
                                extra_tags="alert-warning")
-            if self.error_url:
-                return redirect(self.error_url)
-            raise Http404
+            return redirect(self.get_error_url())
     
     def success(self, message):
         messages.success(self.request, message, extra_tags="alert-success")
@@ -90,11 +98,13 @@ class SuperMixin(LoginRequiredMixin, AdminRequiredMixin, MessageMixin):
     pass
     
 class NoGetMixin(object):
+    def get_error_url(self):
+        return self.error_url
     '''Do not allow the get method'''
     def get(self, request, *args, **kwargs):
         messages.error(self.request, self.error_message, 
                        extra_tags="alert-warning")
-        return redirect(self.error_url)
+        return redirect(self.get_error_url())
         
 class ModifiablePaginator(object):
     '''Allow user-set pagination level
@@ -129,6 +139,20 @@ def success(request, message):
 def error(request, message):
     '''Error message (for function based views)'''
     messages.error(request, message, extra_tags="alert-warning")
+    
+def to_idlist(raw, limiting_class):
+    '''Converts a string of comma separated ids into native form'''
+    if isinstance(raw, str) or isinstance(raw, unicode):
+        raw = raw.split(",")
+    #Prevent overflow error
+    maxid = limiting_class.objects.latest('id').id
+    try:
+        vals = filter(lambda x: x > 0 and x <= maxid ,
+                      [int(x) for x in raw if x.isdigit()])
+    except ValueError:
+        return []
+    else:
+        return vals
            
 def login_user(request):
     '''Logs in the user, based on provided credentials'''
@@ -186,16 +210,9 @@ def backup_database(request):
 def export_all(request, pk):
     surveys = SurveyResponse.objects.filter(survey__id = pk)
     if 'filter' in request.GET:
-        #Prevent overflow error
-        maxid = User.objects.latest('id').id
-        try:
-            vals = filter(lambda x: x >= 0 and x <= maxid ,
-                          [int(x) for x in request.GET['filter'].split(",")])
-        except ValueError:
-            pass
-        else:
-            if vals:
-                surveys = surveys.filter(creator__id__in = vals)
+        vals = to_idlist(request.GET['filter'], User)
+        if vals:
+            surveys = surveys.filter(creator__id__in = vals)
     if not surveys:
         error(request, "No surveys present to export.")
         return redirect('manager:response_list', pk=pk)
@@ -381,7 +398,7 @@ class PersonalDetailsView(SuperMixin, UpdateView):
         return super(self.__class__, self).form_valid(form)
         
     
-class SurveyListView(ModifiablePaginator, SuperMixin, ListView):
+class SurveyListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, ListView):
     model = User
     template_name = 'mg-responselist.html'
     context_object_name = 'users'
@@ -402,9 +419,7 @@ class SurveyListView(ModifiablePaginator, SuperMixin, ListView):
                 )
                 
                 #Prevent overflow error
-                maxid = User.objects.latest('id').id
-                ids = filter(lambda x: x >= 0 and x <= maxid,
-                             [int(x) for x in parts if x.isdigit()])
+                ids = to_idlist(parts, User)
                 if ids:
                     ret |= User.objects.filter(reduce(operator.or_, (Q(id=x) for x in ids)))
         if ret is None:
@@ -446,4 +461,32 @@ class SurveyListView(ModifiablePaginator, SuperMixin, ListView):
         
         context['survey'] = survey
         return context
+        
+class SurveyDeleteView(SuperMixin, CSRFProtectMixin, NoGetMixin, View):
+    model = SurveyResponse
+    success_message='The responses were deleted successfully.'
+    error_message='The responses could not be deleted.'
+    
+    def get_success_url(self):
+        return reverse_lazy('manager:response_list',
+                            kwargs={'pk' : self.kwargs['pk']})
+    
+    def get_error_url(self):
+        return reverse_lazy('manager:response_list',
+                            kwargs={'pk' : self.kwargs['pk']})
+    
+    def post(self, request, *args, **kwargs):
+        todelete = SurveyResponse.objects.filter(survey__id=self.kwargs['pk'])
+        if 'filter' in request.POST:
+            ids = to_idlist(request.POST['filter'], User)
+            if ids:
+                todelete = todelete.filter(creator__id__in=ids)
+        if not todelete:
+            self.error("No responses to delete")
+            raise Http404
+            
+        todelete.delete()
+        self.success(self.success_message)
+        return redirect(self.get_success_url())
+        
        

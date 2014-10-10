@@ -49,8 +49,12 @@
         <li class="alert-danger dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Delete <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Delete selected</a></li>
-            <li><a href="#">Delete all</a></li>
+            <form id="deleter" action="{% url 'manager:response_delete' pk=survey.id %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="filter">
+            </form>
+            <li><a href="#" id="delete-selected">Delete selected</a></li>
+            <li><a href="#" id="delete-all">Delete all</a></li>
           </ul>
         </li>
       </ul>
@@ -138,6 +142,28 @@
       //Must manually trigger bootstrap menu close since we discard the event
       $('.dropdown.open .dropdown-toggle').dropdown('toggle');
       return false;
+    });
+    
+    //DELETE SELECTED
+    $("#delete-selected").click(function () {
+      var c = confirm("Are you sure you want to delete the selected responses?");
+      if (c) {
+        var vals = $("tbody input[type='checkbox']:checked").map(function() {
+          return this.value;
+        }).get();
+        if (vals.length > 0) {
+          $("#deleter input[name='filter']").val(vals);
+          $("#deleter").submit();
+        }
+      }
+    });
+    
+    //DELETE ALL
+    $("#delete-all").click(function () {
+      var c = confirm("Are you sure you want to delete ALL responses?");
+      if (c) {
+        $("#deleter").submit();
+      }
     });
   });
 </script>
