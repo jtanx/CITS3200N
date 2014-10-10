@@ -198,7 +198,7 @@ angular.module('starter.controllers', [])
 	
 })
 
-.controller('settingsCtrl', function($scope, $window, $ionicPopup, Settings, api) {
+.controller('settingsCtrl', function($scope, $ionicModal, $window, $ionicPopup, Settings, api) {
   var setParameters = function() {
     $scope.signedin = api.loggedIn();
   };
@@ -219,10 +219,20 @@ angular.module('starter.controllers', [])
   };
   $scope.signout = function() {
     api.logout();
+    api.logout();
   };
+  
+  $ionicModal.fromTemplateUrl('templates/help.html', function(modal) {
+    $scope.helpModal = modal;
+  },
+  {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
   $scope.helpme = function() {
-		$scope.help = true;
+		$scope.helpModal.show();
   };
+  
   
   $scope.reset = function() {
     $ionicPopup.confirm({
@@ -235,6 +245,11 @@ angular.module('starter.controllers', [])
       }
     });
   };
+  
+  //Modal is reset when the user is done with it
+  $scope.$on('$destroy', function() {
+    $scope.helpModal.remove();
+  });
 })
 
 //this controller fetches the previously entered diary entries, displays them underneath their respective week day names

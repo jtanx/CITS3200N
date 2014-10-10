@@ -633,6 +633,11 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
 	var firstname = '';
 	var lastname = '';
 	
+	var pics = [
+		'Stats', 'Settings', 'Schedule- Filled', 'Mental Test', 'Login', 'Edit exercise', 
+		'Diary', 'Diary- Updated', 'Diary- Refresh', 'Add exercise'
+  ];
+	
     return {
       firstname: function() {
 		var tempfirst = firstname;
@@ -648,6 +653,9 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
 	},
 	reset: function(){
 		$window.localStorage.clear();
+	},
+	pics: function(){
+		return pics;
 	}
     };
 });
