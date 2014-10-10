@@ -117,7 +117,9 @@ class ModifiablePaginator(object):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(ModifiablePaginator, self).get_context_data(**kwargs)
-        context['paginate_by'] = self.get_paginate_by(None)
+        followon = context.get('follow_on', {})
+        followon['paginate_by'] = self.get_paginate_by(None)
+        context['follow_on'] = followon
         return context
         
 def success(request, message):
@@ -183,6 +185,17 @@ def backup_database(request):
 @user_passes_test(lambda u:u.is_staff, login_url='manager:login')
 def export_all(request, pk):
     surveys = SurveyResponse.objects.filter(survey__id = pk)
+    if 'filter' in request.GET:
+        #Prevent overflow error
+        maxid = User.objects.latest('id').id
+        try:
+            vals = filter(lambda x: x >= 0 and x <= maxid ,
+                          [int(x) for x in request.GET['filter'].split(",")])
+        except ValueError:
+            pass
+        else:
+            if vals:
+                surveys = surveys.filter(creator__id__in = vals)
     if not surveys:
         error(request, "No surveys present to export.")
         return redirect('manager:response_list', pk=pk)
@@ -390,7 +403,8 @@ class SurveyListView(ModifiablePaginator, SuperMixin, ListView):
                 
                 #Prevent overflow error
                 maxid = User.objects.latest('id').id
-                ids = filter(lambda x: x <= maxid, [int(x) for x in parts if x.isdigit()])
+                ids = filter(lambda x: x >= 0 and x <= maxid,
+                             [int(x) for x in parts if x.isdigit()])
                 if ids:
                     ret |= User.objects.filter(reduce(operator.or_, (Q(id=x) for x in ids)))
         if ret is None:
@@ -424,6 +438,11 @@ class SurveyListView(ModifiablePaginator, SuperMixin, ListView):
             survey = Survey.objects.get(pk=self.kwargs['pk'])
         except (AttributeError, Survey.DoesNotExist):
             raise Http404
+        
+        if 'query' in self.request.GET:
+            followon = context.get('follow_on', {})
+            followon['query'] = self.request.GET['query']
+            context['follow_on'] = followon
         
         context['survey'] = survey
         return context

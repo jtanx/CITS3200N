@@ -4,13 +4,13 @@
 
       {% if page_obj.has_previous %}
         <li class="previous">
-          <a href="{{paginate_view}}?page={{ page_obj.previous_page_number }}{% if paginate_by %}&paginate_by={{paginate_by}}{% endif %}">&larr; Previous</a>
+          <a href="{{paginate_view}}?page={{ page_obj.previous_page_number }}{% for k,v in follow_on.items %}&{{k}}={{v}}{% endfor %}">&larr; Previous</a>
         </li>
       {% endif %}
       
       {% if page_obj.has_next %}
         <li class="next">
-          <a href="{{paginate_view}}?page={{ page_obj.next_page_number }}{% if paginate_by %}&paginate_by={{paginate_by}}{% endif %}">Next &rarr;</a>
+          <a href="{{paginate_view}}?page={{ page_obj.next_page_number }}{% for k,v in follow_on.items %}&{{k}}={{v}}{% endfor %}">Next &rarr;</a>
         </li>
       {% endif %}
     </ul>

@@ -8,12 +8,12 @@ $(document).on('change', '.btn-file :file', function() {
 
 //http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/
 $(document).ready( function() {
-    $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
-        var input = $(this).parents('.input-group').find(':text'),
-            log = numFiles > 1 ? numFiles + ' files selected' : label;
-        
-        if( input.length ) {
-            input.val(log);
-        }
-    });
+  $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+    var input = $(this).parents('.input-group').find(':text'),
+        log = numFiles > 1 ? numFiles + ' files selected' : label;
+    
+    if (input.length) {
+      input.val(log);
+    }
+  });
 });

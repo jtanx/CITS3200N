@@ -39,9 +39,9 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li><a href="{% url 'manager:export_all' pk=survey.pk %}">Export all</a></li>
-            <li><a href="#">Export selected</a></li>
+            <li><a href="{% url 'manager:export_all' pk=survey.pk %}" id="export-selected">Export selected</a></li>
             <li class="divider"></li>
-            <li><a href="#">Invert selection</a></li>
+            <li><a href="#" id="invert-selected">Invert selection</a></li>
           </ul>
         </li>
       </ul>
@@ -68,7 +68,8 @@
         <th>Last name</th>
         <th>Responses</th>
         <th>Last response</th>
-        <th></th>
+        <th><input type="checkbox" id="sel_header" value="-1"></th>
+        <th><!-- See queries for this user --></th>
       </tr>
     </thead>
     <tbody>
@@ -83,6 +84,7 @@
         <td>{{user.last_name}}</td>
         <td>{{user.survey_count}}</td>
         <td>{{user.last_survey}}</td>
+        <td><input type="checkbox" value="{{user.id}}"></td>
         <td><a href="#"><span class="glyphicon glyphicon-search"></span></a></td>
       </tr>
       {% endfor %}
@@ -103,7 +105,40 @@
       $("#searcher").submit();
     });
     //MAKE IT SORTABLE BUT NOT THE LAST COLUMN
-    $("#response-set").tablesorter({headers: {5: { sorter: false}}});
+    $("#response-set").tablesorter({headers: {5 : {sorter: false}, 6: { sorter: false}}});
+    //DESELECT ALL on REFRESH
+    $(':checkbox:checked').prop('checked',false);
+    //(DE)SELECT ALL
+    $("#sel_header").click(function () {
+      var state = $(this).prop('checked');
+      $("tbody input[type='checkbox']").prop('checked', state);
+    });
+    
+    //INVERT SELECTION WHY IS THIS EVEN HERE
+    $("#invert-selected").click(function () {
+      $("tbody input[type='checkbox']").each(function () {
+        $(this).prop('checked', !$(this).prop('checked'));
+      });
+      
+      //Must manually trigger bootstrap menu close since we discard the event
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle');
+      return false;
+    });
+    
+    //EXPORT SELECTED
+    $("#export-selected").click(function () {
+      var vals = $("tbody input[type='checkbox']:checked").map(function() {
+        return this.value;
+      }).get();
+      if (vals.length > 0) {
+        var dest = $(this).attr('href') + "?filter=" + vals;
+        window.location = dest;
+      }
+      
+      //Must manually trigger bootstrap menu close since we discard the event
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle');
+      return false;
+    });
   });
 </script>
 {% endblock %}
