@@ -30,6 +30,8 @@
       <form id="searcher" class="navbar-form navbar-left" action="{% url 'manager:response_list' pk=survey.id %}" method="get" role="search">
         <div class="form-group">
           <input type="text" class="form-control" name="query" placeholder="Search">
+          <input type="text" class="form-control" name="paginate_by" placeholder="Items per page">
+          <input type="submit" class="form-control hiddenfield">
         </div>
       </form>
       <ul class="nav navbar-nav">
@@ -58,7 +60,6 @@
 {% if users %}
 
 <div class="table-responsive">
-  {% include 'mg-paginate.html' %}
   <table id="response-set" class="table table-hover">
     <thead>
       <tr>

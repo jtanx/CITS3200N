@@ -96,6 +96,30 @@ class NoGetMixin(object):
                        extra_tags="alert-warning")
         return redirect(self.error_url)
         
+class ModifiablePaginator(object):
+    '''Allow user-set pagination level
+       http://stackoverflow.com/questions/14716270/dynamic-pagination-using-generic-listview
+    '''
+    def get_paginate_by(self, queryset):
+        """
+        Paginate by specified value in querystring, or use default class property value.
+        """
+        val = self.request.GET.get('paginate_by', self.paginate_by)
+        try:
+            val = int(val)
+        except ValueError:
+            val = self.paginate_by
+        else:
+            if val < 1:
+                val = self.paginate_by
+        return val
+        
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(ModifiablePaginator, self).get_context_data(**kwargs)
+        context['paginate_by'] = self.get_paginate_by(None)
+        return context
+        
 def success(request, message):
     '''Success message (for function based views)'''
     messages.success(request, message, extra_tags="alert-success")
@@ -237,7 +261,7 @@ class Help(SuperMixin, TemplateView):
 
 
         
-class UserListView(SuperMixin, ListView):
+class UserListView(ModifiablePaginator, SuperMixin, ListView):
     '''Only for admin - a list of users'''
     template_name = 'mg-userlist.html'
     context_object_name = 'users'
@@ -344,7 +368,7 @@ class PersonalDetailsView(SuperMixin, UpdateView):
         return super(self.__class__, self).form_valid(form)
         
     
-class SurveyListView(SuperMixin, ListView):
+class SurveyListView(ModifiablePaginator, SuperMixin, ListView):
     model = User
     template_name = 'mg-responselist.html'
     context_object_name = 'users'
