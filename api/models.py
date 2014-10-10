@@ -125,7 +125,17 @@ class SurveyResponse(models.Model):
                 ret[number] = entry
             return ret   
         return None
-
+       
+    '''
+    def cached_responses(self):
+        #Cached, parsed responses; for template
+        if not hasattr(self, '__cached_responses'):
+            print("CACHE_MISS", id(self))
+            self.__cached_responses = self.responses(True)
+        else:
+            print("CACHE_HIT")
+        return self.__cached_responses
+    '''
     def __unicode__(self):
         return 'Response by %s to %s (%s)' % (self.creator, self.survey, \
                                               self.created)

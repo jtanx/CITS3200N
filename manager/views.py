@@ -223,6 +223,33 @@ def export_all(request, pk):
     hret['Content-Disposition'] = 'attachment; filename="%s"' % name
     return hret
 
+@user_passes_test(lambda u:u.is_staff, login_url='manager:login')
+def export_by_user(request, spk, upk):
+        surveys = None
+        if 'filter' in request.GET:
+            vals = to_idlist(request.GET['filter'], SurveyResponse)
+            if vals:
+                surveys = SurveyResponse.objects.filter(id__in=vals)
+        if surveys is None:
+            surveys = SurveyResponse.objects.filter(survey__id = spk, creator__id = upk)
+        
+        if not surveys:
+            error(request, "No surveys present to export.")  
+            return redirect('manager:user_response_list', spk=spk, upk=upk)
+        
+        ret = export_survey(surveys)
+        hret = HttpResponse(ret.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    
+        user = User.objects.get(pk=upk)
+        name = "-".join([slugify(Survey.objects.get(pk=spk).name),
+                        slugify(user.first_name),
+                        slugify(user.last_name),
+                        "export.xlsx"])
+        hret['Content-Disposition'] = 'attachment; filename="%s"' % name
+        return hret
+        
+
+
 '''
 @user_passes_test(lambda u:u.is_staff, login_url='manager:login')
 def restore_database(request):
@@ -489,4 +516,68 @@ class SurveyDeleteView(SuperMixin, CSRFProtectMixin, NoGetMixin, View):
         self.success(self.success_message)
         return redirect(self.get_success_url())
         
+class SurveyUserListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, ListView):
+    model = SurveyResponse
+    template_name = 'mg-userresponselist.html'
+    context_object_name = 'responses'
+    paginate_by = 5 #5 members per page wow so slow
+    error_message = "That survey and/or user doesn't exist"
+    error_url = reverse_lazy('manager:index')
+
+    def get_queryset(self):
+        ret = SurveyResponse.objects.filter(survey__id=self.kwargs['spk'], 
+                                            creator__id=self.kwargs['upk'])\
+                            .order_by('-created')
+        return ret
+        
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(self.__class__, self).get_context_data(**kwargs)
+        try:
+            survey = Survey.objects.get(pk=self.kwargs['spk'])
+            user = User.objects.get(pk=self.kwargs['upk'])
+        except (AttributeError, Survey.DoesNotExist):
+            raise Http404
+        
+        if 'query' in self.request.GET:
+            followon = context.get('follow_on', {})
+            followon['query'] = self.request.GET['query']
+            context['follow_on'] = followon
+        
+        context['rcache'] = {}
+        for x in self.get_queryset():
+            context['rcache'][x] = x.responses(parsed=True)
+        print(len(context['rcache']))
+        context['cur_user'] = user
+        context['survey'] = survey
+        return context
+        
+class SurveyUserDeleteView(SuperMixin, CSRFProtectMixin, NoGetMixin, View):
+    model = SurveyResponse
+    success_message='The responses were deleted successfully.'
+    error_message='The responses could not be deleted.'
+    
+    def get_success_url(self):
+        return reverse_lazy('manager:user_response_list',
+                            kwargs={'spk' : self.kwargs['spk'], 
+                                    'upk' : self.kwargs['upk']})
+    
+    def get_error_url(self):
+        return reverse_lazy('manager:user_response_list',
+                            kwargs={'spk' : self.kwargs['spk'], 
+                                    'upk' : self.kwargs['upk']})
+    
+    def post(self, request, *args, **kwargs):
+        todelete = SurveyResponse.objects.filter(survey__id=self.kwargs['spk'], creator__id=self.kwargs['upk'])
+        if 'filter' in request.POST:
+            ids = to_idlist(request.POST['filter'], SurveyResponse)
+            if ids:
+                todelete = todelete.filter(id__in=ids)
+        if not todelete:
+            self.error("No responses to delete")
+            raise Http404
+            
+        todelete.delete()
+        self.success(self.success_message)
+        return redirect(self.get_success_url())
        

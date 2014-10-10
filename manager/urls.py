@@ -18,7 +18,9 @@ urlpatterns = patterns('',
         name='user_delete'),
     url(r'^user/add$', views.UserCreateView.as_view(), name='user_add'),
     url(r'^survey/(?P<pk>\d+)$', views.SurveyListView.as_view(), name='response_list'),
+    url(r'^survey/(?P<spk>\d+)/by/(?P<upk>\d+)$', views.SurveyUserListView.as_view(), name='user_response_list'),
+    url(r'^survey/(?P<spk>\d+)/by/(?P<upk>\d+)/export$', views.export_by_user, name='export_by_user'),
+    url(r'^survey/(?P<spk>\d+)/by/(?P<upk>\d+)/delete$', views.SurveyUserDeleteView.as_view(), name='user_response_delete'),
     url(r'^survey/(?P<pk>\d+)/export', views.export_all, name='export_all'),
-    url(r'^survey/(?P<pk1>\d+)/export/(?P<pk2>\d+)$', export.export_for_user, name='export_specific'),
     url(r'^survey/(?P<pk>\d+)/delete', views.SurveyDeleteView.as_view(), name='response_delete')
 )

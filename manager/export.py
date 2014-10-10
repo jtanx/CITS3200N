@@ -5,9 +5,6 @@ import tablib.packages.xlwt as xl
 from datetime import datetime
 from dateutil import tz
 
-def export_for_user(request, pk1, pk2):
-    pass
-
 def export_survey(responses, format='csv'):
     '''responses: QuerySet of survey responses'''
     if not responses.exists():
