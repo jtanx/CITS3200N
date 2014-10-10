@@ -265,11 +265,11 @@ class UserDetailView(SuperMixin, UpdateView):
     
     def form_valid(self, form):
         instance = form.save(commit=False)
-        if 'the_password' in form.cleaned_data:
-            if form.cleaned_data['the_password']:
-                instance.set_password(form.cleaned_data['the_password'])
-                self.success("The password for '%s' has been changed to '%s'" % \
-                            (instance.username, form.cleaned_data['the_password']))
+        new_password = form.cleaned_data.get('the_password')
+        if new_password:
+            instance.set_password(new_password)
+            self.success("The password for '%s' has been changed to '%s'" % \
+                        (instance.username, new_password))
         return super(self.__class__, self).form_valid(form)
     
     def get_object(self):
@@ -337,7 +337,7 @@ class PersonalDetailsView(SuperMixin, UpdateView):
         instance = form.save(commit=False)
         new_password = form.cleaned_data.get('new_password')
         if new_password:
-            print("'%s'" % form.cleaned_data['new_password'])
+            #print("'%s'" % form.cleaned_data['new_password'])
             #raise Exception('"' + form.cleaned_data['new_password'] + '"')
             instance.set_password(form.cleaned_data['new_password'])
         return super(self.__class__, self).form_valid(form)
