@@ -146,12 +146,12 @@
     
     //DELETE SELECTED
     $("#delete-selected").click(function () {
-      var c = confirm("Are you sure you want to delete the selected responses?");
-      if (c) {
-        var vals = $("tbody input[type='checkbox']:checked").map(function() {
-          return this.value;
-        }).get();
-        if (vals.length > 0) {
+      var vals = $("tbody input[type='checkbox']:checked").map(function() {
+        return this.value;
+      }).get();
+      if (vals.length > 0) {
+        var c = confirm("Are you sure you want to delete the selected responses?");
+        if (c) {
           $("#deleter input[name='filter']").val(vals);
           $("#deleter").submit();
         }
