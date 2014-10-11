@@ -176,13 +176,15 @@ angular.module('starter.controllers', [])
   //fetches the mtds questions from the mental survey service
   $scope.questions = Questions.all();
   $scope.availablequestions = [$scope.questions[0]];
-  var answered = 0;
+  $scope.answered = 2;
   $scope.options = MentalSurvey.options();
   $scope.answer = function(question, option) {
-	if(question != 22){answered = question;}
-	$scope.availablequestions[answered]=$scope.questions[answered];
-    MentalSurvey.answer(question, option);
-    $ionicSlideBoxDelegate.update();
+	MentalSurvey.answer(question, option);
+	if($scope.answered == question + 1){
+		$scope.answered++;
+		$ionicSlideBoxDelegate.update();
+		$ionicSlideBoxDelegate.next();
+	}
   };
   $scope.testanswers = MentalSurvey.all();
   //the mental survey can only be submitted after all the questions have been answered

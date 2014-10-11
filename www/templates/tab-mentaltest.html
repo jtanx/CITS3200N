@@ -8,7 +8,7 @@
   <ion-slide-box show-pager="false">
     
 	
-      <ion-slide  ng-repeat="question in availablequestions" type="item-text-wrap">
+      <ion-slide  ng-repeat="question in questions" type="item-text-wrap" ng-if="question.id < answered">
 		
 		 <div class="list card">
       <div class="item item-divider">
