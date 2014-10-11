@@ -1,4 +1,5 @@
 from api.models import *
+from manager.utils import *
 from django.http import HttpResponse
 import tablib 
 import tablib.packages.xlwt as xl
@@ -38,7 +39,7 @@ def export_survey(responses, format='csv'):
             ########STRUCTURE OF THE HEADER########
             entry.headers = ["Number", "Description"]
             ########NAME THE SHEET########
-            entry.title = str(response.creator.first_name + ' ' + 
+            entry.title = filenameify(response.creator.first_name + ' ' + 
                               response.creator.last_name)
         else:
             entry = cohortdataset[response.creator.id]

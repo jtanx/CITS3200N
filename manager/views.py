@@ -15,6 +15,7 @@ from django.utils.text import slugify
 from django.views.decorators.csrf import csrf_protect
 
 from manager.forms import *
+from manager.utils import *
 from api.models import *
 from manager.export import *
 
@@ -219,7 +220,7 @@ def export_all(request, pk):
     ret = export_survey(surveys)
     hret = HttpResponse(ret.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     
-    name = slugify(Survey.objects.get(pk=pk).name) + "-export.xlsx"
+    name = filenameify(Survey.objects.get(pk=pk).name, space_repr='_') + "_export.xlsx"
     hret['Content-Disposition'] = 'attachment; filename="%s"' % name
     return hret
 
@@ -241,10 +242,9 @@ def export_by_user(request, spk, upk):
         hret = HttpResponse(ret.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     
         user = User.objects.get(pk=upk)
-        name = "-".join([slugify(Survey.objects.get(pk=spk).name),
-                        slugify(user.first_name),
-                        slugify(user.last_name),
-                        "export.xlsx"])
+        name = filenameify(" ".join([Survey.objects.get(pk=spk).name,
+                           user.first_name, user.last_name, "export.xlsx"]),
+                           space_repr='_')
         hret['Content-Disposition'] = 'attachment; filename="%s"' % name
         return hret
         
