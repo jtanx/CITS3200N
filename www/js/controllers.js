@@ -71,6 +71,7 @@ angular.module('starter.controllers', [])
       username: this.username,
       password: this.password
     };
+    $scope.message = "";
     $scope.loading = true;
     api.login(credentials);
   }
