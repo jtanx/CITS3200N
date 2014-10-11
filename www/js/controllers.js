@@ -81,8 +81,8 @@ angular.module('starter.controllers', [])
 //this is the controller for adding exercises to the schedule
 .controller('DayAddCtrl', function($scope, $state, $stateParams, Days) {
   $scope.day = Days.get($stateParams.dayId);
-  $scope.submit = function(text, newday, time) {
-		Days.add(text, newday, time);
+  $scope.submit = function(text, newday, dist) {
+		Days.add(text, newday, dist);
 		$state.go('tab.schedule');
 	};
 	$scope.types = Days.types();
@@ -151,13 +151,13 @@ angular.module('starter.controllers', [])
   $scope.entry = Days.getex($stateParams.entryId);
   $scope.types = Days.types();
   $scope.newtype = $scope.entry.name;
-  $scope.newtime = $scope.entry.time;
+  $scope.newdist = $scope.entry.distance;
   $scope.remove = function(id) {
 		Days.remove(id);
 		$state.go('tab.schedule');
 	};
-	$scope.submit = function(type, time) {
-		Days.edit($stateParams.entryId, type, time);
+	$scope.submit = function(type, distance) {
+		Days.edit($stateParams.entryId, type, distance);
 		$state.go('tab.schedule');
 	}
 })
@@ -194,11 +194,29 @@ angular.module('starter.controllers', [])
 })
 
 //statistics controller
-.controller('statsCtrl', function($scope, api) {
-	$scope.press = function() {
-		api.getStats();
-  };
-	
+.controller('statsCtrl', function($scope, Days, api) {
+	var entries = Days.allentries();
+	var setParameters = function(){
+		$scope.rundist = 0;
+		$scope.cycledist = 0;
+		$scope.swimdist = 0;
+		for(var i in entries){
+			if(entries[i].name == 'Run'){
+				$scope.rundist += entries[i].distance;
+			} else if(entries[i].name == 'Cycle'){
+				$scope.cycledist += entries[i].distance;
+			} else if(entries[i].name == 'Swim'){
+				$scope.swimdist += entries[i].distance;
+			}
+		}
+		$scope.run = 1;
+		$scope.cycle = 2;
+		$scope.swim = 3;
+		$scope.runperc = Math.floor($scope.run / $scope.rundist * 100);
+		$scope.cycleperc = Math.floor($scope.cycle / $scope.cycledist * 100);
+		$scope.swimperc = Math.floor($scope.swim / $scope.swimdist * 100);
+	}
+	setParameters();
 })
 
 .controller('settingsCtrl', function($scope, $ionicModal, $window, $ionicPopup, Settings, api) {

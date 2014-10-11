@@ -69,20 +69,20 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
 		}
 	  return -1;
 	},
-	edit: function (id, type, time) {
+	edit: function (id, type, distance) {
 		var index = this.indexOf(id);
 		entries[index] = {id: id, name: type, day: entries[index].day, 
-						time: time};
+						distance: distance};
 		$localStore.setObject('schedEntries', entries);
 	},
 	allentries: function() {
       return entries;
     },
-	add: function(text, newday, time) {
+	add: function(text, newday, distance) {
 		idcount++;
 		$localStore.setObject('schedId', idcount);
       entries.push({id: idcount, name: text, day: newday, 
-						time: time});
+						distance: distance});
 		$localStore.setObject('schedEntries', entries);
 		//console.log(entries);
     },
