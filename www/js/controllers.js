@@ -175,11 +175,14 @@ angular.module('starter.controllers', [])
   
   //fetches the mtds questions from the mental survey service
   $scope.questions = Questions.all();
+  $scope.availablequestions = [$scope.questions[0]];
+  var answered = 0;
   $scope.options = MentalSurvey.options();
   $scope.answer = function(question, option) {
+	if(question != 22){answered = question;}
+	$scope.availablequestions[answered]=$scope.questions[answered];
     MentalSurvey.answer(question, option);
     $ionicSlideBoxDelegate.update();
-    $ionicSlideBoxDelegate.next();
   };
   $scope.testanswers = MentalSurvey.all();
   //the mental survey can only be submitted after all the questions have been answered
@@ -258,10 +261,6 @@ angular.module('starter.controllers', [])
   $scope.close = function() {
 		$scope.helpModal.hide();
   };
-  
-  $scope.$on('doubletap', function() {
-    $scope.helpModal.hide();
-  });
   
   $scope.reset = function() {
     $ionicPopup.confirm({
