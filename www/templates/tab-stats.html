@@ -6,7 +6,7 @@
 		Weekly Goals
     </div>
 	</div>
-	<div class="list card">
+	<div class="list card" ng-if="!(rundist == 0 && run == 0)">
     <div class="item item-divider">
 		Running
     </div>
@@ -25,7 +25,13 @@
 				<span>Achieved:</span><span style="float: right;padding-right: 50%;">{{runperc}} %</span>
 			</div>
 		</label>
-		<label class="item" ng-if="runperc >= 100">
+		<label class="item" ng-if="rundist == 0">
+			<div class="item-icon-right">
+				<span>Achieved:</span><span style="float: right;padding-right: 50%;">-- %</span>
+				<i class="icon ion-checkmark" style="color:#66CC33;"></i>
+			</div>
+		</label>
+		<label class="item" ng-if="runperc >= 100 && rundist != 0">
 			<div class="item-icon-right">
 				<span>Achieved:</span><span style="float: right;padding-right: 50%;">{{runperc}} %</span>
 				<i class="icon ion-checkmark" style="color:#66CC33;"></i>
@@ -33,7 +39,7 @@
 		</label>
 	</div>
 
-	<div class="list card">
+	<div class="list card" ng-if="!(cycledist == 0 && cycle == 0)">
     <div class="item item-divider">
 		Cycling
     </div>
@@ -52,7 +58,13 @@
 				<span>Achieved:</span><span style="float: right;padding-right: 50%;">{{cycleperc}} %</span>
 			</div>
 		</label>
-		<label class="item" ng-if="cycleperc >= 100">
+		<label class="item" ng-if="cycledist == 0">
+			<div class="item-icon-right">
+				<span>Achieved:</span><span style="float: right;padding-right: 50%;">-- %</span>
+				<i class="icon ion-checkmark" style="color:#66CC33;"></i>
+			</div>
+		</label>
+		<label class="item" ng-if="cycleperc >= 100 && cycledist != 0">
 			<div class="item-icon-right">
 				<span>Achieved:</span><span style="float: right;padding-right: 50%;">{{cycleperc}} %</span>
 				<i class="icon ion-checkmark" style="color:#66CC33;"></i>
@@ -60,7 +72,7 @@
 		</label>
 	</div>
 	
-	<div class="list card">
+	<div class="list card" ng-if="!(swimdist == 0 && swim == 0)">
     <div class="item item-divider">
 		Swimming
     </div>
@@ -79,7 +91,13 @@
 				<span>Achieved:</span><span style="float: right;padding-right: 50%;">{{swimperc}} %</span>
 			</div>
 		</label>
-		<label class="item" ng-if="swimperc >= 100">
+		<label class="item" ng-if="swimdist == 0">
+			<div class="item-icon-right">
+				<span>Achieved:</span><span style="float: right;padding-right: 50%;">-- %</span>
+				<i class="icon ion-checkmark" style="color:#66CC33;"></i>
+			</div>
+		</label>
+		<label class="item" ng-if="swimperc >= 100 && swimdist != 0">
 			<div class="item-icon-right">
 				<span>Achieved:</span><span style="float: right;padding-right: 50%;">{{swimperc}} %</span>
 				<i class="icon ion-checkmark" style="color:#66CC33;"></i>

@@ -210,7 +210,7 @@ angular.module('starter.controllers', [])
 			}
 		}
 		$scope.run = 1;
-		$scope.cycle = 2;
+		$scope.cycle = 20;
 		$scope.swim = 3;
 		$scope.runperc = Math.floor($scope.run / $scope.rundist * 100);
 		$scope.cycleperc = Math.floor($scope.cycle / $scope.cycledist * 100);
