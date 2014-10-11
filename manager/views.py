@@ -533,23 +533,29 @@ class SurveyUserListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, List
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(self.__class__, self).get_context_data(**kwargs)
+        
+        #Get the current survey/user
         try:
             survey = Survey.objects.get(pk=self.kwargs['spk'])
             user = User.objects.get(pk=self.kwargs['upk'])
-        except (AttributeError, Survey.DoesNotExist):
+        except (AttributeError, Survey.DoesNotExist, User.DoesNotExist):
             raise Http404
+        context['cur_user'] = user
+        context['survey'] = survey
         
+        #Add on the follow-on parameters
         if 'query' in self.request.GET:
             followon = context.get('follow_on', {})
             followon['query'] = self.request.GET['query']
             context['follow_on'] = followon
-        
+            
+        #Get the current queryset
+        qs = context[self.context_object_name]
+        #Compute the question responses for each response in the queryeset
         context['rcache'] = {}
-        for x in self.get_queryset():
+        for x in qs:
             context['rcache'][x] = x.responses(parsed=True)
-        print(len(context['rcache']))
-        context['cur_user'] = user
-        context['survey'] = survey
+
         return context
         
 class SurveyUserDeleteView(SuperMixin, CSRFProtectMixin, NoGetMixin, View):

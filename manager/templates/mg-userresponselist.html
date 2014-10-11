@@ -43,11 +43,12 @@
             <li><a href="#" id="invert-selected">Invert selection</a></li>
           </ul>
         </li>
-        <li>
-          <a href="{% url 'manager:response_list' pk=survey.id %}">Back</a>
-        </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="{% url 'manager:response_list' pk=survey.id %}">&laquo; Back</a>
+        </li>
+          {% include 'mg-navpaginate.html' %}
         <li class="alert-danger dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Delete <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
@@ -64,7 +65,6 @@
   </div><!-- /.container-fluid -->
 </nav>
 {% if responses %}
-
 <div class="table-responsive">
   <table id="response-set" class="table table-hover">
     <thead>
@@ -89,8 +89,8 @@
       {% endfor %}
     </tbody>
   </table>
-  {% include 'mg-paginate.html' %}
 </div>
+{% include 'mg-paginate.html' %}
 {% else %}
 <p>There are no responses.</p>
 {% endif %}

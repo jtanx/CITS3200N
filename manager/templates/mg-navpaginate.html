@@ -1,0 +1,17 @@
+{% if is_paginated %}
+{% if page_obj.has_previous %}
+  <li>
+    <a href="{{paginate_view}}?page={{ page_obj.previous_page_number }}{% for k,v in follow_on.items %}&{{k}}={{v}}{% endfor %}">&laquo; Previous</a>
+  </li>
+{% else %}
+  <li class="disabled"><a href="#">&laquo; Previous</a></li>
+{% endif %}
+
+{% if page_obj.has_next %}
+  <li>
+    <a href="{{paginate_view}}?page={{ page_obj.next_page_number }}{% for k,v in follow_on.items %}&{{k}}={{v}}{% endfor %}">Next &raquo;</a>
+  </li>
+{% else %}
+  <li class="disabled"><a href="#">Next &raquo;</a></li>
+{% endif %}
+{% endif %}

@@ -45,6 +45,7 @@
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
+        {% include 'mg-navpaginate.html' %}
         <li class="alert-danger dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Delete <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
@@ -72,21 +73,22 @@
         <th>Responses</th>
         <th>Last response</th>
         <th><input type="checkbox" id="sel_header" value="-1"></th>
-        <th><!-- See queries for this user --></th>
       </tr>
     </thead>
     <tbody>
       {% for user in users %}
       <tr>
         <td>
-          {{user.id}}
+          <a href="{% url 'manager:user_response_list' spk=survey.id upk=user.id %}">
+            <span class="glyphicon glyphicon-search"></span>
+            {{user.id}}
+          </a>
         </td>
         <td>{{user.first_name}}</td>
         <td>{{user.last_name}}</td>
         <td>{{user.survey_count}}</td>
         <td>{{user.last_survey}}</td>
         <td><input type="checkbox" value="{{user.id}}"></td>
-        <td><a href="{% url 'manager:user_response_list' spk=survey.id upk=user.id %}"><span class="glyphicon glyphicon-search"></span></a></td>
       </tr>
       {% endfor %}
     </tbody>
@@ -106,7 +108,7 @@
       $("#searcher").submit();
     });
     //MAKE IT SORTABLE BUT NOT THE LAST COLUMN
-    $("#response-set").tablesorter({headers: {5 : {sorter: false}, 6: { sorter: false}}});
+    $("#response-set").tablesorter({headers: {5 : {sorter: false}}});
     //DESELECT ALL on REFRESH
     $(':checkbox:checked').prop('checked',false);
     //(DE)SELECT ALL
