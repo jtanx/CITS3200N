@@ -21,6 +21,7 @@ from manager.export import *
 
 from StringIO import StringIO 
 from datetime import datetime
+from dateutil import tz
 import gzip, os, re, operator
 import tempfile
 
@@ -155,6 +156,46 @@ def to_idlist(raw, limiting_class):
     else:
         return vals
            
+           
+def filter_by_date(qs, field, start=None, end=None):
+    if start:
+        try:
+            start = datetime.strptime(start, '%d/%m/%Y')
+        except ValueError:
+            pass
+        else:
+            start=start.replace(tzinfo=tz.tzlocal())
+            qs = qs.filter(**{field + '__gte' : start})
+            
+    if end:
+        try:
+            end = datetime.strptime(end, '%d/%m/%Y')
+        except ValueError:
+            pass
+        else:
+            end=end.replace(tzinfo=tz.tzlocal())
+            qs = qs.filter(**{field + '__lte' : end})
+    return qs
+    
+def get_user_by_name_or_id(query):
+    qs = User.objects.all()
+    if query:
+        parts = filter(None, re.split(r'\s', query))
+        if parts:
+            #http://stackoverflow.com/questions/4824759/django-query-using-contains-each-value-in-a-list
+            qs = User.objects.filter(
+                reduce(operator.or_, (Q(first_name__icontains=x) for x in parts)) |
+                reduce(operator.or_, (Q(last_name__icontains=x) for x in parts))
+            )
+            
+            #Prevent overflow error
+            ids = to_idlist(parts, User)
+            if ids:
+                qs |= User.objects.filter(reduce(operator.or_, (Q(id=x) for x in ids)))
+    return qs
+                
+        
+           
 def login_user(request):
     '''Logs in the user, based on provided credentials'''
     if request.user.is_authenticated():
@@ -214,6 +255,11 @@ def export_all(request, pk):
         vals = to_idlist(request.GET['filter'], User)
         if vals:
             surveys = surveys.filter(creator__id__in = vals)
+    
+    surveys = filter_by_date(surveys, 'created', 
+                             start=request.GET.get('start'),
+                             end=request.GET.get('end'))
+    
     if not surveys:
         error(request, "No surveys present to export.")
         return redirect('manager:response_list', pk=pk)
@@ -233,6 +279,10 @@ def export_by_user(request, spk, upk):
                 surveys = SurveyResponse.objects.filter(id__in=vals)
         if surveys is None:
             surveys = SurveyResponse.objects.filter(survey__id = spk, creator__id = upk)
+            
+        surveys = filter_by_date(surveys, 'created', 
+                                 start=request.GET.get('start'),
+                                 end=request.GET.get('end'))
         
         if not surveys:
             error(request, "No surveys present to export.")  
@@ -434,23 +484,38 @@ class SurveyListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, ListView
     error_url = reverse_lazy('manager:index')
 
     def get_queryset(self):
-        ret = None
-        if 'query' in self.request.GET:
-            #Allow searching based on the user id, first name and last name.
-            parts = filter(None, re.split(r'\s', self.request.GET['query']))
-            if parts:
-                #http://stackoverflow.com/questions/4824759/django-query-using-contains-each-value-in-a-list
-                ret = User.objects.filter(
-                    reduce(operator.or_, (Q(first_name__icontains=x) for x in parts)) |
-                    reduce(operator.or_, (Q(last_name__icontains=x) for x in parts))
-                )
-                
-                #Prevent overflow error
-                ids = to_idlist(parts, User)
-                if ids:
-                    ret |= User.objects.filter(reduce(operator.or_, (Q(id=x) for x in ids)))
-        if ret is None:
-            ret = User.objects.all()
+        ret = get_user_by_name_or_id(self.request.GET.get('query'))
+        count = """ SELECT COUNT(*) FROM api_surveyresponse
+                    WHERE api_surveyresponse.creator_id = auth_user.id
+                    AND api_surveyresponse.survey_id = %d
+                """ % (int(self.kwargs['pk']))
+        last = """ SELECT created FROM api_surveyresponse
+                   WHERE api_surveyresponse.creator_id = auth_user.id
+                   AND api_surveyresponse.survey_id = %d
+               """ % (int(self.kwargs['pk']))
+               
+        if 'start' in self.request.GET:
+            start = self.request.GET['start']
+            try:
+                start = datetime.strptime(start, '%d/%m/%Y')
+            except ValueError:
+                pass
+            else:
+                fmt = start.strftime(" AND api_surveyresponse.created >= '%Y-%m-%d'")
+                count += fmt
+                last  += fmt
+        if 'end' in self.request.GET:
+            end = self.request.GET['end']
+            try:
+                end = datetime.strptime(end, '%d/%m/%Y')
+            except ValueError:
+                pass
+            else:
+                fmt = end.strftime(" AND api_surveyresponse.created <= '%Y-%m-%d'")
+                count += fmt
+                last  += fmt
+            
+        last += " ORDER BY created DESC LIMIT 1"
         
         #List of users with number of surveys completed and last date of completion
         #Ordered by last name then first name, case insensitive.
@@ -458,18 +523,8 @@ class SurveyListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, ListView
                     extra(select={
                         'lower_firstname' : 'lower(first_name)',
                         'lower_lastname' : 'lower(last_name)',
-                        'survey_count' : 
-                        """ SELECT COUNT(*) FROM api_surveyresponse
-                            WHERE api_surveyresponse.creator_id = auth_user.id
-                            AND api_surveyresponse.survey_id = %d
-                        """ % (int(self.kwargs['pk'])),
-                        'last_survey' : 
-                        """ SELECT created FROM api_surveyresponse
-                            WHERE api_surveyresponse.creator_id = auth_user.id
-                            AND api_surveyresponse.survey_id = %d
-                            ORDER BY created DESC
-                            LIMIT 1
-                        """ % (int(self.kwargs['pk']))
+                        'survey_count' : count,
+                        'last_survey' : last
                     }).\
                     order_by('lower_lastname', 'lower_firstname')
         
@@ -481,10 +536,12 @@ class SurveyListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, ListView
         except (AttributeError, Survey.DoesNotExist):
             raise Http404
         
-        if 'query' in self.request.GET:
-            followon = context.get('follow_on', {})
-            followon['query'] = self.request.GET['query']
-            context['follow_on'] = followon
+        followon = context.get('follow_on', {})
+        followon['query'] = self.request.GET.get('query', '')
+        followon['user_paginate_by'] = self.request.GET.get('paginate_by', '')
+        followon['start'] = self.request.GET.get('start', '')
+        followon['end']   = self.request.GET.get('end', '')
+        context['follow_on'] = followon
         
         context['survey'] = survey
         return context
@@ -504,10 +561,17 @@ class SurveyDeleteView(SuperMixin, CSRFProtectMixin, NoGetMixin, View):
     
     def post(self, request, *args, **kwargs):
         todelete = SurveyResponse.objects.filter(survey__id=self.kwargs['pk'])
+        users = get_user_by_name_or_id(self.request.POST.get('query'))
+        todelete = todelete.filter(creator__in=users)
+        
         if 'filter' in request.POST:
             ids = to_idlist(request.POST['filter'], User)
             if ids:
                 todelete = todelete.filter(creator__id__in=ids)
+                
+        todelete = filter_by_date(todelete, 'created',
+                                  start=self.request.POST.get('start'),
+                                  end=self.request.POST.get('end'))
         if not todelete:
             self.error("No responses to delete")
             raise Http404
@@ -528,6 +592,10 @@ class SurveyUserListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, List
         ret = SurveyResponse.objects.filter(survey__id=self.kwargs['spk'], 
                                             creator__id=self.kwargs['upk'])\
                             .order_by('-created')
+                            
+        ret = filter_by_date(ret, 'created',
+                       start=self.request.GET.get('start'),
+                       end=self.request.GET.get('end'))
         return ret
         
     def get_context_data(self, **kwargs):
@@ -544,10 +612,11 @@ class SurveyUserListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, List
         context['survey'] = survey
         
         #Add on the follow-on parameters
-        if 'query' in self.request.GET:
-            followon = context.get('follow_on', {})
-            followon['query'] = self.request.GET['query']
-            context['follow_on'] = followon
+        followon = context.get('follow_on', {})
+        followon['user_paginate_by'] = self.request.GET.get('paginate_by', '')
+        followon['start'] = self.request.GET.get('start', '')
+        followon['end'] = self.request.GET.get('end', '')
+        context['follow_on'] = followon
             
         #Get the current queryset
         qs = context[self.context_object_name]
@@ -579,6 +648,11 @@ class SurveyUserDeleteView(SuperMixin, CSRFProtectMixin, NoGetMixin, View):
             ids = to_idlist(request.POST['filter'], SurveyResponse)
             if ids:
                 todelete = todelete.filter(id__in=ids)
+        
+        todelete = filter_by_date(todelete, 'created',
+                                  start=self.request.POST.get('start'),
+                                  end=self.request.POST.get('end'))        
+        
         if not todelete:
             self.error("No responses to delete")
             raise Http404

@@ -29,7 +29,9 @@
     <div class="collapse navbar-collapse" id="navbar-collapse-1">
       <form id="searcher" class="navbar-form navbar-left" action="{% url 'manager:user_response_list' spk=survey.id upk=cur_user.id %}" method="get" role="search">
         <div class="form-group">
-          <input type="text" class="form-control" name="paginate_by" placeholder="Items per page">
+<input type="text" class="form-control" name="paginate_by" value="{{follow_on|get_item:'user_paginate_by'}}" placeholder="Items per page">
+          <input type='date' class="form-control" name="start" id='startdate' value="{{follow_on|get_item:'start'}}" placeholder="Start date" data-date-format="DD/MM/YYYY"/>
+          <input type='date' class="form-control" name="end" id='enddate' value="{{follow_on|get_item:'end'}}" placeholder="End date" data-date-format="DD/MM/YYYY"/>
           <input type="submit" class="form-control hiddenfield">
         </div>
       </form>
@@ -37,8 +39,10 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="{% url 'manager:export_by_user' spk=survey.pk upk=cur_user.pk %}">Export all</a></li>
+            <li><a href="{% url 'manager:export_by_user' spk=survey.pk upk=cur_user.pk %}" id="export-current">Export current</a></li>
             <li><a href="{% url 'manager:export_by_user' spk=survey.pk upk=cur_user.pk %}" id="export-selected">Export selected</a></li>
+            <li><a href="{% url 'manager:export_by_user' spk=survey.pk upk=cur_user.pk %}">Export all</a></li>
+
             <li class="divider"></li>
             <li><a href="#" id="invert-selected">Invert selection</a></li>
           </ul>
@@ -55,7 +59,10 @@
             <form id="deleter" action="{% url 'manager:user_response_delete' spk=survey.id upk=cur_user.id %}" method="post">
               {% csrf_token %}
               <input type="hidden" name="filter">
+              <input type="hidden" name="start">
+              <input type="hidden" name="end">
             </form>
+            <li><a href="#" id="delete-current">Delete current</a></li>
             <li><a href="#" id="delete-selected">Delete selected</a></li>
             <li><a href="#" id="delete-all">Delete all</a></li>
           </ul>
@@ -107,11 +114,24 @@
     //DESELECT ALL on REFRESH
     $(':checkbox:checked').prop('checked',false);
     
+    //DATETIME PICKERS WHAT IS THIS
+    $("#startdate,#enddate").datetimepicker({pickTime: false});
+    
     //INVERT SELECTION WHY IS THIS EVEN HERE
     $("#invert-selected").click(function () {
       $("input[type='checkbox']").each(function () {
         $(this).prop('checked', !$(this).prop('checked'));
       });
+      
+      //Must manually trigger bootstrap menu close since we discard the event
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle');
+      return false;
+    });
+    
+    //EXPORT CURRENT
+    $("#export-current").click(function () {
+      var dest = $(this).attr('href') + "?" + $("#searcher").serialize();
+      window.location = dest;
       
       //Must manually trigger bootstrap menu close since we discard the event
       $('.dropdown.open .dropdown-toggle').dropdown('toggle');
@@ -131,6 +151,16 @@
       //Must manually trigger bootstrap menu close since we discard the event
       $('.dropdown.open .dropdown-toggle').dropdown('toggle');
       return false;
+    });
+    
+    //DELETE CURRENT
+    $("#delete-current").click(function () {
+      var c = confirm("Are you sure you want to delete the current view of responses?");
+      if (c) {
+        $("#deleter input[name='start']").val($("#searcher input[name='start']").val());
+        $("#deleter input[name='end']").val($("#searcher input[name='end']").val());
+        $("#deleter").submit();
+      }
     });
     
     //DELETE SELECTED
