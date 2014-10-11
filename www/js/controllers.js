@@ -24,6 +24,7 @@ angular.module('starter.controllers', [])
   $scope.username = "";
   $scope.password = "";
   $scope.message = "";
+  $scope.loading = false;
   
   api.initialise();
   
@@ -38,6 +39,7 @@ angular.module('starter.controllers', [])
   $scope.close = function() {
      $scope.username = "";
      $scope.password = "";
+     $scope.loading  = false;
      $scope.loginModal.hide();
   };
  
@@ -45,6 +47,7 @@ angular.module('starter.controllers', [])
   $scope.$on('event:auth-loginConfirmed', function() {
      $scope.username = "";
      $scope.password = "";
+     $scope.loading  = false;
      $scope.loginModal.hide();
   });
   
@@ -54,6 +57,7 @@ angular.module('starter.controllers', [])
     if (status == 401 || status == 403 || status == 400) {
       error = "Invalid Username or Password.";
     }
+    $scope.loading = false;
     $scope.message = error;
   });
  
@@ -67,6 +71,7 @@ angular.module('starter.controllers', [])
       username: this.username,
       password: this.password
     };
+    $scope.loading = true;
     api.login(credentials);
   }
 })
