@@ -614,6 +614,35 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   }
 })
 
+.factory('Stats', function($q, api) {
+  var distances = {run : 0, cycle : 0, swim : 0};
+  var lastUpdated;
+  
+  return {
+    pollStats: function(force) {
+      var deferred = $q.defer();
+      
+      //Only update if forced to, or if last update was 1 hour ago
+      if (force || typeof lastUpdated === "undefined" || moment().diff(lastUpdated, 'h') > 1) {
+        api.getStats(function (stats) {
+          distances = angular.copy(stats);
+          lastUpdated = moment();
+          deferred.resolve("Got stats");
+        }).error(function () {
+          deferred.reject("No stats");
+        });
+      } else {
+        deferred.resolve("Got stats (cached)");
+      }
+      
+      return deferred.promise;
+    },
+    getStats: function() {
+      return distances;
+    }
+  };
+})
+
 .factory('Settings', function($localStore, $window) {
     
 	var firstname = '';

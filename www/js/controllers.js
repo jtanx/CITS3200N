@@ -199,10 +199,11 @@ angular.module('starter.controllers', [])
 })
 
 //statistics controller
-.controller('statsCtrl', function($scope, Days, api) {
+.controller('statsCtrl', function($scope, Days, Stats, api) {
 	var entries = Days.allentries();
-	var setParameters = function(){
-		$scope.rundist = 0;
+	var setParameters = function(force){
+    //Goal distances (set by schedule)
+		$scope.rundist = 0; 
 		$scope.cycledist = 0;
 		$scope.swimdist = 0;
 		for(var i in entries){
@@ -214,14 +215,33 @@ angular.module('starter.controllers', [])
 				$scope.swimdist += entries[i].distance;
 			}
 		}
-		$scope.run = 1;
-		$scope.cycle = 20;
-		$scope.swim = 3;
-		$scope.runperc = Math.floor($scope.run / $scope.rundist * 100);
-		$scope.cycleperc = Math.floor($scope.cycle / $scope.cycledist * 100);
-		$scope.swimperc = Math.floor($scope.swim / $scope.swimdist * 100);
+		$scope.run = 0;
+		$scope.cycle = 0;
+		$scope.swim = 0;
+    
+    var updateStats = function () {
+      $scope.runperc = $scope.rundist > 0 ? Math.floor($scope.run / $scope.rundist * 100) : 0;
+      $scope.cycleperc = $scope.cycledist > 0 ? Math.floor($scope.cycle / $scope.cycledist * 100) : 0;
+      $scope.swimperc = $scope.swimdist > 0 ? Math.floor($scope.swim / $scope.swimdist * 100) : 0;    
+    };
+    updateStats();
+    
+    //Wait for the api to be initted before making the query
+    api.onInitted().then(function () {
+      Stats.pollStats(force).then(function () {
+        var stats = Stats.getStats();
+        $scope.run = stats.run;
+        $scope.cycle = stats.cycle;
+        $scope.swim = stats.swim;
+        updateStats();
+      }).finally(function () {
+        $scope.$broadcast('scroll.refreshComplete');
+      });
+    });
 	}
 	setParameters();
+  
+  $scope.sync = setParameters;
 })
 
 .controller('settingsCtrl', function($scope, $ionicModal, $window, $ionicPopup, Settings, api) {
@@ -244,7 +264,6 @@ angular.module('starter.controllers', [])
 		$scope.loginModal.show();
   };
   $scope.signout = function() {
-    api.logout();
     api.logout();
   };
   

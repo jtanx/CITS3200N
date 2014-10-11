@@ -5,6 +5,7 @@ angular.module('starter.api', ['starter.localStore'])
   //var url = 'http://cits3200n.csse.uwa.edu.au:8001/api';
   var url = 'http://localhost:8000/api';
   var initted = false;
+  var initStatus = $q.defer();
   var loggedIn = false;
   var toSubmit = $localStore.getObject('api_toSubmit', '[]');
   
@@ -151,8 +152,8 @@ angular.module('starter.api', ['starter.localStore'])
     loggedIn: function() {
       return loggedIn;
     },
-    isInitted: function() {
-      return initted;
+    onInitted: function() {
+      return initStatus.promise;
     },
     
     addServiceCallback: function(serviceID, callback) {
@@ -182,7 +183,9 @@ angular.module('starter.api', ['starter.localStore'])
         initted = true;
         submitPending().then(syncFromServer().then(function () {
           $rootScope.$broadcast('event:api-initialised');
-        }));
+        })).finally(function () {
+          initStatus.resolve("We are initted");
+        });
       }
     },
     
@@ -289,8 +292,10 @@ angular.module('starter.api', ['starter.localStore'])
       $localStore.setObject('api_toSubmit', toSubmit);
     },
     
-    getStats: function() {
-      $http.get(url + "/surveys/");
+    getStats: function(continuation) {
+      return $http.get(url + "/info/").success(function (data, status, headers, config) {
+        continuation({run : data.weekly_run, cycle : data.weekly_cycle, swim : data.weekly_swim});
+      });
     }
   };
 })
