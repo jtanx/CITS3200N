@@ -5,6 +5,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.exceptions import ParseError
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.utils import timezone
+import datetime
 from api.models import *
 
 # Serializers define the API representation.
@@ -14,12 +16,33 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'username', 'email', 'is_staff')
         
 class InfoSerializer(serializers.ModelSerializer):
-    first_name = serializers.Field(source='first_name')
-    last_name = serializers.Field(source='last_name')
+    '''General info about this current user'''
+    weekly_run = serializers.SerializerMethodField('get_weekly_run')
+    weekly_cycle = serializers.SerializerMethodField('get_weekly_cycle')
+    weekly_swim = serializers.SerializerMethodField('get_weekly_swim')
     
+    def get_weekly_exercise(self, obj, type):
+        '''Calculate the total exercise distance for the past week'''
+        thisweek = timezone.now() - datetime.timedelta(days = 7)
+        qs = QuestionResponse.objects.filter(rid__creator=obj,
+                                             rid__created__gte=thisweek,
+                                             rid__survey__id=3, #hardcode magic is magic
+                                             qid__number=1, #hardcode magic is magic
+                                             entry=type).values_list('rid', flat=True)
+                                             
+        qs = QuestionResponse.objects.filter(rid__id__in=qs, qid__number=4).values_list('entry', flat=True)
+        return sum(int(x) for x in qs)
+    
+    def get_weekly_run(self, obj):
+        return self.get_weekly_exercise(obj, "Run")
+    def get_weekly_cycle(self, obj):
+        return self.get_weekly_exercise(obj, "Cycle")
+    def get_weekly_swim(self, obj):
+        return self.get_weekly_exercise(obj, "Swim")
+        
     class Meta:
         model = User
-        fields = ('first_name', 'last_name')
+        fields = ('first_name', 'last_name', 'weekly_run', 'weekly_cycle', 'weekly_swim')
         read_only_fields = ('first_name', 'last_name')
 
 class QuestionSerializer(serializers.ModelSerializer):
