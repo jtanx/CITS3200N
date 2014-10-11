@@ -35,6 +35,12 @@ angular.module('starter.controllers', [])
     $scope.loginModal.show();
   });
  
+  $scope.close = function() {
+     $scope.username = "";
+     $scope.password = "";
+     $scope.loginModal.hide();
+  };
+ 
   //If credentials entered are correct, the login display is hidden
   $scope.$on('event:auth-loginConfirmed', function() {
      $scope.username = "";
@@ -83,7 +89,7 @@ angular.module('starter.controllers', [])
 })
 
 //this controller makes sure that the added exercise entries are valid
-.controller('ExAddCtrl', function($scope, $state, $stateParams, Exercises, Save) {
+.controller('ExAddCtrl', function($scope, $state, $stateParams, Exercises) {
   $scope.exercise = {};
   //the times entered must be valid, and the end time must be after the start time
   $scope.isTimeValid = function() {
@@ -94,7 +100,6 @@ angular.module('starter.controllers', [])
   //the save state of the exercise is changed when an exercise is added
   $scope.submit = function() {
 		Exercises.add($scope.exercise);
-		$scope.unsave = Save.unsave();
 		$state.go('tab.diary');
 	};
 	$scope.types = Exercises.types();
@@ -102,7 +107,7 @@ angular.module('starter.controllers', [])
 })
 
 //controls the exercise tab
-.controller('ExerciseCtrl', function($scope, $state, $stateParams, Exercises, Save, api) {
+.controller('ExerciseCtrl', function($scope, $state, $stateParams, Exercises, api) {
   var setParameters = function() {
     $scope.exercise = angular.copy(Exercises.get($stateParams.exId));
     console.log($scope.exercise);
@@ -129,13 +134,11 @@ angular.module('starter.controllers', [])
   //when an exercise is edited, the save state is updated
   $scope.submit = function() {
 		Exercises.edit($stateParams.exId, $scope.exercise);
-		Save.unsave();
 	$state.go('tab.diary');
 	};
   //when an exercise is removed, the save state is updated
   $scope.remove = function(id) {
 		Exercises.remove(id);
-		Save.unsave();
 		$state.go('tab.diary');
 	};
   
@@ -222,6 +225,8 @@ angular.module('starter.controllers', [])
     api.logout();
   };
   
+  
+  
   $ionicModal.fromTemplateUrl('templates/help.html', function(modal) {
     $scope.helpModal = modal;
   },
@@ -232,7 +237,13 @@ angular.module('starter.controllers', [])
   $scope.helpme = function() {
 		$scope.helpModal.show();
   };
+  $scope.close = function() {
+		$scope.helpModal.hide();
+  };
   
+  $scope.$on('doubletap', function() {
+    $scope.helpModal.hide();
+  });
   
   $scope.reset = function() {
     $ionicPopup.confirm({
@@ -253,14 +264,13 @@ angular.module('starter.controllers', [])
 })
 
 //this controller fetches the previously entered diary entries, displays them underneath their respective week day names
-.controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises, Save, api) {
+.controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises, api) {
   var setParameters = function() {
     $scope.todaytext = moment().format('ll');
     $scope.diff = SleepEntries.diff();
     $scope.types = Meals.types();
     $scope.meals = Meals.today();
     $scope.exercises = Exercises.all();
-    $scope.saved = Save.status();
     $scope.sleepadded = SleepEntries.added();
   }
   
@@ -273,11 +283,6 @@ angular.module('starter.controllers', [])
   });
   
   //the save button saves all new information entered into the diary
-  $scope.save = function() {
-		Save.save();
-    api.syncAll();
-		$scope.saved = Save.status();
-  };
   
   $scope.added = function(type){
 		for(var i = 0; i<$scope.meals.length;i++){
@@ -288,32 +293,29 @@ angular.module('starter.controllers', [])
 })
 
 //when a new meal is entered, the save status of the diary is updated
-.controller('MealDetailCtrl', function($scope, $state, $stateParams, Meals, Save) {
+.controller('MealDetailCtrl', function($scope, $state, $stateParams, Meals) {
   $scope.type = $stateParams.type;
   $scope.submit = function(text){
 		Meals.add($stateParams.type, text);
-		Save.unsave();
 		$state.go('tab.diary');
   };
 })
 
 //when a meal is edited, the save status of the diary is updated
-.controller('MealEditCtrl', function($scope, $state, $stateParams, Meals, Save) {
+.controller('MealEditCtrl', function($scope, $state, $stateParams, Meals) {
   $scope.text = Meals.get($stateParams.type).text;
   $scope.type = $stateParams.type;
   $scope.submit = function(text){
 		Meals.edit($stateParams.type, text);
-		Save.unsave();
 		$state.go('tab.diary');
   };
   $scope.remove = function(){
 		Meals.remove($stateParams.type);
-		Save.unsave();
 		$state.go('tab.diary');
   };
 })
 
-.controller('SleepDetailCtrl', function($scope, $state, $stateParams, SleepEntries, Save) {
+.controller('SleepDetailCtrl', function($scope, $state, $stateParams, SleepEntries) {
 	$scope.submit = function(start,end,quality){
     if (end.isBefore(start)) {
       end.add(1, 'd');
@@ -323,12 +325,11 @@ angular.module('starter.controllers', [])
 		//if(startdate < enddate){
 		//		SleepEntries.add(startdate, enddate, quality);
 		//} else {$scope.timeerror = true;}
-		Save.unsave();
 		$state.go('tab.diary');
 	};
 })
 
-.controller('SleepEditCtrl', function($scope, $state, $stateParams, SleepEntries, Save) {
+.controller('SleepEditCtrl', function($scope, $state, $stateParams, SleepEntries) {
 	$scope.entry = SleepEntries.get();
   $scope.start = $scope.entry.start;
   $scope.end = $scope.entry.end;
@@ -348,12 +349,10 @@ angular.module('starter.controllers', [])
 		//if(startdate < enddate){
 		//		SleepEntries.edit(startdate, enddate, quality);
 		//} else {$scope.timeerror = true;}
-		Save.unsave();
 		$state.go('tab.diary');
 	};
 	$scope.remove = function(){
 		SleepEntries.remove();
-		Save.unsave();
 		$state.go('tab.diary');
     };
 })

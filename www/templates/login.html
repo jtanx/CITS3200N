@@ -1,6 +1,7 @@
 
-<ion-modal-view ng-controller="loginCtrl">
+<ion-modal-view on-swipe-down="close()" ng-controller="loginCtrl">
   <ion-header-bar class="bar-stable">
+  <button class="button button-icon" ng-click="close()">Cancel</button>
       <h1 class="title">Login</h1>
   </ion-header-bar>
 
@@ -24,6 +25,9 @@
             Sign in
           </button>
       </div>
+	  
+   
   </form>
+  
   </ion-content>
 </ion-modal-view>

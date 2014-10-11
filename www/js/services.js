@@ -236,20 +236,6 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   }
 })
 
-.factory('Save', function($localStore) {
-  return {
-	save: function() {
-		$localStore.setObject('saved', true);
-	},
-	unsave: function() {
-		$localStore.setObject('saved', false);
-	},
-	status: function() {
-		return $localStore.getObject('saved', true);
-	}
-  }
-})
-
 .factory('Meals', function($localStore, api) {
   var meals = $localStore.getObject('meals', '{}');
   var types = [
