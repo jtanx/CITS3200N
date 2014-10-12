@@ -1,7 +1,7 @@
 The server
 =============
 
-Requires Python 2.7, pip, django, django-rest-framework, python-dateutil, tablib
+Requires Python 2.7, pip, django, django-rest-framework, <strike>python-dateutil</strike>, tablib
 
 To use
 * Initialise the database with

@@ -4,7 +4,6 @@ from django.http import HttpResponse
 import tablib 
 import tablib.packages.xlwt as xl
 from datetime import datetime
-from dateutil import tz
 
 def export_survey(responses, format='csv'):
     '''responses: QuerySet of survey responses'''
@@ -22,7 +21,7 @@ def export_survey(responses, format='csv'):
     questnumber = []
     questdescription = []
     cohortdataset = {}
-    to_zone = tz.tzlocal()
+    to_zone = timzone.get_current_timezone()
 
     #Append all the question details to list
     for q in questions:

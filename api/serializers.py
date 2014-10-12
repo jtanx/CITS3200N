@@ -23,7 +23,8 @@ class InfoSerializer(serializers.ModelSerializer):
     
     def get_weekly_exercise(self, obj, type):
         '''Calculate the total exercise distance for the past week'''
-        thisweek = timezone.now() - datetime.timedelta(days = 7)
+        now = timezone.now()
+        thisweek = timezone.now() - datetime.timedelta(days = now.weekday())
         qs = QuestionResponse.objects.filter(rid__creator=obj,
                                              rid__created__gte=thisweek,
                                              rid__survey__id=3, #hardcode magic is magic
