@@ -11,6 +11,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.core.management import call_command
 from django.db import transaction
 from django.db.models import Q
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_protect
 
 from manager.forms import *
@@ -21,7 +22,6 @@ from manager.export import *
 
 from StringIO import StringIO 
 from datetime import datetime
-from dateutil import tz
 import gzip, os, re, operator
 import tempfile
 
@@ -164,7 +164,7 @@ def filter_by_date(qs, field, start=None, end=None):
         except ValueError:
             pass
         else:
-            start=start.replace(tzinfo=tz.tzlocal())
+            start=start.replace(tzinfo=timezone.get_current_timezone())
             qs = qs.filter(**{field + '__gte' : start})
             
     if end:
@@ -173,7 +173,7 @@ def filter_by_date(qs, field, start=None, end=None):
         except ValueError:
             pass
         else:
-            end=end.replace(tzinfo=tz.tzlocal())
+            end=end.replace(tzinfo=timezone.get_current_timezone())
             qs = qs.filter(**{field + '__lte' : end})
     return qs
     
