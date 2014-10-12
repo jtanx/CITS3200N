@@ -31,6 +31,8 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+
+
 #Max upload size in bytes
 MAX_UPLOAD_SIZE = 10485760 # 10MB - 10485760
 
@@ -102,9 +104,9 @@ REST_FRAMEWORK = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-au'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Australia/Perth'
 
 USE_I18N = True
 
