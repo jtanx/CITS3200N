@@ -17,4 +17,80 @@
   </p>
   {% endif %}
 </div>
+
+{% if user.is_authenticated and user.is_staff %}
+  <div class="page-header clearfix">
+    <div class="pull-right">
+      <form id="marker" role="form" method="post" action="{% url 'manager:mark_read' %}">
+        {% csrf_token %}
+        <input type="hidden" name="rids">
+        <input class="btn btn-default" type="submit" value="Mark as read">
+      </form>
+    </div>
+    <h1>New responses</h1>
+  </div>
+  
+{% if unseen.count > 0 %}
+<div class="table-responsive">
+  <table id="response-set" class="table table-hover">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Survey name</th>
+        <th>Response ID</th>
+        <th>Response date</th>
+        <th><input type="checkbox" id="sel_header" value="-1"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for resp in unseen %}
+      <tr>
+        <td>
+          <a href="{% url 'manager:user_response_list' spk=resp.survey.id upk=resp.creator.id %}?start={{resp.created|date:'d/m/Y'}}">
+            <span class="glyphicon glyphicon-search"></span>
+            {{resp.creator.id}}
+          </a>
+        </td>
+        <td>{{resp.creator.first_name}}</td>
+        <td>{{resp.creator.last_name}}</td>
+        <td>{{resp.survey.name}}</td>
+        <td>{{resp.id}}</td>
+        <td>{{resp.created}}</td>
+        <td><input type="checkbox" value="{{resp.id}}"></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p>There are no new responses.</p>
+{% endif %}
+
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  //DESELECT ALL on REFRESH
+  $(':checkbox:checked').prop('checked',false);
+  //(DE)SELECT ALL
+  $("#sel_header").click(function () {
+    var state = $(this).prop('checked');
+    $("tbody input[type='checkbox']").prop('checked', state);
+  });
+  
+  //MARK READ
+  $("#marker input[type='submit']").click(function () {
+    var vals = $("tbody input[type='checkbox']:checked").map(function() {
+      return this.value;
+    }).get();
+    if (vals.length > 0) {
+      $("#marker input[name='rids']").val(vals);
+      $("#marker").submit();
+    }
+    return false;
+  });
+</script>
 {% endblock %}

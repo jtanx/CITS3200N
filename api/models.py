@@ -160,5 +160,16 @@ class QuestionResponse(models.Model):
     class Meta:
         unique_together = (("rid", "qid"),)
 
+class ViewedResponses(models.Model):
+    who = models.ForeignKey(User)
+    what = models.ForeignKey(SurveyResponse)
+    when = models.DateTimeField(default=timezone.now)
+    
+    def __unicode__(self):
+        return "%s:[%s] viewed '%s'" % (self.who, self.when, self.what)  
+    
+    class Meta:
+        unique_together = (('who', 'what'),)
+        
 #For all signals
 import api.signals

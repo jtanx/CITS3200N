@@ -5,6 +5,7 @@ from manager import views, export
 
 urlpatterns = patterns('',
     url(r'^$', views.Index.as_view(), name='index'),
+    url(r'^mark-read$', views.MarkReadView.as_view(), name='mark_read'),
     url(r'^help$', views.Help.as_view(), name='help'),
     url(r'^login/?$', views.login_user, name='login'),
     url(r'^logout$', views.logout_user, name='logout'),

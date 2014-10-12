@@ -139,4 +139,5 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     "manager.misc.survey_list",
+    "manager.misc.num_notifications",
 )

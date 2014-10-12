@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_protect
 
 from manager.forms import *
 from manager.utils import *
+from manager.models import *
 from api.models import *
 from manager.export import *
 
@@ -163,7 +164,7 @@ def filter_by_date(qs, field, start=None, end=None):
         except ValueError:
             pass
         else:
-            start=start.replace(tzinfo=timzone.get_current_timezone())
+            start=start.replace(tzinfo=timezone.get_current_timezone())
             qs = qs.filter(**{field + '__gte' : start})
             
     if end:
@@ -172,7 +173,7 @@ def filter_by_date(qs, field, start=None, end=None):
         except ValueError:
             pass
         else:
-            end=end.replace(tzinfo=timzone.get_current_timezone())
+            end=end.replace(tzinfo=timezone.get_current_timezone())
             qs = qs.filter(**{field + '__lte' : end})
     return qs
     
@@ -353,6 +354,25 @@ class Index(TemplateView):
         # Set the active nav tab to the home button
         context['nav_home'] = 'active'
         return context
+        
+class MarkReadView(SuperMixin, CSRFProtectMixin, NoGetMixin, View):
+    success_message='The responses were marked as read.'
+    error_message='The responses could not be marked as read.'
+    
+    def get_success_url(self):
+        return reverse_lazy('manager:index')
+    
+    def get_error_url(self):
+        return reverse_lazy('manager:index')
+        
+    def post(self, request, *args, **kwargs): 
+        ids = to_idlist(self.request.POST.get('rids'), SurveyResponse)
+        responses = SurveyResponse.objects.filter(id__in=ids)
+        for r in responses:
+            ViewedResponses.objects.get_or_create(who=request.user, what=r)
+        self.success(self.success_message)
+        return redirect(self.get_success_url())
+        
         
 class Help(SuperMixin, TemplateView):
     '''The main help view.'''

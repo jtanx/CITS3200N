@@ -62,6 +62,22 @@ class Migration(migrations.Migration):
             },
             bases=(models.Model,),
         ),
+        migrations.CreateModel(
+            name='ViewedResponses',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('when', models.DateTimeField(default=django.utils.timezone.now)),
+                ('what', models.ForeignKey(to='api.SurveyResponse')),
+                ('who', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AlterUniqueTogether(
+            name='viewedresponses',
+            unique_together=set([('who', 'what')]),
+        ),
         migrations.AlterUniqueTogether(
             name='surveyquestion',
             unique_together=set([('parent', 'number')]),

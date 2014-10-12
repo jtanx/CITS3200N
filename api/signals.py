@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-from api.models import SurveyResponse
+from api.models import SurveyResponse, ViewedResponses
 
 @receiver(post_save, sender=User)
 def create_necessary(sender, instance=None, created=False, **kwargs):
@@ -13,6 +13,9 @@ def create_necessary(sender, instance=None, created=False, **kwargs):
 @receiver(post_save, sender=SurveyResponse)
 def survey_updated(sender, instance=None, created=False, **kwargs):
     if instance is not None:
+        #Reset the 'viewed' attribute if it has been updated
+        ViewedResponses.objects.filter(what=instance).delete()
+        '''
         survey = instance.survey 
         responses = instance.responses(parsed=True) #Get actual format
         if not responses: #Responses to questions have not been saved yet
@@ -26,4 +29,5 @@ def survey_updated(sender, instance=None, created=False, **kwargs):
             print("TRAINING VOLUME")
         elif survey.id == 4: #Meal diary
             pass
+        '''
         
