@@ -21,7 +21,7 @@ def export_survey(responses, format='csv'):
     questnumber = []
     questdescription = []
     cohortdataset = {}
-    to_zone = timzone.get_current_timezone()
+    to_zone = timezone.get_current_timezone()
 
     #Append all the question details to list
     for q in questions:
