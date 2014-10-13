@@ -1,3 +1,8 @@
+/**
+ * This file contains the services used by this app.
+ */
+
+//Unique IDs for each survey. Needed to be used for the API.
 var surveyIDs = {
   MTDS : 1,
   SLEEP : 2,
@@ -5,7 +10,7 @@ var surveyIDs = {
   MEAL : 4
 };
 
-//Service IDS
+//Service IDS (unique as for the surveyIDs)
 var serviceIDs = {
   MTDS : 1001,
   SLEEP : 1002,
@@ -93,6 +98,9 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   }
 })
 
+/**
+ * A service for managing the exercises for the diary.
+ */
 .factory('Exercises', function($localStore, api) {
   var exercises = $localStore.getObject('exercises', '[]');
   var types = [ 
@@ -236,6 +244,10 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   }
 })
 
+
+/**
+ * A service to manage the meal entries for the diary
+ */
 .factory('Meals', function($localStore, api) {
   var meals = $localStore.getObject('meals', '{}');
   var types = [
@@ -369,6 +381,9 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   }
 })
 
+/**
+ * A service to manage the sleep entries for the diary.
+ */
 .factory('SleepEntries', function($localStore, api) {
   var entries = $localStore.getObject('sleepEntries', '{}');
   var id = function(date) {
@@ -508,7 +523,9 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   }
 })
 
-
+/**
+ * A service to manage the mental test questions
+ */
 .factory('Questions', function() {
   // Might use a resource here that returns a JSON array
 
@@ -614,6 +631,9 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   }
 })
 
+/**
+ * A service to manage the stats 
+ */
 .factory('Stats', function($q, api) {
   var distances = {run : 0, cycle : 0, swim : 0};
   var lastUpdated;
@@ -643,6 +663,9 @@ angular.module('starter.services', ['starter.localStore', 'starter.api'])
   };
 })
 
+/**
+ * A service to manage the settings.
+ */
 .factory('Settings', function($localStore, $window) {
     
 	var firstname = '';

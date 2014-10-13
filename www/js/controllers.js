@@ -1,3 +1,7 @@
+/**
+ * The controllers for this app. Generally, each tab has one controller.
+ */
+
 angular.module('starter.controllers', [])
 
 //Controllers for the app
@@ -359,6 +363,9 @@ angular.module('starter.controllers', [])
   };
 })
 
+/**
+ * Controller for the sleep details view.
+ */
 .controller('SleepDetailCtrl', function($scope, $state, $stateParams, SleepEntries) {
 	$scope.submit = function(start,end,quality){
     if (end.isBefore(start)) {
@@ -373,6 +380,9 @@ angular.module('starter.controllers', [])
 	};
 })
 
+/**
+ * Controller for the sleep edit view.
+ */
 .controller('SleepEditCtrl', function($scope, $state, $stateParams, SleepEntries) {
 	$scope.entry = SleepEntries.get();
   $scope.start = $scope.entry.start;

@@ -1,13 +1,23 @@
+/**
+ * This file contains most of the code required to interface with the server.
+ * The server is a simple REST api with roughly three useful urls:
+ * /info/ - User info and some basic stats
+ * /survey/ - Submission and retrieval of survey data
+ * /api-token-auth/ - Authentication and login
+ */
 angular.module('starter.api', ['starter.localStore'])
 
 .factory('api', function($rootScope, $http, $localStore, $ionicLoading, $filter, $q, authService) {
+  //Set the URL of the server to use here.
   //var url = 'http://ftracker-jtanx.rhcloud.com/api';
-  //var url = 'http://cits3200n.csse.uwa.edu.au:8001/api';
-  var url = 'http://localhost:8000/api';
-  var initted = false;
-  var initStatus = $q.defer();
-  var loggedIn = false;
-  var toSubmit = $localStore.getObject('api_toSubmit', '[]');
+  var url = 'http://cits3200n.csse.uwa.edu.au:8001/api';
+  //var url = 'http://localhost:8000/api';
+  var initted = false; //Are we initted?
+  var initStatus = $q.defer(); //Have a callback to run stuff when we are initted.
+  var loggedIn = false; //Are we logged in?
+  
+  //Used to store any pending surveys to be submitted to the server.
+  var toSubmit = $localStore.getObject('api_toSubmit', '[]'); 
   
   //Callbacks are set in a services.js .run function 
   var serviceCallbacks = {};
@@ -149,21 +159,26 @@ angular.module('starter.api', ['starter.localStore'])
     };
   
   return {
+    //Are we logged in?
     loggedIn: function() {
       return loggedIn;
     },
+    //Return the deferred promise so we can run stuff when we are initted.
     onInitted: function() {
       return initStatus.promise;
     },
-    
+    //Add callbacks for all services. These will be called when we get a response
+    //from the server. Used to set the remote ID in whatever data structure
+    //the calling service is using
     addServiceCallback: function(serviceID, callback) {
       serviceCallbacks[serviceID] = callback;
     },
-    
+    //Add callbacks for all services. This one will be called when a sync operation
+    //is performed and we get data back from the server for what it currently holds.
     addSyncCallback: function(surveyID, callback) {
       syncCallbacks[surveyID] = callback;
     },
-    
+    //Do we have stuff that needs sending to the server?
     hasPendingSubmissions: function () {
       return toSubmit.length > 0;
     },
@@ -172,6 +187,7 @@ angular.module('starter.api', ['starter.localStore'])
     syncFromServer: syncFromServer,
     syncAll: syncAll,
     
+    //Initialise this service.
     initialise: function() {
       if (!initted) {
         var token = $localStore.get("AuthToken", "");
@@ -217,13 +233,14 @@ angular.module('starter.api', ['starter.localStore'])
       });
     },
     
+    //Log the user out.
     logout: function() {
       delete $http.defaults.headers.common.Authorization;
       $localStore.set("AuthToken", "");
       loggedIn = false;
       $rootScope.$broadcast('event:auth-logout-complete');
     },
-    
+    //Called when the login is cancelled.
     loginCancelled: function() {
       authService.loginCancelled();
     },
@@ -251,6 +268,11 @@ angular.module('starter.api', ['starter.localStore'])
       $localStore.setObject('api_toSubmit', toSubmit);
     },
     
+    /**
+     * Edit the survey. If the survey is pending submission, then
+     * replace that pending submission with the current details. If it has
+     * already been submitted, then send the edit request to the server.
+     */
     editSurvey : function (params) {
       params.action = 'update';
       var updated = false;
@@ -292,6 +314,9 @@ angular.module('starter.api', ['starter.localStore'])
       $localStore.setObject('api_toSubmit', toSubmit);
     },
     
+    /**
+     * Get stats from the server for the current user.
+     */
     getStats: function(continuation) {
       return $http.get(url + "/info/").success(function (data, status, headers, config) {
         continuation({run : data.weekly_run, cycle : data.weekly_cycle, swim : data.weekly_swim});
