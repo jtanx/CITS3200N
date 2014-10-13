@@ -11,7 +11,7 @@ import json
 
 class BootstrapMixin(object):
      def __init__(self, *args, **kwargs):
-        '''Shit hack to get it styled with bootstrap'''
+        '''Hack to get it styled with bootstrap'''
         super(BootstrapMixin, self).__init__(*args, **kwargs)
         for name, field in self.fields.items():
             if field.widget.attrs.has_key('class'):
@@ -27,6 +27,7 @@ class AllRequiredMixin(object):
             field.required = True
             
 class RestoreForm(BootstrapMixin, Form):
+    '''Form to restore the database'''
     restore = forms.FileField()
     
     def invalid_format(self):
@@ -127,6 +128,7 @@ class PersonalDetailsForm(BootstrapMixin, AllRequiredMixin, ModelForm):
         fields = ['current_password', 'username', 'first_name', 'last_name', 'email']
     
 class UserUpdateForm(BootstrapMixin, AllRequiredMixin, ModelForm):
+    '''Form to update user details.'''
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
         #This field is not required (absence==not active), but everything else is

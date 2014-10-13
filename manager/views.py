@@ -1,3 +1,4 @@
+'''All the views and view mixins to display the manager interface.'''
 from __future__ import print_function
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -158,6 +159,8 @@ def to_idlist(raw, limiting_class):
            
            
 def filter_by_date(qs, field, start=None, end=None):
+    '''Filter a queryset to between the start and end dates (inclusive). The
+       start and end dates are assumed to be strings in the form DD/MM/YYYY.'''
     if start:
         try:
             start = datetime.strptime(start, '%d/%m/%Y')
@@ -178,6 +181,9 @@ def filter_by_date(qs, field, start=None, end=None):
     return qs
     
 def get_user_by_name_or_id(query):
+    '''From a string 'query' get all users that have first or last names
+       containing that query (case insensitive), or else if it is a number, 
+       the user with that user ID (if any).'''
     qs = User.objects.all()
     if query:
         parts = filter(None, re.split(r'\s', query))
@@ -236,6 +242,8 @@ def logout_user(request):
     
 @user_passes_test(lambda u:u.is_staff, login_url='manager:login')
 def backup_database(request):
+    '''Backs up the databsae by exporting the 'api' application and 'User' model
+       to JSON and gzipping it.'''
     content = StringIO()
     call_command('dumpdata', 'auth.user', 'api', indent=4, stdout=content)
     compressed = StringIO()
@@ -250,6 +258,7 @@ def backup_database(request):
     
 @user_passes_test(lambda u:u.is_staff, login_url='manager:login')
 def export_all(request, pk):
+    '''Exports survey results (not specific to any user).'''
     surveys = SurveyResponse.objects.filter(survey__id = pk)
     if 'filter' in request.GET:
         vals = to_idlist(request.GET['filter'], User)
@@ -272,6 +281,7 @@ def export_all(request, pk):
 
 @user_passes_test(lambda u:u.is_staff, login_url='manager:login')
 def export_by_user(request, spk, upk):
+    '''Exports survye results for a specific user.'''
         surveys = None
         if 'filter' in request.GET:
             vals = to_idlist(request.GET['filter'], SurveyResponse)
@@ -315,6 +325,7 @@ def restore_database(request):
 '''
 
 class RestoreDatabaseView(SuperMixin, FormView):
+    '''Restores the database from a previous backup'''
     template_name = "mg-restore.html"
     form_class = RestoreForm
     success_url = reverse_lazy('manager:index')
@@ -324,18 +335,20 @@ class RestoreDatabaseView(SuperMixin, FormView):
     
     def form_valid(self, form):
         f = form.cleaned_data['restore']
+        #Unfortunately 'loaddata' cannot accept a file stream, so must save to temp location first.
         with tempfile.NamedTemporaryFile(mode='w+b', suffix='.json.gz', delete=False) as fp:
             fp.write(f)
             fp.seek(0)
             name = fp.name
             
         try:
+            #Whole thing must be atomic.
             with transaction.atomic():
-                call_command('migrate', 'api', 'zero')
-                call_command('migrate', 'api')
-                User.objects.all().delete()
-                call_command('loaddata', name)
-                os.unlink(name)
+                call_command('migrate', 'api', 'zero') #Delete all api data
+                call_command('migrate', 'api') #Restore the database
+                User.objects.all().delete() #Remove all users
+                call_command('loaddata', name) #Load the backup data
+                os.unlink(name) #Remove the temporary file
         except Exception:
             self.error('Failed to apply backup')
             return redirect(self.error_url)
@@ -356,6 +369,8 @@ class Index(TemplateView):
         return context
         
 class MarkReadView(SuperMixin, CSRFProtectMixin, NoGetMixin, View):
+    '''For the notifications. Mark the comma separated list of survey ids as
+       'read' for the current user.'''
     success_message='The responses were marked as read.'
     error_message='The responses could not be marked as read.'
     
@@ -435,6 +450,7 @@ class UserDetailView(SuperMixin, UpdateView):
                             kwargs={'pk' : self.kwargs['pk']})
         
 class UserCreateView(SuperMixin, CreateView):
+    '''Create a new user.'''
     model = User
     success_url = reverse_lazy('manager:user_list')
     success_message='The user was added successfully.'
@@ -462,6 +478,7 @@ class UserCreateView(SuperMixin, CreateView):
         
         
 class UserDeleteView(SuperMixin, NoGetMixin, DeleteView):
+    '''Delete a user.'''
     model = User
     success_url = reverse_lazy('manager:user_list')
     success_message='The user was deleted successfully.'
@@ -473,6 +490,7 @@ class UserDeleteView(SuperMixin, NoGetMixin, DeleteView):
         return valid.filter(pk=self.kwargs['pk'])
     
 class PersonalDetailsView(SuperMixin, UpdateView):
+    '''Update your own personal details.'''
     model = User
     template_name='mg-changepersonaldetails.html'
     form_class = PersonalDetailsForm
@@ -495,6 +513,7 @@ class PersonalDetailsView(SuperMixin, UpdateView):
         
     
 class SurveyListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, ListView):
+    '''View of the surveys'''
     model = User
     template_name = 'mg-responselist.html'
     context_object_name = 'users'
@@ -566,6 +585,7 @@ class SurveyListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, ListView
         return context
         
 class SurveyDeleteView(SuperMixin, CSRFProtectMixin, NoGetMixin, View):
+    '''Delete survey responses.'''
     model = SurveyResponse
     success_message='The responses were deleted successfully.'
     error_message='The responses could not be deleted.'
@@ -600,6 +620,7 @@ class SurveyDeleteView(SuperMixin, CSRFProtectMixin, NoGetMixin, View):
         return redirect(self.get_success_url())
         
 class SurveyUserListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, ListView):
+    '''View survey responses specific to a particular user.'''
     model = SurveyResponse
     template_name = 'mg-userresponselist.html'
     context_object_name = 'responses'
@@ -647,6 +668,7 @@ class SurveyUserListView(ModifiablePaginator, CSRFProtectMixin, SuperMixin, List
         return context
         
 class SurveyUserDeleteView(SuperMixin, CSRFProtectMixin, NoGetMixin, View):
+    '''Delete survey responses to a particular user.'''
     model = SurveyResponse
     success_message='The responses were deleted successfully.'
     error_message='The responses could not be deleted.'

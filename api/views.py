@@ -13,7 +13,6 @@ from django.utils import timezone
 import datetime
 
 UPDATE_METHODS = ['PUT', 'PATCH', 'DELETE']
-
 class IsRecent(permissions.BasePermission):
     '''Check if the entry was recent (within 1 week; non admins only)'''
 
@@ -26,11 +25,13 @@ class IsRecent(permissions.BasePermission):
         
 # ViewSets define the view behavior.
 class UserViewSet(viewsets.ModelViewSet):
+    '''View users'''
     permission_classes = (IsAuthenticated,IsAdminUser)
     queryset = User.objects.all()
     serializer_class = UserSerializer
     
 class InfoView(APIView):
+    '''View info for current user (e.g. first/last name and weekly exercise totals'''
     permission_classes = (IsAuthenticated,)
     serializer_class = InfoSerializer
     model = User
@@ -40,12 +41,15 @@ class InfoView(APIView):
         return Response(data=req.data)
 
 class SurveyViewSet(viewsets.ReadOnlyModelViewSet):
+    '''View what surveys are on offer and which question is what.'''
     permission_classes = (IsAuthenticated,)
     serializer_class = SurveySerializer
     model = Survey
     query_set = Survey.objects.all()
     
 class SurveySubmissionViewSet(viewsets.ModelViewSet):
+    '''View and submit responses to surveys. Surveys can be modified up to one
+       week after they have been first submitted.'''
     permission_classes = (IsAuthenticated, IsRecent)
     serializer_class = SurveyResponseSerializer
     model = SurveyResponse

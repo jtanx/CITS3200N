@@ -1,3 +1,5 @@
+'''All the models used for this application.'''
+
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -6,10 +8,12 @@ from django.utils.dateparse import parse_datetime
 import re
     
 class Survey(models.Model):
+    '''Represents a survey type, e.g. MTDS survey or Sleep survey'''
     name = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=255, blank=True)
 
     def questions(self):
+        '''Get the questions related to this survey'''
         if self.id:
             return SurveyQuestion.objects.filter(parent = self).order_by('number')
         return None
@@ -18,6 +22,13 @@ class Survey(models.Model):
         return '%s: %s' % (self.name, self.description)
 
 class SurveyQuestion(models.Model):
+    '''A single question for a particular survey. The type is specified by a 
+       three-letter code as shown below. For choice based questions, the choices
+       are stored in the 'choices' field, as a comma separated list of choices.
+       
+       An integer scale (INTSCALE) value is a particular variation on the
+       integer type, and restricts the value to between 1-5 (inclusive).
+       '''
     INTEGER = "INT"
     INTSCALE = "INS"
     DATETIME = "DTM"
@@ -104,6 +115,10 @@ class SurveyQuestion(models.Model):
     
     
 class SurveyResponse(models.Model):
+    '''A response to a particular survey by a particular user. The created date
+       is indicated by the user, and determines what date the survey corresponds
+       to (e.g. answering a survey for 13/10/14. The submitted date is when the
+       server actually received the response.'''
     survey = models.ForeignKey(Survey)
     creator = models.ForeignKey(User)
     created = models.DateTimeField()
@@ -141,6 +156,9 @@ class SurveyResponse(models.Model):
                                               self.created)
 
 class QuestionResponse(models.Model):
+    '''A response to one question from a particular survey response by a user.
+       All responses are stored in the field 'entry' as a string, and are parsed
+       based on the question type indicated.'''
     rid = models.ForeignKey(SurveyResponse, blank=True)
     qid = models.ForeignKey(SurveyQuestion)
     entry = models.CharField(max_length=255)
@@ -161,6 +179,9 @@ class QuestionResponse(models.Model):
         unique_together = (("rid", "qid"),)
 
 class ViewedResponses(models.Model):
+    '''Keeps a record of when a user has 'seen' a particular response. Used in
+       the manager interface to keep track of notifications to show to the user.
+       In effect, only used for administrators of the system.'''
     who = models.ForeignKey(User)
     what = models.ForeignKey(SurveyResponse)
     when = models.DateTimeField(default=timezone.now)

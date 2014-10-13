@@ -6,6 +6,7 @@ import tablib.packages.xlwt as xl
 from datetime import datetime
 
 def export_survey(responses, format='csv'):
+    '''The code to export survey data to the Excel format.'''
     '''responses: QuerySet of survey responses'''
     if not responses.exists():
         return None

@@ -1,3 +1,4 @@
+'''All the serializers to convert to/from JSON from the Python representation'''
 from rest_framework import serializers, permissions
 from rest_framework.serializers import ValidationError
 from StringIO import StringIO
@@ -11,6 +12,7 @@ from api.models import *
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    '''Serializing the User model'''
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'is_staff')
@@ -47,10 +49,12 @@ class InfoSerializer(serializers.ModelSerializer):
         read_only_fields = ('first_name', 'last_name')
 
 class QuestionSerializer(serializers.ModelSerializer):
+    '''Serializes the question'''
     class Meta:
         model = SurveyQuestion
 
 class SurveySerializer(serializers.ModelSerializer):
+    '''Serializes a survey'''
     class Meta:
         model = Survey
         fields = ('id', 'name', 'description', 'questions')
@@ -82,6 +86,7 @@ class QuestionResponseSerializer(serializers.Serializer):
 '''
     
 class QuestionResponseSerializer(serializers.ModelSerializer):
+    '''Serializes a response to a question.'''
     class QuestionNumberField(serializers.WritableField):
         def from_native(self, value):
             try:
@@ -106,9 +111,9 @@ class QuestionResponseSerializer(serializers.ModelSerializer):
         fields = ('number', 'entry')
         
 class SurveyResponseSerializer(serializers.ModelSerializer):
+    '''Serializes a survey response'''
     class ResponseField(serializers.WritableField):
         def to_native(self, obj):
-            #raise Exception("You piece of shit")
             serializer = QuestionResponseSerializer(obj, many=True)
             return serializer.data
             
@@ -155,6 +160,7 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'submitted',)
         
     def validate(self, attrs):
+        '''Check that the response is valid; e.g. responding to the right survey'''
         responses = attrs['responses']
         survey = attrs['survey']
         

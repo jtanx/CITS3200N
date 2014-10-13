@@ -1,5 +1,14 @@
 '''
 Modified version of django-cors-headers
+Used to allow cross-origin serving of content for the API, otherwise
+browsers like Firefox and Chrome will refuse to interact with it. Not an issue
+if deployed to the device since Ionic/Cordova allows cross-origin access by
+default.
+
+For more info on CORS see here:
+http://www.django-rest-framework.org/topics/ajax-csrf-cors
+
+django-cors-headers license (MIT)
 https://github.com/ottoyiu/django-cors-headers/blob/master/LICENSE.txt
 '''
 

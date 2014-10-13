@@ -1,7 +1,7 @@
 from django.contrib import admin
 from api.models import *
 
-# Register your models here.
+# Models to be shown in the Django administrator interface
 admin.site.register(Survey)
 admin.site.register(SurveyQuestion)
 admin.site.register(QuestionResponse)
