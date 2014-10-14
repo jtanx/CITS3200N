@@ -15,11 +15,15 @@
   
   <form name="add">
 
-    <label class="item item-input">
-	<span class="input-label">Type</span>
-   <select required ng-model="text" ng-options="type for type in types" name="type"></select><br>
-	</label>
-	
+    <label class="item item-input item-select">
+    <span class="input-label">Type</span>
+        <select required ng-model="text" name="type">
+			<option value="Run">Run</option>
+			<option value="Cycle">Cycle</option>
+			<option value="Swim">Swim</option>
+		</select>
+		</label>
+    
    <label class="item item-input">
 	<span class="input-label">Distance (km)</span>
    <input type="number" ng-model="dist" min="0" name="dist" required />
