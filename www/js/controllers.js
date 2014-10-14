@@ -1,3 +1,7 @@
+/**
+ * The controllers for this app. Generally, each tab has one controller.
+ */
+
 angular.module('starter.controllers', [])
 
 //Controllers for the app
@@ -24,6 +28,7 @@ angular.module('starter.controllers', [])
   $scope.username = "";
   $scope.password = "";
   $scope.message = "";
+  $scope.loading = false;
   
   api.initialise();
   
@@ -35,10 +40,18 @@ angular.module('starter.controllers', [])
     $scope.loginModal.show();
   });
  
+  $scope.close = function() {
+     $scope.username = "";
+     $scope.password = "";
+     $scope.loading  = false;
+     $scope.loginModal.hide();
+  };
+ 
   //If credentials entered are correct, the login display is hidden
   $scope.$on('event:auth-loginConfirmed', function() {
      $scope.username = "";
      $scope.password = "";
+     $scope.loading  = false;
      $scope.loginModal.hide();
   });
   
@@ -48,6 +61,7 @@ angular.module('starter.controllers', [])
     if (status == 401 || status == 403 || status == 400) {
       error = "Invalid Username or Password.";
     }
+    $scope.loading = false;
     $scope.message = error;
   });
  
@@ -61,6 +75,8 @@ angular.module('starter.controllers', [])
       username: this.username,
       password: this.password
     };
+    $scope.message = "";
+    $scope.loading = true;
     api.login(credentials);
   }
 })
@@ -75,15 +91,15 @@ angular.module('starter.controllers', [])
 //this is the controller for adding exercises to the schedule
 .controller('DayAddCtrl', function($scope, $state, $stateParams, Days) {
   $scope.day = Days.get($stateParams.dayId);
-  $scope.submit = function(text, newday, time) {
-		Days.add(text, newday, time);
+  $scope.submit = function(text, newday, dist) {
+		Days.add(text, newday, dist);
 		$state.go('tab.schedule');
 	};
 	$scope.types = Days.types();
 })
 
 //this controller makes sure that the added exercise entries are valid
-.controller('ExAddCtrl', function($scope, $state, $stateParams, Exercises, Save) {
+.controller('ExAddCtrl', function($scope, $state, $stateParams, Exercises) {
   $scope.exercise = {};
   //the times entered must be valid, and the end time must be after the start time
   $scope.isTimeValid = function() {
@@ -94,7 +110,6 @@ angular.module('starter.controllers', [])
   //the save state of the exercise is changed when an exercise is added
   $scope.submit = function() {
 		Exercises.add($scope.exercise);
-		$scope.unsave = Save.unsave();
 		$state.go('tab.diary');
 	};
 	$scope.types = Exercises.types();
@@ -102,7 +117,7 @@ angular.module('starter.controllers', [])
 })
 
 //controls the exercise tab
-.controller('ExerciseCtrl', function($scope, $state, $stateParams, Exercises, Save, api) {
+.controller('ExerciseCtrl', function($scope, $state, $stateParams, Exercises, api) {
   var setParameters = function() {
     $scope.exercise = angular.copy(Exercises.get($stateParams.exId));
     console.log($scope.exercise);
@@ -129,13 +144,11 @@ angular.module('starter.controllers', [])
   //when an exercise is edited, the save state is updated
   $scope.submit = function() {
 		Exercises.edit($stateParams.exId, $scope.exercise);
-		Save.unsave();
 	$state.go('tab.diary');
 	};
   //when an exercise is removed, the save state is updated
   $scope.remove = function(id) {
 		Exercises.remove(id);
-		Save.unsave();
 		$state.go('tab.diary');
 	};
   
@@ -148,13 +161,13 @@ angular.module('starter.controllers', [])
   $scope.entry = Days.getex($stateParams.entryId);
   $scope.types = Days.types();
   $scope.newtype = $scope.entry.name;
-  $scope.newtime = $scope.entry.time;
+  $scope.newdist = $scope.entry.distance;
   $scope.remove = function(id) {
 		Days.remove(id);
 		$state.go('tab.schedule');
 	};
-	$scope.submit = function(type, time) {
-		Days.edit($stateParams.entryId, type, time);
+	$scope.submit = function(type, distance) {
+		Days.edit($stateParams.entryId, type, distance);
 		$state.go('tab.schedule');
 	}
 })
@@ -168,15 +181,50 @@ angular.module('starter.controllers', [])
   setParameters();
   //Re-set the parameters when we sync
   $scope.$on('event:api-synced', setParameters);
-
+  
+  //Function to automatically slide to the next question when we have answered a question.
+  var updater = function upd(newVal) {
+    if ($ionicSlideBoxDelegate.slidesCount() + 1 < newVal) {
+      //console.log("WE ARE WAITING");
+      //Slides haven't been updated yet, so wait until it is.
+      setTimeout(function(){upd(newVal);}, 50);
+    } else {
+      //console.log("WE ARE IN");
+      if ($ionicSlideBoxDelegate.currentIndex() + 2 < newVal) {
+        //If the current slide is less than the last answered question...
+        $ionicSlideBoxDelegate.update();
+        $ionicSlideBoxDelegate.next();
+      } else {
+        //We are done.
+      }
+    }
+  };
+  
+  /*
+  $scope.$watch("answered", function(newVal, oldVal) {
+    console.log("WATCHMAN");
+    var f = function() {
+      updater(newVal);
+    };
+    //setTimeout(f, 0)
+    f();
+  }, true);
+  */
   
   //fetches the mtds questions from the mental survey service
   $scope.questions = Questions.all();
+  $scope.availablequestions = [$scope.questions[0]];
+  $scope.answered = 2;
   $scope.options = MentalSurvey.options();
   $scope.answer = function(question, option) {
-    MentalSurvey.answer(question, option);
-    $ionicSlideBoxDelegate.update();
-    $ionicSlideBoxDelegate.next();
+	MentalSurvey.answer(question, option);
+  //console.log('answer', question, $scope.answered)
+	if($scope.answered == question + 1){
+		$scope.answered++;
+		$ionicSlideBoxDelegate.update();
+		//$ionicSlideBoxDelegate.next();
+	}
+  updater($scope.answered);
   };
   $scope.testanswers = MentalSurvey.all();
   //the mental survey can only be submitted after all the questions have been answered
@@ -191,11 +239,49 @@ angular.module('starter.controllers', [])
 })
 
 //statistics controller
-.controller('statsCtrl', function($scope, api) {
-	$scope.press = function() {
-		api.getStats();
-  };
-	
+.controller('statsCtrl', function($scope, Days, Stats, api) {
+	var entries = Days.allentries();
+	var setParameters = function(force){
+    //Goal distances (set by schedule)
+		$scope.rundist = 0; 
+		$scope.cycledist = 0;
+		$scope.swimdist = 0;
+		for(var i in entries){
+			if(entries[i].name == 'Run'){
+				$scope.rundist += entries[i].distance;
+			} else if(entries[i].name == 'Cycle'){
+				$scope.cycledist += entries[i].distance;
+			} else if(entries[i].name == 'Swim'){
+				$scope.swimdist += entries[i].distance;
+			}
+		}
+		$scope.run = 0;
+		$scope.cycle = 0;
+		$scope.swim = 0;
+    
+    var updateStats = function () {
+      $scope.runperc = $scope.rundist > 0 ? Math.floor($scope.run / $scope.rundist * 100) : 0;
+      $scope.cycleperc = $scope.cycledist > 0 ? Math.floor($scope.cycle / $scope.cycledist * 100) : 0;
+      $scope.swimperc = $scope.swimdist > 0 ? Math.floor($scope.swim / $scope.swimdist * 100) : 0;    
+    };
+    updateStats();
+    
+    //Wait for the api to be initted before making the query
+    api.onInitted().then(function () {
+      Stats.pollStats(force).then(function () {
+        var stats = Stats.getStats();
+        $scope.run = stats.run;
+        $scope.cycle = stats.cycle;
+        $scope.swim = stats.swim;
+        updateStats();
+      }).finally(function () {
+        $scope.$broadcast('scroll.refreshComplete');
+      });
+    });
+	}
+	setParameters();
+  
+  $scope.sync = setParameters;
 })
 
 .controller('settingsCtrl', function($scope, $ionicModal, $window, $ionicPopup, Settings, api) {
@@ -219,8 +305,9 @@ angular.module('starter.controllers', [])
   };
   $scope.signout = function() {
     api.logout();
-    api.logout();
   };
+  
+  
   
   $ionicModal.fromTemplateUrl('templates/help.html', function(modal) {
     $scope.helpModal = modal;
@@ -232,7 +319,9 @@ angular.module('starter.controllers', [])
   $scope.helpme = function() {
 		$scope.helpModal.show();
   };
-  
+  $scope.close = function() {
+		$scope.helpModal.hide();
+  };
   
   $scope.reset = function() {
     $ionicPopup.confirm({
@@ -253,14 +342,13 @@ angular.module('starter.controllers', [])
 })
 
 //this controller fetches the previously entered diary entries, displays them underneath their respective week day names
-.controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises, Save, api) {
+.controller('diaryCtrl', function($scope, Meals, SleepEntries, Exercises, api) {
   var setParameters = function() {
     $scope.todaytext = moment().format('ll');
     $scope.diff = SleepEntries.diff();
     $scope.types = Meals.types();
     $scope.meals = Meals.today();
     $scope.exercises = Exercises.all();
-    $scope.saved = Save.status();
     $scope.sleepadded = SleepEntries.added();
   }
   
@@ -273,11 +361,6 @@ angular.module('starter.controllers', [])
   });
   
   //the save button saves all new information entered into the diary
-  $scope.save = function() {
-		Save.save();
-    api.syncAll();
-		$scope.saved = Save.status();
-  };
   
   $scope.added = function(type){
 		for(var i = 0; i<$scope.meals.length;i++){
@@ -288,32 +371,32 @@ angular.module('starter.controllers', [])
 })
 
 //when a new meal is entered, the save status of the diary is updated
-.controller('MealDetailCtrl', function($scope, $state, $stateParams, Meals, Save) {
+.controller('MealDetailCtrl', function($scope, $state, $stateParams, Meals) {
   $scope.type = $stateParams.type;
   $scope.submit = function(text){
 		Meals.add($stateParams.type, text);
-		Save.unsave();
 		$state.go('tab.diary');
   };
 })
 
 //when a meal is edited, the save status of the diary is updated
-.controller('MealEditCtrl', function($scope, $state, $stateParams, Meals, Save) {
+.controller('MealEditCtrl', function($scope, $state, $stateParams, Meals) {
   $scope.text = Meals.get($stateParams.type).text;
   $scope.type = $stateParams.type;
   $scope.submit = function(text){
 		Meals.edit($stateParams.type, text);
-		Save.unsave();
 		$state.go('tab.diary');
   };
   $scope.remove = function(){
 		Meals.remove($stateParams.type);
-		Save.unsave();
 		$state.go('tab.diary');
   };
 })
 
-.controller('SleepDetailCtrl', function($scope, $state, $stateParams, SleepEntries, Save) {
+/**
+ * Controller for the sleep details view.
+ */
+.controller('SleepDetailCtrl', function($scope, $state, $stateParams, SleepEntries) {
 	$scope.submit = function(start,end,quality){
     if (end.isBefore(start)) {
       end.add(1, 'd');
@@ -323,12 +406,14 @@ angular.module('starter.controllers', [])
 		//if(startdate < enddate){
 		//		SleepEntries.add(startdate, enddate, quality);
 		//} else {$scope.timeerror = true;}
-		Save.unsave();
 		$state.go('tab.diary');
 	};
 })
 
-.controller('SleepEditCtrl', function($scope, $state, $stateParams, SleepEntries, Save) {
+/**
+ * Controller for the sleep edit view.
+ */
+.controller('SleepEditCtrl', function($scope, $state, $stateParams, SleepEntries) {
 	$scope.entry = SleepEntries.get();
   $scope.start = $scope.entry.start;
   $scope.end = $scope.entry.end;
@@ -348,12 +433,10 @@ angular.module('starter.controllers', [])
 		//if(startdate < enddate){
 		//		SleepEntries.edit(startdate, enddate, quality);
 		//} else {$scope.timeerror = true;}
-		Save.unsave();
 		$state.go('tab.diary');
 	};
 	$scope.remove = function(){
 		SleepEntries.remove();
-		Save.unsave();
 		$state.go('tab.diary');
     };
 })

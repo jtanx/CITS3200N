@@ -20,6 +20,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
   });
 })
 
+//Uses moment.js to parse dates from the user.
 //http://cameronspear.com/blog/how-cool-are-formatters-and-parsers/
 .directive('timeField', [function () {
   return {
@@ -58,8 +59,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       controller: 'loginDisplay'
     })
 
-    // Each tab has its own nav history stack:
-
+    //The settings tab
     .state('tab.settings', {
       url: '/settings',
       views: {
@@ -70,6 +70,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       }
     })
 
+    //The diary tab
 	 .state('tab.diary', {
       url: '/diary',
       views: {
@@ -80,7 +81,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       }
     })
     
-
+    //The sleep details view
     .state('tab.sleep-detail',  {
       url: '/diary/sleep/add',
       views: {
@@ -91,6 +92,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       }
     })
 	
+  //The sleep editing view
 	.state('tab.sleep-edit',  {
       url: '/diary/sleep/edit',
       views: {
@@ -101,6 +103,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       }
     })
 	
+  //The exercise add view
 	.state('tab.exercise-add',  {
       url: '/diary/exercise/add',
       views: {
@@ -111,6 +114,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       }
     })
 	
+  //The exercise edit view
 	.state('tab.exercise-edit',  {
       url: '/diary/exercise/:exId',
       views: {
@@ -121,6 +125,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       }
     })
 	
+  //The meal entry addition view
 	.state('tab.meal-detail',  {
       url: '/diary/meal/add/:type',
       views: {
@@ -131,6 +136,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       }
     })
 	
+  //The meal entry editing view
 	.state('tab.meal-edit',  {
       url: '/diary/meal/edit/:type',
       views: {
@@ -141,7 +147,8 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       }
     })
 	
-    .state('tab.schedule', {
+  //The schedule tab
+  .state('tab.schedule', {
       url: '/schedule',
       views: {
         'tab-schedule': {
@@ -150,7 +157,8 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
         }
       }
     })
-    .state('tab.day-add', {
+  //The schedule add view for a particular day  
+  .state('tab.day-add', {
       url: '/schedule/:dayId',
       views: {
         'tab-schedule': {
@@ -159,6 +167,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
         }
       }
     })
+  //The schedule edit view for a particular day
 	.state('tab.shed-edit', {
       url: '/schedule/edit/:entryId',
       views: {
@@ -169,7 +178,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       }
     })
 
-   
+  //The stats tab
 	.state('tab.stats', {
       url: '/stats',
       views: {
@@ -180,7 +189,8 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       }
     })
 	
-    .state('tab.mentaltest', {
+  //The mental test tab
+  .state('tab.mentaltest', {
       url: '/mentaltest',
       views: {
         'tab-mentaltest': {
@@ -190,7 +200,7 @@ angular.module('starter', ['ionic', 'ngCookies', 'http-auth-interceptor', 'start
       }
     });
 
-  // if none of the above states are matched, use this as the fallback
+  // If none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/tab/diary');
 
 });
