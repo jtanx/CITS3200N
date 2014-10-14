@@ -181,7 +181,35 @@ angular.module('starter.controllers', [])
   setParameters();
   //Re-set the parameters when we sync
   $scope.$on('event:api-synced', setParameters);
-
+  
+  //Function to automatically slide to the next question when we have answered a question.
+  var updater = function upd(newVal) {
+    if ($ionicSlideBoxDelegate.slidesCount() + 1 < newVal) {
+      //console.log("WE ARE WAITING");
+      //Slides haven't been updated yet, so wait until it is.
+      setTimeout(function(){upd(newVal);}, 50);
+    } else {
+      //console.log("WE ARE IN");
+      if ($ionicSlideBoxDelegate.currentIndex() + 2 < newVal) {
+        //If the current slide is less than the last answered question...
+        $ionicSlideBoxDelegate.update();
+        $ionicSlideBoxDelegate.next();
+      } else {
+        //We are done.
+      }
+    }
+  };
+  
+  /*
+  $scope.$watch("answered", function(newVal, oldVal) {
+    console.log("WATCHMAN");
+    var f = function() {
+      updater(newVal);
+    };
+    //setTimeout(f, 0)
+    f();
+  }, true);
+  */
   
   //fetches the mtds questions from the mental survey service
   $scope.questions = Questions.all();
@@ -190,11 +218,13 @@ angular.module('starter.controllers', [])
   $scope.options = MentalSurvey.options();
   $scope.answer = function(question, option) {
 	MentalSurvey.answer(question, option);
+  console.log('answer', question, $scope.answered)
 	if($scope.answered == question + 1){
 		$scope.answered++;
 		$ionicSlideBoxDelegate.update();
-		$ionicSlideBoxDelegate.next();
+		//$ionicSlideBoxDelegate.next();
 	}
+  updater($scope.answered);
   };
   $scope.testanswers = MentalSurvey.all();
   //the mental survey can only be submitted after all the questions have been answered
