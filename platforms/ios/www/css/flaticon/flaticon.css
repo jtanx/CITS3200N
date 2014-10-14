@@ -1,0 +1,61 @@
+@font-face {
+	font-family: "Flaticon";
+	src: url("flaticon.eot");
+	src: url("flaticon.eot#iefix") format("embedded-opentype"),
+	url("flaticon.woff") format("woff"),
+	url("flaticon.ttf") format("truetype"),
+	url("flaticon.svg") format("svg");
+	font-weight: normal;
+	font-style: normal;
+}
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after {   
+	font-family: Flaticon;
+        font-size: 32px;
+line-height:1;
+text-align:center;
+
+}
+.flaticon-bar5:before {
+	content: "\e000";
+	line-height:0.85;
+}
+.flaticon-bars5:before{
+	content: "\e001";
+}
+.flaticon-bars6:before{
+	content: "\e002";
+}
+.flaticon-book48:before {
+	content: "\e003";
+	line-height:1.05;
+}
+.flaticon-book82:before {
+	content: "\e004";
+	line-height:1.05;
+}
+.flaticon-calendar33:before {
+	content: "\e005";
+}
+.flaticon-calendar48:before {
+	content: "\e006";
+}
+.flaticon-emoticon5:before {
+	content: "\e007";
+	font-size:42px;
+	line-height:0.85;
+}
+.flaticon-emoticon7:before {
+	content: "\e008";
+	font-size:42px;
+	line-height:0.85;
+}
+.flaticon-floppy13:before {
+	content: "\e009";
+}
+.flaticon-settings18:before {
+	content: "\e00a";
+}
+.flaticon-tools4:before {
+	content: "\e00b";
+}

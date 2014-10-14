@@ -1,0 +1,35 @@
+
+<ion-modal-view on-swipe-down="close()" ng-controller="loginCtrl">
+  <ion-header-bar class="bar-stable">
+  <button class="button button-icon" ng-click="close()">Cancel</button>
+      <h1 class="title">Login</h1>
+  </ion-header-bar>
+
+  <ion-content has-header="true">
+  <div class="list">
+    <form>
+    <label class="item item-input">
+			<span class="input-label">Username</span>
+			<input name="username" ng-model="username" type="text" autocorrect="off" autocapitalize="off">
+		</label>
+		<label class="item item-input">
+			<span class="input-label">Password</span>
+			<input name="password" ng-model="password" type="password">
+		</label>
+    
+    <div class="padding">
+      {{message}} &nbsp;
+      <span ng-if="loading" class="icon ion-looping" style="font-size: 30px;"></span>
+    </div>
+
+      <div class="padding">
+          <button class="button button-block button-positive" ng-click="login()">
+            Sign in
+          </button>
+      </div>
+	  
+    </form>
+  </div>
+  
+  </ion-content>
+</ion-modal-view>

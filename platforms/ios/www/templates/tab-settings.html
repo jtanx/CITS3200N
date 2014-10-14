@@ -1,0 +1,26 @@
+<ion-view title="Settings">
+ 
+  <ion-content class="padding">
+		<div>
+	<button class="button button-full button-positive" ng-if="!signedin"
+		ng-click="signin()">Sign In</button>
+	
+	<button class="button button-full button-positive" ng-if="signedin"
+		ng-click="signout()">Sign Out</button>
+    
+  <!--no.-->
+  <button class="button button-full button-positive" ng-if="signedin"
+    ng-click="sync()">Sync</button>
+
+		
+	<button class="button button-full button-positive" ng-click="helpme()">Help</button>
+    
+	<button class="button button-full button-positive" ng-click="reset()">Full Reset</button>
+		</div>
+		
+	
+	<div ng-if="help">no</div>
+
+	</ion-content>
+</ion-view>
+

@@ -1,0 +1,27 @@
+<ion-view title="Schedule">
+
+  <ion-content class="has-header" ng-controller="scheduleCtrl">
+  
+ </form>
+	
+    <div ng-repeat="day in days" class="list padding-top">
+		<div class="list padding-top">
+			<div class="item item-divider item-positive item-positive">
+				{{day.name}}
+				<a style="float:right;" href="#/tab/schedule/{{day.id}}">
+				<i class="icon ion-ios7-plus-empty" style="font-size: 45px; color: white;"></i>
+				</a>
+			</div>
+			
+			<div ng-repeat="entry in entries | filter:day.name">
+			<a class="item item-icon-right" href="#/tab/schedule/edit/{{entry.id}}">
+				<i class="icon ion-ios7-arrow-right" ></i>
+				<span class="prefill">{{entry.name}} {{entry.distance}} kms
+			</a>
+			</div>
+		</div>
+	</div>
+	
+  </ion-content>
+</ion-view>
+

@@ -1,0 +1,66 @@
+<!--
+link to the font-awesome style sheet, which is needed to use the floppy disc icon for the save button
+-->
+
+<ion-view title="Diary">
+  
+  <ion-header-bar class="bar bar-subheader" ng-controller="diaryCtrl">
+  <h1 class="title">{{todaytext}}</h1>
+  </ion-header-bar>
+  
+  <ion-content class="has-subheader" ng-controller="diaryCtrl">
+    <ion-refresher
+      pulling-text="Pull to refresh..."
+      on-refresh="sync()">
+    </ion-refresher>
+  
+    <div class="list padding-top">
+      <div class="item item-divider item-positive list-positive">
+        Exercise
+	  <a style="float:right;" href="#/tab/diary/exercise/add">
+		<i class="icon ion-ios7-plus-empty" style="font-size: 45px; color: white;"></i>
+	  </a>
+      </div>
+	  <div ng-repeat="exercise in exercises">
+      <a class="item item-icon-right" href="#/tab/diary/exercise/{{exercise.id}}">
+        <i class="icon ion-ios7-arrow-right"></i>
+        {{exercise.distance + " km " + exercise.type + " for " }}
+				{{exercise.end.diff(exercise.start, 'hours')}} 
+		<span ng-if="exercise.end.diff(exercise.start, 'hours') == 1">hr</span>
+		<span ng-if="exercise.end.diff(exercise.start, 'hours') != 1">hrs</span>
+      </a>
+	  </div>
+    </div>
+    
+	<div class="list padding-top">
+      <div class="item item-divider item-positive list-positive">
+        Sleep
+		<a style="float:right;" ng-if="!sleepadded" href="#/tab/diary/sleep/add">
+		<i class="icon ion-ios7-plus-empty" style="font-size: 45px; color: white;"></i>
+	  </a>
+      </div>
+      <a class="item item-icon-right" ng-if="sleepadded" href="#/tab/diary/sleep/edit">
+        <i class="icon ion-ios7-arrow-right"></i>
+        {{diff}}
+		<span ng-if="diff == 1">hr</span>
+		<span ng-if="diff != 1">hrs</span>
+      </a>
+    </div>
+	
+    <div class="list padding-top" ng-repeat="type in types">
+      <div class="item item-divider item-positive item-positive">
+        {{type}}
+		<a style="float:right;" ng-if="!added(type)" href="#/tab/diary/meal/add/{{type}}">
+		<i class="icon ion-ios7-plus-empty" style="font-size: 45px; color: white;"></i>
+		</a>
+      </div>
+	  <div ng-repeat="meal in meals | filter:type">
+      <a class="item item-icon-right" href="#/tab/diary/meal/edit/{{type}}">
+        <i class="icon ion-ios7-arrow-right"></i>
+        {{meal.text}}
+	  </a>
+    </div>
+    </div>
+    
+  </ion-content>
+</ion-view>

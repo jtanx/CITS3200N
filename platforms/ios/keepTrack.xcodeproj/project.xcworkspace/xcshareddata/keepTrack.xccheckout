@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>1DEC5D2B-8A7A-44CE-84F3-33C8E9C8BB76</string>
+	<key>IDESourceControlProjectName</key>
+	<string>keepTrack</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>5A0B33EE84A49BCE1D686C5B9994B7BA901F392E</key>
+		<string>https://github.com/jtanx/CITS3200N</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>platforms/ios/keepTrack.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>5A0B33EE84A49BCE1D686C5B9994B7BA901F392E</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/jtanx/CITS3200N</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>5A0B33EE84A49BCE1D686C5B9994B7BA901F392E</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>5A0B33EE84A49BCE1D686C5B9994B7BA901F392E</string>
+			<key>IDESourceControlWCCName</key>
+			<string>CITS3200NFinal</string>
+		</dict>
+	</array>
+</dict>
+</plist>

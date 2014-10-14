@@ -1,0 +1,20 @@
+
+<ion-view title="Edit {{type}}">
+  <ion-content has-header="true" padding="true">
+    <form name="add">
+		
+		<label class="item item-input">
+        <textarea required placeholder="Enter Meal" name="text" ng-model="text">
+        </textarea>
+		</label>
+	
+	<ion-nav-buttons side="right">
+
+   <button class="button button-icon" ng-disabled="!add.$valid"
+   ng-click="submit(text)"/>Done</button>
+
+	</ion-nav-buttons>
+	</form>
+	<button class="button button-full button-assertive" ng-click="remove(exercise.id)"/>Delete</button>
+  </ion-content>
+</ion-view>

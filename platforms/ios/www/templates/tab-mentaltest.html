@@ -1,0 +1,48 @@
+<ion-view title="Mental Test">
+  
+  <ion-content class="has-header" ng-controller="mentaltestCtrl">
+  <div ng-if="!completed">
+  <h5 align="center"  class="title">
+    In the past 24 hours, how often have you felt...
+    </h5>
+  <ion-slide-box show-pager="false">
+    
+	
+      <ion-slide  ng-repeat="question in questions" type="item-text-wrap" ng-if="question.id < answered">
+		
+		 <div class="list card">
+      <div class="item item-divider">
+        {{(question.id) + ". " + question.name}}
+      </div>
+      <label class="item item-radio" ng-repeat="option in options" ng-click="answer(question.id,option.id)">
+	    <div ng-if="testanswers[question.id-1] != option.id">
+		<input type="radio" name="group">
+        <div class="item-content">
+          {{option.name}}
+        </div>
+		</input>
+		</div>
+	  <div class="item item-icon-right" ng-if="testanswers[question.id-1] == option.id" style="background-color:#F7F7F7;">
+			<span style="background-color:#F7F7F7;">
+          {{option.name}}
+			</span>
+			<i class="icon ion-checkmark"></i>
+		</div>
+	  </label>
+		</div>
+		<button ng-if="question.id == 22 && testanswers[question.id-1] != null" class="button button-full button-positive" 
+					ng-click="submit()">
+				Submit
+		</button>
+		</ion-slide>
+		
+	</ion-slide-box>
+	</div>
+	<div class="card" ng-if="completed" align="center">
+		<div class="item item-text-wrap">
+			Completed
+		</div>
+	</div>
+	
+</ion-content > 
+</ion-view>

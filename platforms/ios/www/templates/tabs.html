@@ -1,0 +1,36 @@
+<!-- 
+  Create tabs with an icon and label, using the tabs-positive style. 
+  Each tab's child <ion-nav-view> directive will have its own 
+  navigation history that also transitions its views in and out.
+-->
+
+<ion-tabs class="tabs-icon-top">
+
+
+    <!-- Diary Tab -->
+  <ion-tab title="Diary" icon-on="flaticon-book48" icon-off="flaticon-book82" href="#/tab/diary">
+    <ion-nav-view name="tab-diary"></ion-nav-view>
+  </ion-tab>
+
+  
+  <!-- Mental Test Tab -->
+  <ion-tab title="Mental Test" icon-on="flaticon-emoticon7" icon-off="flaticon-emoticon5" href="#/tab/mentaltest">
+    <ion-nav-view name="tab-mentaltest"></ion-nav-view>
+  </ion-tab>
+
+  <!-- Schedule Tab -->
+  <ion-tab title="Schedule" icon-on="flaticon-calendar33" icon-off="flaticon-calendar48" href="#/tab/schedule">
+    <ion-nav-view name="tab-schedule"></ion-nav-view>
+  </ion-tab>
+
+
+  <!-- Stats Tab -->
+  <ion-tab title="Stats" icon-on="flaticon-bars5" icon-off="flaticon-bars6" href="#/tab/stats">
+    <ion-nav-view name="tab-stats"></ion-nav-view>
+  </ion-tab>
+
+  <!-- Settings Tab -->
+  <ion-tab title="Settings" icon-on="flaticon-settings18" icon-off="flaticon-tools4" href="#/tab/settings">
+    <ion-nav-view name="tab-settings"></ion-nav-view>
+  </ion-tab>
+</ion-tabs>

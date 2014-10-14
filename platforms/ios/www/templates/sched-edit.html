@@ -1,0 +1,27 @@
+<!--
+  This template loads for the 'tab.friend-detail' state (app.js)
+  'firend' is a $scope variable created in the FriendsCtrl controller (controllers.js)
+  The FriendsCtrl pulls data from the Friends service (service.js)
+  The Friends service returns an array of friend data
+-->
+<ion-view title="Edit {{entry.name.name}}">
+  <ion-content has-header="true" padding="true">
+ <form name="edit">
+   <label class="item item-input item-select">
+	<span class="input-label">Type</span>
+   <select required ng-model="newtype" ng-options="type for type in types"></select><br>
+   </label>
+   <label class="item item-input">
+	<span class="input-label">Distance (km)</span>
+   <input required type="number" min="0" ng-model="newdist" name="distance" />
+	</label>
+   
+   <ion-nav-buttons side="right">
+   <button class="button button-icon" ng-disabled="!edit.$valid" 
+   ng-click="submit(newtype, newdist)"/>Done</button>
+   </ion-nav-buttons>
+   </form>
+  <button class="button button-full button-assertive" ng-click="remove(entry.id)"/>Delete</button>
+   
+  </ion-content>
+</ion-view>

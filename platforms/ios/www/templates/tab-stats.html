@@ -1,0 +1,163 @@
+<ion-view title="Stats">
+  
+  <ion-content class="has-header padding">
+    <ion-refresher
+      pulling-text="Pull to refresh..."
+      on-refresh="sync(true)">
+    </ion-refresher>  
+ 
+ <div class="list padding-top">
+	<div class="list card" align="center">
+	<div class="item item-divider">
+		Weekly Goals
+    </div>
+	</div>
+	<div class="list card">
+    <div class="item item-divider">
+		Running
+    </div>
+		<label class="item" >
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Goal:</div>
+          <div class="col">{{rundist}} km</div>
+        </div>
+			</div>
+		</label>
+		<label class="item" >
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Actual:</div>
+          <div class="col">{{run}} km</div>
+        </div>
+			</div>
+		</label>
+    <label class="item" ng-if="runperc < 100 && rundist > 0">
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Achieved:</div>
+          <div class="col">{{runperc}} %</div>
+        </div>
+			</div>
+		</label>
+    <label class="item" ng-if="rundist == 0">
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Achieved:</div>
+          <div class="col">-- %</div>
+        </div>
+			</div>
+		</label>
+		<label class="item" ng-if="runperc >= 100">
+			<div class="item-icon-right">
+        <div class="row" style="float:left;">
+          <div class="col">Achieved:</div>
+          <div class="col">{{runperc}} %</div>
+        </div>
+				<i class="icon ion-checkmark" style="color:#66CC33;"></i>
+			</div>
+		</label>
+	</div>
+
+	<div class="list card">
+    <div class="item item-divider">
+		Cycling
+    </div>
+		<label class="item" >
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Goal:</div>
+          <div class="col">{{cycledist}} km</div>
+        </div>
+			</div>
+		</label>
+		<label class="item" >
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Actual:</div>
+          <div class="col">{{cycle}} km</div>
+        </div>
+			</div>
+		</label>
+		<label class="item" ng-if="cycleperc < 100 && cycledist > 0">
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Achieved:</div>
+          <div class="col">{{cycleperc}} %</div>
+        </div>
+			</div>
+		</label>
+    <label class="item" ng-if="cycledist == 0">
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Achieved:</div>
+          <div class="col">-- %</div>
+        </div>
+			</div>
+		</label>
+		<label class="item" ng-if="cycleperc >= 100">
+			<div class="item-icon-right">
+        <div class="row" style="float:left;">
+          <div class="col">Achieved:</div>
+          <div class="col">{{cycleperc}} %</div>
+        </div>
+				<i class="icon ion-checkmark" style="color:#66CC33;"></i>
+			</div>
+		</label>
+	</div>
+	
+	<div class="list card">
+    <div class="item item-divider">
+		Swimming
+    </div>
+		<label class="item" >
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Goal:</div>
+          <div class="col">{{swimdist}} km</div>
+        </div>
+			</div>
+		</label>
+		<label class="item" >
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Actual:</div>
+          <div class="col">{{swim}} km</div>
+        </div>
+			</div>
+		</label>
+		<label class="item" ng-if="swimperc < 100 && swimdist > 0">
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Achieved:</div>
+          <div class="col">{{swimperc}} %</div>
+        </div>
+			</div>
+		</label>
+    <label class="item" ng-if="swimdist == 0">
+			<div class="item-content">
+        <div class="row">
+          <div class="col">Achieved:</div>
+          <div class="col">-- %</div>
+        </div>
+			</div>
+		</label>
+		<label class="item" ng-if="swimperc >= 100 ">
+			<div class="item-icon-right">
+        <div class="row" style="float:left;">
+          <div class="col">Achieved:</div>
+          <div class="col">{{swimperc}} %</div>
+        </div>
+				<i class="icon ion-checkmark" style="color:#66CC33;"></i>
+			</div>
+		</label>
+	</div>
+  
+  </div>
+  
+  
+  
+  </ion-content>
+</ion-view>
+
+	
