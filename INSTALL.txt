@@ -1,0 +1,15 @@
+Requirements:
+node.js, npm, cordova, ionic, ios-deploy, ios-sim
+> For ios deployment: A computer running OS X and XCode 6
+
+* Install node.js
+* From a node.js shell:
+npm install -g cordova ionic ios-deploy ios-sim
+
+Development:
+* ionic serve --nobrowser
+> Edit files under www/
+
+Deployment:
+* ionic build ios
+* Open the generated .xcodeproj project file in XCode and deploy from there.
