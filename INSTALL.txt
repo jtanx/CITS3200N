@@ -1,0 +1,12 @@
+Requirements:
+* Python 2.7, Django 1.7, djangorestframework >= 2.4.3, tablib, python-dateutil
+
+Development:
+> Initialise database
+python manage.py migrate
+> Run the dev server
+python mange.py runserver
+
+Deployment:
+python manage.py runfcgi (for fcgi deployment)
+> Very server specific; must be set up by the sysadmin running the server.
