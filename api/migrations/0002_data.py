@@ -26,7 +26,7 @@ def add_fixtures(apps, schema_editor):
     if not getattr(settings, 'ON_PAAS', False):
         call_command('loaddata', 'api_data.json')
     else:
-        call_command('loaddata', os.environ['OPENSHIFT_REPO_DIR'] + '/wsgi/openshift/api_data.json')
+        call_command('loaddata', os.environ['OPENSHIFT_REPO_DIR'] + '/api_data.json')
         
 def clear_api(apps, schema_editor):
     Survey.objects.all().delete()
