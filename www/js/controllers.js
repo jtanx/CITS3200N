@@ -218,7 +218,7 @@ angular.module('starter.controllers', [])
   $scope.options = MentalSurvey.options();
   $scope.answer = function(question, option) {
 	MentalSurvey.answer(question, option);
-  console.log('answer', question, $scope.answered)
+  //console.log('answer', question, $scope.answered)
 	if($scope.answered == question + 1){
 		$scope.answered++;
 		$ionicSlideBoxDelegate.update();
