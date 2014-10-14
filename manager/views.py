@@ -282,31 +282,31 @@ def export_all(request, pk):
 @user_passes_test(lambda u:u.is_staff, login_url='manager:login')
 def export_by_user(request, spk, upk):
     '''Exports survye results for a specific user.'''
-        surveys = None
-        if 'filter' in request.GET:
-            vals = to_idlist(request.GET['filter'], SurveyResponse)
-            if vals:
-                surveys = SurveyResponse.objects.filter(id__in=vals)
-        if surveys is None:
-            surveys = SurveyResponse.objects.filter(survey__id = spk, creator__id = upk)
-            
-        surveys = filter_by_date(surveys, 'created', 
-                                 start=request.GET.get('start'),
-                                 end=request.GET.get('end'))
+    surveys = None
+    if 'filter' in request.GET:
+        vals = to_idlist(request.GET['filter'], SurveyResponse)
+        if vals:
+            surveys = SurveyResponse.objects.filter(id__in=vals)
+    if surveys is None:
+        surveys = SurveyResponse.objects.filter(survey__id = spk, creator__id = upk)
         
-        if not surveys:
-            error(request, "No surveys present to export.")  
-            return redirect('manager:user_response_list', spk=spk, upk=upk)
-        
-        ret = export_survey(surveys)
-        hret = HttpResponse(ret.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    surveys = filter_by_date(surveys, 'created', 
+                             start=request.GET.get('start'),
+                             end=request.GET.get('end'))
     
-        user = User.objects.get(pk=upk)
-        name = filenameify(" ".join([Survey.objects.get(pk=spk).name,
-                           user.first_name, user.last_name, "export.xlsx"]),
-                           space_repr='_')
-        hret['Content-Disposition'] = 'attachment; filename="%s"' % name
-        return hret
+    if not surveys:
+        error(request, "No surveys present to export.")  
+        return redirect('manager:user_response_list', spk=spk, upk=upk)
+    
+    ret = export_survey(surveys)
+    hret = HttpResponse(ret.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+    user = User.objects.get(pk=upk)
+    name = filenameify(" ".join([Survey.objects.get(pk=spk).name,
+                       user.first_name, user.last_name, "export.xlsx"]),
+                       space_repr='_')
+    hret['Content-Disposition'] = 'attachment; filename="%s"' % name
+    return hret
         
 
 
