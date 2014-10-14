@@ -33,9 +33,15 @@
 		<input required type="number" min="0" ng-model="exercise.distance" name="distance" />
 		</label>
 		
-		<label class="item item-input">
+    <label class="item item-input item-select">
 		<span class="input-label">Exertion</span>
-        <input required type="number" min="1" max="5" ng-model="exercise.exertion" name="exertion" />
+        <select required ng-model="exercise.exertion" name="exertion">
+			<option value="1">1 - Least intense</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5 - Most intense</option>
+		</select>
 		</label>
 		
    <ion-nav-buttons side="right">
