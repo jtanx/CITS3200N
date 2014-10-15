@@ -10,3 +10,14 @@ python mange.py runserver
 Deployment:
 python manage.py runfcgi (for fcgi deployment)
 > Very server specific; must be set up by the sysadmin running the server.
+
+Default logins:
+Username: admin
+Password: admin
+> The superuser
+
+Username: test
+Password: test
+> A normal user
+
+Default logins are set by the migration file api/migrations/0002_data.py
